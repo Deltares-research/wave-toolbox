@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-"""Tests for `deltares-wave-toolbox` package."""
+"""Tests for `deltares_wave_toolbox` package."""
 
 import pytest
 
 
-from deltares-wave-toolbox import deltares-wave-toolbox
+from deltares_wave_toolbox import deltares_wave_toolbox
 
 
 @pytest.fixture

@@ -1,4 +1,4 @@
-* deltares-wave-toolbox version:
+* deltares_wave_toolbox version:
 * Python version:
 * Operating System:
 

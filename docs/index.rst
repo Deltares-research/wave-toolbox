@@ -1,4 +1,4 @@
-Welcome to deltares-wave-toolbox's documentation!
+Welcome to deltares_wave_toolbox's documentation!
 ======================================
 
 .. toctree::

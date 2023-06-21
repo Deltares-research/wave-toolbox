@@ -1,1 +1,1 @@
-"""Unit test package for deltares-wave-toolbox."""
+"""Unit test package for deltares_wave_toolbox."""

@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use deltares-wave-toolbox in a project::
+To use deltares_wave_toolbox in a project::
 
-    import deltares-wave-toolbox
+    import deltares_wave_toolbox

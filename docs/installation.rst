@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install deltares-wave-toolbox, run this command in your terminal:
+To install deltares_wave_toolbox, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install deltares-wave-toolbox
+    $ pip install deltares_wave_toolbox
 
-This is the preferred method to install deltares-wave-toolbox, as it will always install the most recent stable release.
+This is the preferred method to install deltares_wave_toolbox, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,19 +26,19 @@ you through the process.
 From sources
 ------------
 
-The sources for deltares-wave-toolbox can be downloaded from the `Github repo`_.
+The sources for deltares_wave_toolbox can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/Deltares/deltares-wave-toolbox
+    $ git clone git://github.com/Deltares/deltares_wave_toolbox
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/Deltares/deltares-wave-toolbox/tarball/master
+    $ curl -OJL https://github.com/Deltares/deltares_wave_toolbox/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/Deltares/deltares-wave-toolbox
-.. _tarball: https://github.com/Deltares/deltares-wave-toolbox/tarball/master
+.. _Github repo: https://github.com/Deltares/deltares_wave_toolbox
+.. _tarball: https://github.com/Deltares/deltares_wave_toolbox/tarball/master

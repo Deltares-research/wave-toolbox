@@ -1,5 +1,5 @@
 =====================
-deltares-wave-toolbox
+deltares_wave_toolbox
 =====================
 
 
