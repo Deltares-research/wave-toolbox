@@ -1,0 +1,12 @@
+pip
+bump2version
+wheel
+flake8
+Sphinx
+twine
+pytest
+black
+numpy
+matplotlib
+pandas
+pyyaml
