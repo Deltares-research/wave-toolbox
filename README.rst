@@ -15,7 +15,7 @@ Features
 --------
 
 * From a time series of water level elevations, the toolbox can calculate:
-* the wave spectrum 
+* the wave spectrum
 * spectral wave parameters such as wave heigth and different wave periods
 * wave height exceedance curves
 * theoretical wave spectra and wave height distributions
