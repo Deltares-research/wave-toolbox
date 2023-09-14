@@ -5,6 +5,7 @@ import numpy as np
 
 # --- toolbox modules 
 import deltares_wave_toolbox.cores.core_engine as engine_core
+import deltares_wave_toolbox.spectrum as spectrum
 
 
 
@@ -259,7 +260,7 @@ def compute_moment(f=None,S=None,m=None,fmin=None,fmax=None):
     #
     return moment
  
-def create_spectrum_jonswap(f=None,fp=None,hm0=None,gammaPeak=3.3,l_fmax=0):
+def create_spectrum_jonswap(f=None,fp=None,hm0=None,gammaPeak=3.3,l_fmax=0, output_object= True):
     """
     CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
 
@@ -398,9 +399,12 @@ def create_spectrum_jonswap(f=None,fp=None,hm0=None,gammaPeak=3.3,l_fmax=0):
     #     energy, i.e. corresponding with wave height Hm0
     sVarDens = sVarDens * ( hm0 / hm0NonScale )**2;
 
-    return sVarDens
+    if output_object:
+        return spectrum.Spectrum(f, sVarDens)
+    else:
+        return sVarDens
 
-def create_spectrum_piersonmoskowitz(f=None,fp=None,hm0=None,l_fmax=0):
+def create_spectrum_piersonmoskowitz(f=None,fp=None,hm0=None,l_fmax=0, output_object= True):
     """
     
     CREATE_SPECTRUM_PIERSONMOSKOWITZ  Creates a Pierson-Moskowitz spectrum
@@ -471,7 +475,11 @@ def create_spectrum_piersonmoskowitz(f=None,fp=None,hm0=None,l_fmax=0):
     gammaPeak = 1
     sVarDens  = create_spectrum_jonswap(f,fp,hm0,gammaPeak,l_fmax)
 
-    return sVarDens
+
+    if output_object:
+        return spectrum.Spectrum(f, sVarDens)
+    else:
+        return sVarDens
 
 def tpd(freqs:np.ndarray=None,spectrum:np.ndarray=None)->float:
     '''

@@ -45,11 +45,8 @@ import copy
 # --- toolbox modules 
 import deltares_wave_toolbox.cores.core_engine as engine_core
 
-from deltares_wave_toolbox.series import Series
+import deltares_wave_toolbox.series as series
 
-
-
-    
 
 
 def frequency_averaging(f=None,sFreq=None,dfDesired=None):
@@ -771,9 +768,9 @@ def spectrum2timeseries(f,sVarDens,tInit,tEnd,dt,seed=None, output_object= True)
                     time step of time axis. Units: s
     seed        :int
                     Seed for random phases.
-    output_object     :Logical
-                        optional argument indicating whether the output is a time series of a 
-                        Series object  
+    output_object:Logical
+                    optional argument indicating whether the output is a time series of a 
+                    Series object  
 
 
     Returns
@@ -842,7 +839,7 @@ def spectrum2timeseries(f,sVarDens,tInit,tEnd,dt,seed=None, output_object= True)
     xTime = xTime[0:nTime]
 
     if output_object:
-        return Series(t, xTime)
+        return series.Series(t, xTime)
     else:
         return t, xTime
 

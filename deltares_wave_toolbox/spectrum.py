@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from deltares_wave_toolbox.cores.core_spectral import spectrum2timeseries
-from deltares_wave_toolbox.cores.core_wavefunctions import compute_moment, tpd, compute_tps
-from deltares_wave_toolbox.series import Series
-import deltares_wave_toolbox.cores.core_engine as engine_core
 
+
+import deltares_wave_toolbox.cores.core_engine as engine_core
+import deltares_wave_toolbox.cores.core_spectral as core_spectral
+import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
 
 
@@ -14,10 +14,8 @@ class Spectrum():
     The wave Spectrum class
     """
     # load static methods 
-    compute_moment = staticmethod(compute_moment)
-    tpd = staticmethod(tpd)
-    spectrum2timeseries = staticmethod(spectrum2timeseries)
-    compute_tps = staticmethod(compute_tps)
+    #compute_moment = staticmethod(core_wavefunctions.compute_moment) # WHY does it now work?
+
 
 
     def __init__(self,f,S,D=None):
@@ -80,7 +78,7 @@ class Spectrum():
             float: Hm0
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0  = self.compute_moment(self.f,self.S, 0,fmin,fmax)
+        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
         self.Hm0 = 4 * np.sqrt( m0 )
         return self.Hm0
     
@@ -99,7 +97,7 @@ class Spectrum():
         iFmax = np.where(self.f<=fmax)[0][-1]  
         fMiMa = self.f[iFmin:iFmax+1]
         SMiMa = self.S[iFmin:iFmax+1]
-        Tps = compute_tps(fMiMa, SMiMa)
+        Tps = core_wavefunctions.compute_tps(fMiMa, SMiMa)
         return Tps
 
     def get_Tp(self,fmin=None,fmax=None):
@@ -144,8 +142,8 @@ class Spectrum():
             float: Tmm10
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m_1 = self.compute_moment(self.f,self.S,-1,fmin,fmax)
-        m0  = compute_moment(self.f,self.S, 0,fmin,fmax)
+        m_1 = core_wavefunctions.compute_moment(self.f,self.S,-1,fmin,fmax)
+        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
         self.Tmm10 = m_1 / m0
         return self.Tmm10
 
@@ -160,8 +158,8 @@ class Spectrum():
             float: Tm01
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0  = compute_moment(self.f,self.S, 0,fmin,fmax)
-        m1  = compute_moment(self.f,self.S, 1,fmin,fmax)
+        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
+        m1  = core_wavefunctions.compute_moment(self.f,self.S, 1,fmin,fmax)
         self.Tm01  = m0 / m1
         return self.Tm01
 
@@ -176,8 +174,8 @@ class Spectrum():
             float: Tm02
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0  = compute_moment(self.f,self.S, 0,fmin,fmax)
-        m2  = compute_moment(self.f,self.S, 2,fmin,fmax)
+        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
+        m2  = core_wavefunctions.compute_moment(self.f,self.S, 2,fmin,fmax)
         self.Tm02  = np.sqrt( m0 / m2 )
         return self.Tm02 
 
@@ -192,8 +190,8 @@ class Spectrum():
         Returns:
             object: Series class with time series
         """
-        [t,xTime] = spectrum2timeseries(self.f,self.S,tstart,tend,dt)
-        return Series(t, xTime)
+        series = core_spectral.spectrum2timeseries(self.f,self.S,tstart,tend,dt)
+        return series
 
     def plot(self,savepath=None,fig=None):
         """ Plot spectrum

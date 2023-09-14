@@ -1,17 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from deltares_wave_toolbox.cores.core_time import sort_wave_params, determine_zero_crossing, determine_params_individual_waves, highest_waves_params, exceedance_wave_height, determine_mean
+
+
+import deltares_wave_toolbox.spectrum as spectrum
+
 import deltares_wave_toolbox.cores.core_engine as engine_core
-from deltares_wave_toolbox.cores.core_spectral import compute_spectrum_time_serie, time2freq_nyquist
-from deltares_wave_toolbox import Spectrum
+import deltares_wave_toolbox.cores.core_time as core_time
+import deltares_wave_toolbox.cores.core_spectral as core_spectral
+
+
 
 class WaveHeights():
 
-    sort_wave_params = staticmethod(sort_wave_params)
-    exceedance_wave_height = staticmethod(exceedance_wave_height)
-    highest_waves_params = staticmethod(highest_waves_params)
-    determine_mean = staticmethod(determine_mean)
+
 
     def __init__(self,hwave,twave):
         hwave,tSize =engine_core.convert_to_vector(hwave)
@@ -34,7 +36,7 @@ class WaveHeights():
         are sorted in descending order. This same sorting is applied to 
         tWave.
         """
-        self.hwave, self.twave = sort_wave_params(self.hwave,self.twave)
+        self.hwave, self.twave = core_time.sort_wave_params(self.hwave,self.twave)
 
     def get_Hrms(self):
         Hrms = np.sqrt(np.mean( self.hwave**2 ))
@@ -64,8 +66,8 @@ class WaveHeights():
         Returns:
             hExcPerc(float):  wave height with given exceedance probability
         """
-        self.hwave,self.twave = sort_wave_params(self.hwave,self.twave)
-        hExcPerc = exceedance_wave_height(hWaveSorted=self.hwave,excPerc=excPerc)
+        self.hwave,self.twave = core_time.sort_wave_params(self.hwave,self.twave)
+        hExcPerc = core_time.exceedance_wave_height(hWaveSorted=self.hwave,excPerc=excPerc)
         return hExcPerc
     
     def highest_waves(self, fracP):
@@ -89,8 +91,8 @@ class WaveHeights():
             tFracP     : double 
                     average of the wave periods of the highest fracP waves
         """
-        self.hwave,self.twave = sort_wave_params(self.hwave,self.twave)
-        hFracP,tFracP = highest_waves_params(hWaveSorted=self.hwave,tWaveSorted=self.twave ,fracP=fracP)
+        self.hwave,self.twave = core_time.sort_wave_params(self.hwave,self.twave)
+        hFracP,tFracP = core_time.highest_waves_params(hWaveSorted=self.hwave,tWaveSorted=self.twave ,fracP=fracP)
         return hFracP,tFracP
     
 
@@ -105,12 +107,7 @@ class Series(WaveHeights):
     Returns:
         _type_: _description_
     """
-    # load static methods
-    determine_zero_crossing = staticmethod(determine_zero_crossing)
-    determine_params_individual_waves = staticmethod(determine_params_individual_waves)
-    highest_waves_params = staticmethod(highest_waves_params)
-    compute_spectrum_time_serie = staticmethod(compute_spectrum_time_serie)
-    time2freq_nyquist = staticmethod(time2freq_nyquist)
+
 
     def __init__(self,time,x):
         time,tSize =engine_core.convert_to_vector(time)
@@ -141,7 +138,7 @@ class Series(WaveHeights):
         Returns:
             float and array: nWave with number of waves and tCross with the moments in time with a crossing
         """
-        nWave,tCross = determine_zero_crossing(t=self.time,x=self.time,typeCross=typeCross)
+        nWave,tCross = core_time.determine_zero_crossing(t=self.time,x=self.time,typeCross=typeCross)
         return nWave,tCross
     
     def get_spectrum(self,fres=0.01):
@@ -153,8 +150,9 @@ class Series(WaveHeights):
         Returns:
             Spectrum object: Spectrum
         """
-        [f, S] = compute_spectrum_time_serie(self.time,self.x,fres)
-        return Spectrum(f, S)
+
+        [f, S] = core_spectral.compute_spectrum_time_serie(self.time,self.x,fres)
+        return spectrum.Spectrum(f, S)
     
     def get_fourier_comp(self):
         """ get Fourier components from series
@@ -164,8 +162,7 @@ class Series(WaveHeights):
             array: xFreq, fourrier components
             isOdd: logical
         """
-        
-        f,xFreq,isOdd = time2freq_nyquist(self.time, self.time)
+        f,xFreq,isOdd = core_spectral.time2freq_nyquist(self.time, self.time)
         return f, xFreq, isOdd
     
     def _determine_individual_waves(self,typeCross='down'):
@@ -197,8 +194,8 @@ class Series(WaveHeights):
                 * The values of aTrough are always smaller than zero
                 * hWave = aCrest - aTrough
         """
-        nWave,tCross = determine_zero_crossing(t=self.time,x=self.x,typeCross=typeCross)
-        hWave, tWave, aCrest, aTrough, tCrest, tTrough = determine_params_individual_waves(tCross=tCross,t=self.time,x=self.x)
+        nWave,tCross = core_time.determine_zero_crossing(t=self.time,x=self.x,typeCross=typeCross)
+        hWave, tWave, aCrest, aTrough, tCrest, tTrough = core_time.determine_params_individual_waves(tCross=tCross,t=self.time,x=self.x)
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
     def plot(self,savepath=None,fig=None):
@@ -211,7 +208,7 @@ class Series(WaveHeights):
 
         if fig is None:
             fig = plt.figure()
-        plt.plot(self.f,self.S)
+        plt.plot(self.time,self.x)
         plt.grid('on')
         plt.xlabel('time [$s$]')
         plt.ylabel('z [$m$]')
