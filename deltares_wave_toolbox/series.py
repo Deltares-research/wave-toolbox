@@ -22,6 +22,7 @@ class WaveHeights():
 
       
         self.hwave = hwave
+        self.nwave = len(hwave)
         self.twave = twave
 
     def __str__(self):
@@ -41,6 +42,9 @@ class WaveHeights():
     def get_Hrms(self):
         Hrms = np.sqrt(np.mean( self.hwave**2 ))
         return Hrms
+    
+    def get_Hmax(self):
+        return np.max(self.hwave)
     
     def get_Hs(self):
         """ Compute Hs
@@ -95,6 +99,48 @@ class WaveHeights():
         hFracP,tFracP = core_time.highest_waves_params(hWaveSorted=self.hwave,tWaveSorted=self.twave ,fracP=fracP)
         return hFracP,tFracP
     
+    def plot_exceedance_waveheight(self,savepath=None,fig=None):
+        """ Plot exceedances of wave heights
+
+        Args:
+            savepath (str, optional): path to save figure. Defaults to None.
+            fig (figure object, optional): figure object. Defaults to None.
+        """
+        self.hwave,self.twave = core_time.sort_wave_params(self.hwave,self.twave)
+        if fig is None:
+            fig = plt.figure()
+        plt.plot(self.hwave, np.linspace(0,self.nwave, self.nwave, self.nwave)/self.nwave  )
+
+        #plt.gca().invert_xaxis()
+        plt.yscale('log')
+        plt.grid('on')
+        plt.xlabel('Wave height [$m$]')
+        plt.ylabel('P exceedance ')
+        plt.legend()
+
+        if savepath is not None:
+            plt.savefig(savepath)
+
+    def plot_hist_waveheight(self,savepath=None,fig=None):
+        """ Plot Histogram of wave heights
+
+        Args:
+            savepath (str, optional): path to save figure. Defaults to None.
+            fig (figure object, optional): figure object. Defaults to None.
+        """
+
+        if fig is None:
+            fig = plt.figure()
+        plt.hist(self.hwave, label='Distribution')
+
+        plt.grid('on')
+        plt.xlabel('H [$m$]')
+        plt.ylabel('P ')
+        plt.legend()
+
+        if savepath is not None:
+            plt.savefig(savepath)
+
 
 
 
@@ -138,7 +184,7 @@ class Series(WaveHeights):
         Returns:
             float and array: nWave with number of waves and tCross with the moments in time with a crossing
         """
-        nWave,tCross = core_time.determine_zero_crossing(t=self.time,x=self.time,typeCross=typeCross)
+        nWave,tCross = core_time.determine_zero_crossing(t=self.time,x=self.x,typeCross=typeCross)
         return nWave,tCross
     
     def get_spectrum(self,fres=0.01):
@@ -154,6 +200,17 @@ class Series(WaveHeights):
         [f, S] = core_spectral.compute_spectrum_time_serie(self.time,self.x,fres)
         return spectrum.Spectrum(f, S)
     
+    def max(self):
+        return np.max(self.x)
+    def min(self):
+        return np.min(self.x)
+    def mean(self):
+        return np.mean(self.x)
+    def var(self):
+        return np.var(self.x)
+    def var(self):
+        return np.var(self.x)
+           
     def get_fourier_comp(self):
         """ get Fourier components from series
 
@@ -162,7 +219,7 @@ class Series(WaveHeights):
             array: xFreq, fourrier components
             isOdd: logical
         """
-        f,xFreq,isOdd = core_spectral.time2freq_nyquist(self.time, self.time)
+        f,xFreq,isOdd = core_spectral.time2freq_nyquist(self.time, self.x)
         return f, xFreq, isOdd
     
     def _determine_individual_waves(self,typeCross='down'):
@@ -198,7 +255,7 @@ class Series(WaveHeights):
         hWave, tWave, aCrest, aTrough, tCrest, tTrough = core_time.determine_params_individual_waves(tCross=tCross,t=self.time,x=self.x)
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
-    def plot(self,savepath=None,fig=None):
+    def plot(self,savepath=None,fig=None, plot_crossing = False):
         """ Plot Series
 
         Args:
@@ -208,10 +265,15 @@ class Series(WaveHeights):
 
         if fig is None:
             fig = plt.figure()
-        plt.plot(self.time,self.x)
+        plt.plot(self.time,self.x,label='series')
+        if plot_crossing:
+            nWave, tCross = self.get_crossing()
+            plt.plot(tCross, np.asarray(tCross)*0,'ro',label='crossing') ##TODO make tCross array?
         plt.grid('on')
         plt.xlabel('time [$s$]')
         plt.ylabel('z [$m$]')
+        plt.legend()
+
         if savepath is not None:
             plt.savefig(savepath)
 

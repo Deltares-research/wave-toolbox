@@ -805,7 +805,7 @@ def spectrum2timeseries(f,sVarDens,tInit,tEnd,dt,seed=None, output_object= True)
     #     (nTimeEven / 2)
     dfGen = 1 / tDuration
     fNyq  = 1 / (2*dt)
-    fGen  = np.arange(dfGen,fNyq,dfGen) 
+    fGen  = np.arange(dfGen,fNyq+dfGen/2,dfGen) ##TODO why dfGen/2
     nF    = len( fGen )
 
     # --- Interpolate the given variance density spectrum sVarDens = sVarDens(f)

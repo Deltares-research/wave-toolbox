@@ -97,8 +97,8 @@ class Spectrum():
         iFmax = np.where(self.f<=fmax)[0][-1]  
         fMiMa = self.f[iFmin:iFmax+1]
         SMiMa = self.S[iFmin:iFmax+1]
-        Tps = core_wavefunctions.compute_tps(fMiMa, SMiMa)
-        return Tps
+        self.Tps = core_wavefunctions.compute_tps(fMiMa, SMiMa)
+        return self.Tps
 
     def get_Tp(self,fmin=None,fmax=None):
         """ Compute Tp (peak period) of spectrum
@@ -193,7 +193,7 @@ class Spectrum():
         series = core_spectral.spectrum2timeseries(self.f,self.S,tstart,tend,dt)
         return series
 
-    def plot(self,savepath=None,fig=None):
+    def plot(self,savepath=None,fig=None, plot_periods= True,xlim=None):
         """ Plot spectrum
 
         Args:
@@ -203,10 +203,21 @@ class Spectrum():
 
         if fig is None:
             fig = plt.figure()
-        plt.plot(self.f,self.S)
+        plt.plot(self.f,self.S,label = 'Spectrum')
+
+        if plot_periods:
+            if hasattr(self, 'Tps'):
+                plt.plot([1/self.Tps, 1/self.Tps],[0, np.max(self.S)],label = 'Tps')
+            if hasattr(self, 'Tmm10'):
+                plt.plot([1/self.Tmm10, 1/self.Tmm10],[0, np.max(self.S)],label = 'Tmm10')
+            if hasattr(self, 'Tm02'):
+                plt.plot([1/self.Tm02, 1/self.Tm02],[0, np.max(self.S)],label = 'Tm02')
         plt.grid('on')
         plt.xlabel('f [$Hz$]')
         plt.ylabel('S [$m^2/Hz$]')
+        plt.legend()
+        if xlim is not None:
+            plt.xlim(xlim)
         if savepath is not None:
             plt.savefig(savepath)
 
