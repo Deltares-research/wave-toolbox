@@ -151,7 +151,7 @@ class WaveHeights:
         plt.plot(Rayleigh_x, self.hwave, label="Wave height distribution")
 
         plt.grid("on")
-        plt.xlabel("$P_{exceedance}$ [$\%$]")
+        plt.xlabel(r"$P_{exceedance}$ [$\%$]")
         plt.ylabel("Wave height [$m$]")
         plt.legend()
 
