@@ -342,7 +342,6 @@ def rfwave(h=None, T=None, H=None):
         [eta, u, w, L] = rfwave_rfw(T, t, H, h, xeta, xvel, zvel)
         eta_max = eta[0, 0, 0] - h
         ua = u[0, 0, 0]
-        WT = 0
         # if d>=0 rfwave cannot be used and SPP will use linear wave theory
     else:
         print(
@@ -569,17 +568,17 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
 
             f = np.concatenate(
                 (f, 0.5 * u**2 + 0.5 * v**2 + eta - R), axis=None
-            )  #  [f; 0.5*u.^2 + 0.5*v.^2 + eta - R]
+            )  # [f; 0.5*u.^2 + 0.5*v.^2 + eta - R]
             f = np.concatenate(
                 (f, 1 / (2 * N) * (eta[0] + eta[N] + 2 * sum(eta[1 : N + 1])) - 1),
                 axis=None,
-            )  #  [f; 1/(2*N)*(eta(1) + eta(N+1) + 2*sum(eta(2:N))) - 1];
+            )  # [f; 1/(2*N)*(eta(1) + eta(N+1) + 2*sum(eta(2:N))) - 1];
             f = np.concatenate(
                 (f, eta[0] - eta[N] - H), axis=None
-            )  #  [f; eta(1) - eta(N+1) - H];
+            )  # [f; eta(1) - eta(N+1) - H];
             f = np.concatenate(
                 (f, k * c * tau - 2 * np.pi), axis=None
-            )  #  [f; k*c*tau - 2*pi];
+            )  # [f; k*c*tau - 2*pi];
             f = np.concatenate((f, c - cE + B0), axis=None)  # [f; c - cE + B0];
 
             #     Fill the A matrix. For i = 1:N+1:
