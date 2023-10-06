@@ -732,7 +732,6 @@ def rfwave_rfeta(N=None, h=None, ceta=None, k=None, x=None, c=None, t=None):
 
     """
 
-    x0 = 0.0
     jj = np.arange(0, N)  # 1:N;
     mm = np.arange[0:N].T  # [0:N]';
     ceta = k * (ceta - 1) * h
