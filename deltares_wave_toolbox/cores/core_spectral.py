@@ -1,43 +1,5 @@
-"""
-Spyder Editor
-
-# Copyright notice
-#     Copyright (c) 2008  Deltares.
-#       Ivo Wenneker
-#
-#       ivo.wenneker@deltares.nl
-#
-#       Rotterdamseweg 185
-#       Delft
-#
-#     All rights reserved.
-#     This routine is part of the WaveLab software system.
-#     Using this routine one is submitted to the license
-#     agreement for the WaveLab system.
-#     Permission to copy or distribute this software or documentation
-#     in hard or soft copy granted only under conditions as described
-#     by the license obtained from DELTARES.
-#     No part of this publication may be reproduced, stored in a
-#     retrieval system or be transmitted by any means, electronic,
-#     mechanical, photocopy, recording, or otherwise, without written
-#     permission from DELTARES.
-
-# Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-# Created: 
-# Created 
-
-# $Id:  $
-# $Date:  $
-# $Author:  $
-# $Revision:  $
-# $HeadURL:  $
-# $Keywords: $
-"""
 # --- python modules
-from enum import Enum
 import math
-import scipy.integrate as integrate
-from scipy.fftpack import fft, ifft
 import numpy as np
 import copy
 
@@ -560,7 +522,7 @@ def time2freq_nyquist(t, xTime):
     """
     # --- Ensure array input is of type ndarray.
 
-    ## Check on input
+    # Check on input
     # Aktie Ivo: toevoegen de volgende checks:
     # t is stijgend, met constante dt
     # length(t) = length(xtime)
@@ -582,8 +544,8 @@ def time2freq_nyquist(t, xTime):
             "time2freq_nyquist: Input error: array sizes differ in dimension"
         )
 
-    ## Computational core Transform time signal to frequency domain, over
-    #  frequency axis up to twice the Nyquist frequency
+    # Computational core Transform time signal to frequency domain, over
+    # frequency axis up to twice the Nyquist frequency
     fTotal, xFreqTotal = time2freq(t, xTime)
 
     # --- Number of time points, and check whether this number is even or odd
@@ -727,7 +689,8 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
 
     if not engine_core.monotonic_increasing_constant_step(f):
         raise ValueError(
-            "compute_spectrum_freq_serie: Input error: frequency input parameter must be monotonic with constant step size"
+            "compute_spectrum_freq_serie: Input error: frequency input parameter must be monotonic with constant step"
+            " size"
         )
 
     if not (fSize[0] == xFreqSize[0]):
@@ -735,7 +698,7 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
             "compute_spectrum_freq_serie: Input error: array sizes differ in dimension"
         )
 
-    if Ntime == None:
+    if Ntime is None:
         raise ValueError(
             "compute_spectrum_freq_serie: Input error: Number of time samples not specified"
         )
@@ -814,7 +777,7 @@ def spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed=None, output_object=T
     #     (nTimeEven / 2)
     dfGen = 1 / tDuration
     fNyq = 1 / (2 * dt)
-    fGen = np.arange(dfGen, fNyq + dfGen / 2, dfGen)  ##TODO why dfGen/2
+    fGen = np.arange(dfGen, fNyq + dfGen / 2, dfGen)  # TODO why dfGen/2
     nF = len(fGen)
 
     # --- Interpolate the given variance density spectrum sVarDens = sVarDens(f)

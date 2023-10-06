@@ -38,8 +38,8 @@ class Spectrum:
         self.D = D
         self.nf = len(f)
 
-        ## 1D or 2D spectrum
-        if self.D == None:
+        # 1D or 2D spectrum
+        if self.D is None:
             self.spec = "1D"
         else:
             self.spec = "2D"
@@ -124,7 +124,7 @@ class Spectrum:
         ifp = max(imax)
         fp = fMiMa[ifp]
         #
-        if np.all(ifp == None):  # matlab isempty(ifp)
+        if np.all(ifp is None):  # matlab isempty(ifp)
             ifp = 1
             fp = fMiMa[ifp]
         self.Tp = 1 / fp

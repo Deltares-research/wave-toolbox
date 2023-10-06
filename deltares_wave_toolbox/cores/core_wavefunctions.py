@@ -128,7 +128,7 @@ def compute_spectrum_params(f=None, S=None, fmin=None, fmax=None):
     ifp = max(imax)
     fp = fMiMa[ifp]
     #
-    if np.all(ifp == None):  # matlab isempty(ifp)
+    if np.all(ifp is None):  # matlab isempty(ifp)
         ifp = 1
         fp = fMiMa[ifp]
     Tp = 1 / fp
@@ -226,7 +226,8 @@ def compute_moment(f=None, S=None, m=None, fmin=None, fmax=None):
         freq = f
         spec = S
 
-    # --- Compute the integrand, that is the product of f^m * S  (using lambda is an alternatief for using def <function name> :)
+    # --- Compute the integrand, that is the product of f^m * S  (using lambda is an alternatief for using def
+    # <function name> :)
     func_integrand = (
         lambda freq, m, spec: freq ** (m) * spec
     )  # matlab freq.^(m) .* spec;
@@ -247,19 +248,18 @@ def compute_moment(f=None, S=None, m=None, fmin=None, fmax=None):
             fmax <= freq[len(freq) - 1]
         ):  # matlab freq(end))      NOTE: USE len(freq) here instead of Nf because length is altered on lines 741
             ifminn = engine_core.approx_array_index(freq, fminn)
-            ifmax = (
-                engine_core.approx_array_index(freq, fmax) + 1
-            )  # due to range specification ifminn:ifmax. e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value and not S[Nf])
-            moment = integrate.simps(
-                integrand[ifminn:ifmax], freq[ifminn:ifmax]
-            )  # moment = integral1d(freq,integrand,fminn,fmax);
+            ifmax = engine_core.approx_array_index(freq, fmax) + 1
+            # due to range specification ifminn:ifmax. e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value
+            # and not S[Nf])
+            moment = integrate.simps(integrand[ifminn:ifmax], freq[ifminn:ifmax])
+            # moment = integral1d(freq,integrand,fminn,fmax);
 
         else:
             # 1: Integral over [fminn,freq(end)]
             ifminn = engine_core.approx_array_index(freq, fminn)
-            ifmax = (
-                engine_core.approx_array_index(freq, freq[len(freq) - 1]) + 1
-            )  # due to range specification ifminn:ifmax.  e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value and not S[Nf])
+            ifmax = engine_core.approx_array_index(freq, freq[len(freq) - 1]) + 1
+            # due to range specification ifminn:ifmax.  e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value
+            # and not S[Nf])
             moment1 = integrate.simps(
                 integrand[ifminn:ifmax], freq[ifminn:ifmax]
             )  # moment1 = integral1d(freq,integrand,fminn,freq(end));
@@ -611,7 +611,9 @@ def compute_tps(f=None, S=None) -> float:
         # --- nF > 2 - default situation
         if nmax == 1:
             # --- nmax = 1
-            jmax = imax  # matlab imax   ->in matlab jmax=imax, as imax=np.where() it already account for the fact that indices starts with zero.
+            # matlab imax   ->in matlab jmax=imax, as imax=np.where() it already account for the fact that indices
+            # starts with zero.
+            jmax = imax
             if imax == 0:
                 jmax = 1  # the one after the first one: starting at 0, so jmax must be 1 in python ->matlab jmax=2
             elif imax == nF - 1:

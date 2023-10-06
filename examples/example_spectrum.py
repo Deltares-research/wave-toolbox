@@ -4,12 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.join(".."))
-
-
 from deltares_wave_toolbox.cores.core_wavefunctions import create_spectrum_jonswap
 from deltares_wave_toolbox.cores.core_spectral import compute_spectrum_freq_serie
 
-## create JONSWAP Spectrum ##
+# create JONSWAP Spectrum ##
 ff = np.linspace(0.01, 2, 1000)
 
 spec = create_spectrum_jonswap(f=ff, fp=0.1, hm0=1)
@@ -21,7 +19,7 @@ Tmm10 = spec.get_Tmm10()
 
 spec.plot(xlim=[0, 0.5])
 
-## create Series from spectrum ##
+# create Series from spectrum ##
 timeseries = spec.create_series(10, 3600, 0.1)
 
 timeseries.plot(plot_crossing=True)

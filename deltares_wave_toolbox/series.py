@@ -217,9 +217,6 @@ class Series(WaveHeights):
     def var(self):
         return np.var(self.x)
 
-    def var(self):
-        return np.var(self.x)
-
     def get_fourier_comp(self):
         """get Fourier components from series
 
@@ -290,7 +287,7 @@ class Series(WaveHeights):
             nWave, tCross = self.get_crossing()
             plt.plot(
                 tCross, np.asarray(tCross) * 0, "ro", label="crossing"
-            )  ##TODO make tCross array?
+            )  # TODO make tCross array?
         plt.grid("on")
         plt.xlabel("time [$s$]")
         plt.ylabel("z [$m$]")

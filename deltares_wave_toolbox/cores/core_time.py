@@ -1,42 +1,4 @@
-"""
-Spyder Editor
-
-# Copyright notice
-#     Copyright (c) 2008  Deltares.
-#       Ivo Wenneker
-#
-#       ivo.wenneker@deltares.nl
-#
-#       Rotterdamseweg 185
-#       Delft
-#
-#     All rights reserved.
-#     This routine is part of the WaveLab software system.
-#     Using this routine one is submitted to the license
-#     agreement for the WaveLab system.
-#     Permission to copy or distribute this software or documentation
-#     in hard or soft copy granted only under conditions as described
-#     by the license obtained from DELTARES.
-#     No part of this publication may be reproduced, stored in a
-#     retrieval system or be transmitted by any means, electronic,
-#     mechanical, photocopy, recording, or otherwise, without written
-#     permission from DELTARES.
-
-# Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-# Created: 
-# Created 
-
-# $Id:  $
-# $Date:  $
-# $Author:  $
-# $Revision:  $
-# $HeadURL:  $
-# $Keywords: $
-"""
-
-
 import numpy as np
-
 import deltares_wave_toolbox.cores.core_engine as engine_core
 
 
@@ -371,7 +333,7 @@ def highest_waves_params(
     if nWaveP > 0:
         hFracP = determine_mean(
             hWaveSorted[0:nWaveP]
-        )  #  0:nWaveP means nWaveP elements, starting at index zero # matlab hWaveSorted(1:nWaveP)
+        )  # 0:nWaveP means nWaveP elements, starting at index zero # matlab hWaveSorted(1:nWaveP)
         tFracP = determine_mean(
             tWaveSorted[0:nWaveP]
         )  # see statement above, matlab tWaveSorted(1:nWaveP)
@@ -455,9 +417,9 @@ def exceedance_wave_height(hWaveSorted=None, excPerc=None) -> float:
 
     # Computational core
     # --- Index of the wave corresponding to the given exceedance probability percentage
-    iWaveP = (
-        int(np.floor(nWave * excPerc / 100.0)) - 1
-    )  # note here you select the actual value and not the range (e.g. hWaveSorted[ 1: 4]), so substract 1 as array index start at 0 instead of 1 (MATLAB)
+    iWaveP = int(np.floor(nWave * excPerc / 100.0)) - 1
+    # note here you select the actual value and not the range (e.g. hWaveSorted[ 1: 4]), so substract 1 as array index
+    # start at 0 instead of 1 (MATLAB)
 
     # --- Compute wave height with exceedance probability
     if not (iWaveP < 0):
