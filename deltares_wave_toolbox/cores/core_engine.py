@@ -346,7 +346,7 @@ def rfwave(h=None, T=None, H=None):
         # if d>=0 rfwave cannot be used and SPP will use linear wave theory
     else:
         print(
-            "The wave characteristics fall outside the range of Rfwave. Only the results of linear wave theory are 
+            "The wave characteristics fall outside the range of Rfwave. Only the results of linear wave theory are"
             "shown. Be cautious with the results! Is your input correct?"
         )
         # use linear wave theory, therefore make input for spp_calc_l.m to
@@ -354,7 +354,6 @@ def rfwave(h=None, T=None, H=None):
         L = 0
         ua = 0
         eta_max = 0
-
 
     # calculate values from linear wave theory
     L_lin = calc_l_lin(T, h, g)
