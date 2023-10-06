@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import rayleigh
 
 
 import deltares_wave_toolbox.spectrum as spectrum
@@ -117,6 +118,49 @@ class WaveHeights:
         plt.xlabel("Wave height [$m$]")
         plt.ylabel("P exceedance ")
         plt.legend()
+
+        if savepath is not None:
+            plt.savefig(savepath)
+
+    def plot_exceedance_waveheight_Rayleigh(self, savepath=None, fig=None):
+        """Plot exceedances of wave heights compared to Rayleigh distribution
+
+        Args:
+            savepath (str, optional): path to save figure. Defaults to None.
+            fig (figure object, optional): figure object. Defaults to None.
+        """
+
+        Rayleigh_x = np.sqrt(-np.log(np.arange(1, self.nwave + 1) / self.nwave))
+        Rayleigh_theoretical_H2p = (
+            self.get_Hs()[0] * rayleigh.ppf(0.98, scale=1 / np.sqrt(2)) / np.sqrt(2)
+        )
+        Rayleigh_theoretical_dist = Rayleigh_theoretical_H2p * np.sqrt(
+            np.log(1 - np.arange(self.nwave, 0, -1) / (self.nwave + 1)) / np.log(0.02)
+        )
+
+        self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
+        if fig is None:
+            fig = plt.figure()
+
+        plt.plot(
+            Rayleigh_x,
+            Rayleigh_theoretical_dist,
+            label="Theoretical Rayleigh distribution",
+        )
+
+        plt.plot(Rayleigh_x, self.hwave, label="Wave height distribution")
+
+        plt.grid("on")
+        plt.xlabel("$P_{exceedance}$ [$\%$]")
+        plt.ylabel("Wave height [$m$]")
+        plt.legend()
+
+        xtick_positions = np.array([100, 50, 20, 10, 5, 2, 1, 0.1, 0.01, 0.001])
+        ax = plt.gca()
+        ax.set_xticks(
+            rayleigh.ppf(1 - xtick_positions / 100, scale=1 / np.sqrt(2)),
+            labels=xtick_positions,
+        )
 
         if savepath is not None:
             plt.savefig(savepath)

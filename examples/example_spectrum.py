@@ -8,11 +8,10 @@ sys.path.insert(1, os.getcwd())
 from deltares_wave_toolbox.cores.core_wavefunctions import create_spectrum_jonswap
 from deltares_wave_toolbox.cores.core_spectral import compute_spectrum_freq_serie
 
-
 # create JONSWAP Spectrum ##
 ff = np.linspace(0.01, 2, 1000)
 
-spec = create_spectrum_jonswap(f=ff, fp=0.1, hm0=1)
+spec = create_spectrum_jonswap(f=ff, fp=0.1, hm0=2)
 
 
 Hm0 = spec.get_Hm0()
@@ -53,6 +52,7 @@ print("Hs :", Hs)
 
 timeseries.plot_hist_waveheight()
 timeseries.plot_exceedance_waveheight()
+timeseries.plot_exceedance_waveheight_Rayleigh()
 
 print("--- wave exceedance ---")
 print("h2perc:", h2perc)
