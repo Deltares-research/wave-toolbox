@@ -2,23 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 import deltares_wave_toolbox.cores.core_engine as engine_core
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
 
-
-class Spectrum():
+class Spectrum:
     """
     The wave Spectrum class
     """
-    # load static methods 
-    #compute_moment = staticmethod(core_wavefunctions.compute_moment) # WHY does it now work?
 
+    # load static methods
+    # compute_moment = staticmethod(core_wavefunctions.compute_moment) # WHY does it now work?
 
-
-    def __init__(self,f,S,D=None):
+    def __init__(self, f, S, D=None):
         """_The innit function
 
         Args:
@@ -26,31 +23,34 @@ class Spectrum():
             S (array): array with energy density
             D (array, optional): array with directions for 2D spectrum. Defaults to None.
         """
-        f,fSize =engine_core.convert_to_vector(f)
-        S,SSize =engine_core.convert_to_vector(S)
+        f, fSize = engine_core.convert_to_vector(f)
+        S, SSize = engine_core.convert_to_vector(S)
 
-        assert engine_core.monotonic_increasing_constant_step(f), 'compute_spectrum_params: Input error: frequency input parameter must be monotonic with constant step size'
-        assert fSize[0]==SSize[0], 'compute_spectrum_params: Input error: array sizes differ in dimension'
-      
+        assert engine_core.monotonic_increasing_constant_step(
+            f
+        ), "compute_spectrum_params: Input error: frequency input parameter must be monotonic with constant step size"
+        assert (
+            fSize[0] == SSize[0]
+        ), "compute_spectrum_params: Input error: array sizes differ in dimension"
+
         self.f = f
         self.S = S
         self.D = D
         self.nf = len(f)
 
         ## 1D or 2D spectrum
-        if self.D==None:
-            self.spec = '1D'
+        if self.D == None:
+            self.spec = "1D"
         else:
-            self.spec = '2D'
+            self.spec = "2D"
 
-        
     def __str__(self):
         return f"{self.spec} wave spectrum with {self.nf} number of frequencies"
 
     def __repr__(self):
         return f"{type(self).__name__} (spec = {self.spec})"
-    
-    def _set_flim(self,fmin, fmax):
+
+    def _set_flim(self, fmin, fmax):
         """Set frequency limits
 
         Args:
@@ -60,15 +60,14 @@ class Spectrum():
         Returns:
             float: minimum and maximum frequency
         """
-        if ( fmin is None ):
+        if fmin is None:
             fmin = self.f[0]
-        if ( fmax is None):  
+        if fmax is None:
             fmax = self.f[-1]
             return fmin, fmax
 
-
-    def get_Hm0(self,fmin=None,fmax=None):
-        """ Compute Hm0 of spectrum
+    def get_Hm0(self, fmin=None, fmax=None):
+        """Compute Hm0 of spectrum
 
         Args:
             fmin (float, optional): Minimum frequency. Defaults to None.
@@ -78,12 +77,12 @@ class Spectrum():
             float: Hm0
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
-        self.Hm0 = 4 * np.sqrt( m0 )
+        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
+        self.Hm0 = 4 * np.sqrt(m0)
         return self.Hm0
-    
-    def get_Tps(self,fmin=None,fmax=None):
-        """ Compute Tps (smoothed peak period) of spectrum
+
+    def get_Tps(self, fmin=None, fmax=None):
+        """Compute Tps (smoothed peak period) of spectrum
 
         Args:
             fmin (float, optional): Minimum frequency. Defaults to None.
@@ -93,15 +92,15 @@ class Spectrum():
             float: Tps
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        iFmin = np.where(self.f>=fmin)[0][0]  
-        iFmax = np.where(self.f<=fmax)[0][-1]  
-        fMiMa = self.f[iFmin:iFmax+1]
-        SMiMa = self.S[iFmin:iFmax+1]
+        iFmin = np.where(self.f >= fmin)[0][0]
+        iFmax = np.where(self.f <= fmax)[0][-1]
+        fMiMa = self.f[iFmin : iFmax + 1]
+        SMiMa = self.S[iFmin : iFmax + 1]
         self.Tps = core_wavefunctions.compute_tps(fMiMa, SMiMa)
         return self.Tps
 
-    def get_Tp(self,fmin=None,fmax=None):
-        """ Compute Tp (peak period) of spectrum
+    def get_Tp(self, fmin=None, fmax=None):
+        """Compute Tp (peak period) of spectrum
 
         Args:
             fmin (float, optional): Minimum frequency. Defaults to None.
@@ -111,28 +110,28 @@ class Spectrum():
             float: Tp
         """
         # --- Make separate arrays containing only part corresponding to
-        #     frequencies between fmin and fmax 
+        #     frequencies between fmin and fmax
         #     Note: first zero selects first element of tuple.
         fmin, fmax = self._set_flim(fmin, fmax)
-        iFmin = np.where(self.f>=fmin)[0][0] 
-        iFmax = np.where(self.f<=fmax)[0][-1]  
-        fMiMa = self.f[iFmin:iFmax+1]
-        SMiMa = self.S[iFmin:iFmax+1]
+        iFmin = np.where(self.f >= fmin)[0][0]
+        iFmax = np.where(self.f <= fmax)[0][-1]
+        fMiMa = self.f[iFmin : iFmax + 1]
+        SMiMa = self.S[iFmin : iFmax + 1]
         # --- Compute peak period -----------------------------------------------
-        Smax = max( SMiMa )
-        imax = np.where(SMiMa == Smax)[0] # matlab find( SMiMa == Smax );
+        Smax = max(SMiMa)
+        imax = np.where(SMiMa == Smax)[0]  # matlab find( SMiMa == Smax );
         imax = imax.astype(int)
-        ifp  = max(imax)
-        fp   = fMiMa[ifp]
+        ifp = max(imax)
+        fp = fMiMa[ifp]
         #
-        if np.all(ifp==None):  # matlab isempty(ifp)
+        if np.all(ifp == None):  # matlab isempty(ifp)
             ifp = 1
-            fp  = fMiMa[ifp]
+            fp = fMiMa[ifp]
         self.Tp = 1 / fp
         return self.Tp
 
-    def get_Tmm10(self,fmin=None,fmax=None):
-        """ Compute Tmm10 spectral period) of spectrum
+    def get_Tmm10(self, fmin=None, fmax=None):
+        """Compute Tmm10 spectral period) of spectrum
 
         Args:
             fmin (float, optional): Minimum frequency. Defaults to None.
@@ -142,13 +141,13 @@ class Spectrum():
             float: Tmm10
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m_1 = core_wavefunctions.compute_moment(self.f,self.S,-1,fmin,fmax)
-        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
+        m_1 = core_wavefunctions.compute_moment(self.f, self.S, -1, fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
         self.Tmm10 = m_1 / m0
         return self.Tmm10
 
-    def get_Tm01(self,fmin=None,fmax=None):
-        """ Compute Tm01 of spectrum
+    def get_Tm01(self, fmin=None, fmax=None):
+        """Compute Tm01 of spectrum
 
         Args:
             fmin (float, optional): Minimum frequency. Defaults to None.
@@ -158,13 +157,13 @@ class Spectrum():
             float: Tm01
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
-        m1  = core_wavefunctions.compute_moment(self.f,self.S, 1,fmin,fmax)
-        self.Tm01  = m0 / m1
+        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
+        m1 = core_wavefunctions.compute_moment(self.f, self.S, 1, fmin, fmax)
+        self.Tm01 = m0 / m1
         return self.Tm01
 
-    def get_Tm02(self,fmin=None,fmax=None):
-        """ Compute Tm02 of spectrum
+    def get_Tm02(self, fmin=None, fmax=None):
+        """Compute Tm02 of spectrum
 
         Args:
             fmin (float, optional): Minimum frequency. Defaults to None.
@@ -174,13 +173,13 @@ class Spectrum():
             float: Tm02
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0  = core_wavefunctions.compute_moment(self.f,self.S, 0,fmin,fmax)
-        m2  = core_wavefunctions.compute_moment(self.f,self.S, 2,fmin,fmax)
-        self.Tm02  = np.sqrt( m0 / m2 )
-        return self.Tm02 
+        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
+        m2 = core_wavefunctions.compute_moment(self.f, self.S, 2, fmin, fmax)
+        self.Tm02 = np.sqrt(m0 / m2)
+        return self.Tm02
 
     def create_series(self, tstart, tend, dt):
-        """ Construct series from Spectrum with random phase
+        """Construct series from Spectrum with random phase
 
         Args:
             tstart (float): Start time of time series
@@ -190,11 +189,11 @@ class Spectrum():
         Returns:
             object: Series class with time series
         """
-        series = core_spectral.spectrum2timeseries(self.f,self.S,tstart,tend,dt)
+        series = core_spectral.spectrum2timeseries(self.f, self.S, tstart, tend, dt)
         return series
 
-    def plot(self,savepath=None,fig=None, plot_periods= True,xlim=None):
-        """ Plot spectrum
+    def plot(self, savepath=None, fig=None, plot_periods=True, xlim=None):
+        """Plot spectrum
 
         Args:
             savepath (str, optional): path to save figure. Defaults to None.
@@ -203,22 +202,24 @@ class Spectrum():
 
         if fig is None:
             fig = plt.figure()
-        plt.plot(self.f,self.S,label = 'Spectrum')
+        plt.plot(self.f, self.S, label="Spectrum")
 
         if plot_periods:
-            if hasattr(self, 'Tps'):
-                plt.plot([1/self.Tps, 1/self.Tps],[0, np.max(self.S)],label = 'Tps')
-            if hasattr(self, 'Tmm10'):
-                plt.plot([1/self.Tmm10, 1/self.Tmm10],[0, np.max(self.S)],label = 'Tmm10')
-            if hasattr(self, 'Tm02'):
-                plt.plot([1/self.Tm02, 1/self.Tm02],[0, np.max(self.S)],label = 'Tm02')
-        plt.grid('on')
-        plt.xlabel('f [$Hz$]')
-        plt.ylabel('S [$m^2/Hz$]')
+            if hasattr(self, "Tps"):
+                plt.plot([1 / self.Tps, 1 / self.Tps], [0, np.max(self.S)], label="Tps")
+            if hasattr(self, "Tmm10"):
+                plt.plot(
+                    [1 / self.Tmm10, 1 / self.Tmm10], [0, np.max(self.S)], label="Tmm10"
+                )
+            if hasattr(self, "Tm02"):
+                plt.plot(
+                    [1 / self.Tm02, 1 / self.Tm02], [0, np.max(self.S)], label="Tm02"
+                )
+        plt.grid("on")
+        plt.xlabel("f [$Hz$]")
+        plt.ylabel("S [$m^2/Hz$]")
         plt.legend()
         if xlim is not None:
             plt.xlim(xlim)
         if savepath is not None:
             plt.savefig(savepath)
-
-
