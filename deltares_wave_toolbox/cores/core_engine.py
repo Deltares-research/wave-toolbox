@@ -263,7 +263,6 @@ def rfwave(h=None, T=None, H=None):
 
     """
 
-    accuracy = 1e-4
     t = 0  # time
     xeta = 0  # location along x-axis where sea level elevation is needed
     xvel = 0  # location along x-axis where velocity is needed
@@ -347,27 +346,19 @@ def rfwave(h=None, T=None, H=None):
         # if d>=0 rfwave cannot be used and SPP will use linear wave theory
     else:
         print(
-            "The wave characteristics fall outside the range of Rfwave. Only the results of linear wave theory are shown. Be cautious with the results! Is your input correct?"
+            "The wave characteristics fall outside the range of Rfwave. Only the results of linear wave theory are 
+            "shown. Be cautious with the results! Is your input correct?"
         )
-        # warndlg('The wave characteristics fall outside the range or Rfwave. Now linear wave theory will be used. Be cautious with the results! Is your input correct?')
         # use linear wave theory, therefore make input for spp_calc_l.m to
         # compute wave length
         L = 0
         ua = 0
         eta_max = 0
-        # this variable tells which wave theory has been used. "1" means that
-        # linear theory has been used.
-        WT = 1
+
 
     # calculate values from linear wave theory
     L_lin = calc_l_lin(T, h, g)
     ua_lin = np.pi * H / (T * np.sinh(2 * np.pi * h / L_lin))
-
-    # show results
-    ua_rfwave = ua
-    ua_linear = ua_lin
-    L_rfwave = L
-    L_linear = L_lin
 
     return eta_max, ua, ua_lin, L, L_lin
 
