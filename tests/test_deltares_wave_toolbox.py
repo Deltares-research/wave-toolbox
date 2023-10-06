@@ -5,9 +5,6 @@
 import pytest
 
 
-from deltares_wave_toolbox import deltares_wave_toolbox
-
-
 @pytest.fixture
 def response():
     """Sample pytest fixture.

@@ -2,10 +2,11 @@ import sys
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-
-sys.path.append(os.path.join(".."))
 from deltares_wave_toolbox.cores.core_wavefunctions import create_spectrum_jonswap
 from deltares_wave_toolbox.cores.core_spectral import compute_spectrum_freq_serie
+
+sys.path.append(os.path.join(".."))
+
 
 # create JONSWAP Spectrum ##
 ff = np.linspace(0.01, 2, 1000)
