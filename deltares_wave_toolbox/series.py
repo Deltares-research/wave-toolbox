@@ -8,6 +8,7 @@ import deltares_wave_toolbox.spectrum as spectrum
 import deltares_wave_toolbox.cores.core_engine as engine_core
 import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
+import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
 
 class WaveHeights:
@@ -134,7 +135,13 @@ class WaveHeights:
             plt.savefig(savepath)
 
     def plot_exceedance_waveheight_Rayleigh(
-        self, normalize=False, savepath=None, fig=None
+        self,
+        normalize=False,
+        plot_BG=False,
+        water_depth=None,
+        cota_slope=None,
+        savepath=None,
+        fig=None,
     ):
         """Plot exceedances of wave heights compared to Rayleigh distribution
 
@@ -167,6 +174,23 @@ class WaveHeights:
             Rayleigh_theoretical_dist / H_normalize,
             label="Theoretical Rayleigh distribution",
         )
+
+        if plot_BG:
+            # TODO !!! implement proper way to get Hm0 here (via spectrum?)
+            Hm0 = self.get_Hs()[0]
+
+            (
+                hwave_BG,
+                Pexceedance_BG,
+            ) = core_wavefunctions.compute_BattjesGroenendijk_wave_height_distribution(
+                Hm0, self.nwave, water_depth, cota_slope=cota_slope
+            )
+
+            plt.plot(
+                np.sqrt(-np.log(Pexceedance_BG)),
+                hwave_BG / H_normalize,
+                label="Battjes & Groenendijk (2000) distribution",
+            )
 
         plt.plot(Rayleigh_x, self.hwave / H_normalize, label="Wave height distribution")
 
