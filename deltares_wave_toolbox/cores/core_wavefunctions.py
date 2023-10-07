@@ -1,5 +1,7 @@
 # --- python modules
 import scipy.integrate as integrate
+import scipy.special as special
+from scipy.stats import exponweib
 import numpy as np
 
 
@@ -676,3 +678,123 @@ def compute_tps(f=None, S=None) -> float:
         Tps = 1 / f[0]
 
     return Tps  # TODO: check for some reason single value is stored as array,
+
+
+def compute_BattjesGroenendijk_wave_height_distribution(
+    Hm0, nwave, water_depth, cota_slope=250, tolerance=1e-5
+):
+    """
+    COMPUTE_BATTJESGROENENDIJK_WAVE_HEIGHT_DISTRIBUTION  Computes wave height distribution following Battjes and
+    Groenendijk (2000)
+
+
+    Parameters
+    ----------
+    Hm0   : double
+         Spectral wave height (unit: m)
+    nwave : array double (1D)
+         number of waves (units: -)
+    water_depth : double
+            water depth (units: m)
+    cota_slope : double
+            cotangent of the bottom slope (units: -)
+    tolerance : double
+            tolerance for convergence of transition wave height (units: -)
+
+
+    Returns
+    -------
+    hwave_BG        : array double (1D)
+         theoretical Battjes & Groenendijk (2000) wave height distribution (units: m)
+    Pexceedance_BG  : array double (1D)
+         theoretical Battjes & Groenendijk (2000) wave height exceedance probability (units: -)
+
+    Syntax:
+    compute_BattjesGroenendijk_wave_height_distribution(
+    Hm0, nwave, water_depth, cota_slope=cota_slope, tolerance=tolerance
+    )
+
+
+    Example
+    >>> Hm0 = 2.0
+    >>> nwave = 700
+    >>> water_depth = 4.5
+    >>> cota_slope = 50
+    >>> tolerance = 1e-5
+    >>> hwave_BG, Pexceedance_BG = compute_BattjesGroenendijk_wave_height_distribution(
+        Hm0, nwave, water_depth, cota_slope=cota_slope, tolerance=tolerance
+        )
+    """
+
+    # TODO include check on validity ranges input parameters
+
+    gamma_transition = 0.35 + 5.8 * (1 / cota_slope)
+    H_transition = gamma_transition * water_depth
+    m0 = np.power(Hm0 / 4, 2)
+    # TODO check if we need to directly calc H_rms from series
+    H_rms = np.sqrt(m0) * (2.69 + 3.24 * np.sqrt(m0) / water_depth)
+
+    H_transition_norm = H_transition / H_rms
+
+    if (
+        H_transition_norm > 2.75
+    ):  # To assure convergence uses the Rayleigh dist when this values exceeds 2.27
+        # x = exponweib.ppf(1 - 1 / nwave, 1, 2, scale=np.sqrt(8)) / 4 * Hm0
+        # h3m = Hm0
+        # h1m = 1.27 * Hm0
+        # dist = "Rayleigh"
+        # th1 = 1
+        # th2 = 1
+
+        print("!!! Rayleigh distributed waves, not Battjes & Groenendijk (2000) !!!")
+        # TODO implement nice error handling when not BG but Rayleigh
+    else:
+        # Calculate H(p=1/N)
+        delta_H = 0.01
+        H_1_norm = 100
+        k1 = 2
+        k2 = 3.6
+        EST = 10
+        while abs(EST - 1) > tolerance:
+            H_2_norm = H_transition_norm / np.power(
+                H_transition_norm / H_1_norm, k1 / k2
+            )
+            # so that F1(Htr)=F2(Htr), pag 166
+            A_1 = 2 / k1 + 1
+            X = np.power(H_transition_norm / H_1_norm, k1)
+            A_2 = 2 / k2 + 1
+            EST = np.power(H_1_norm, 2) * special.gammainc(A_1, X) * special.gamma(
+                A_1
+            ) + np.power(H_2_norm, 2) * (
+                special.gamma(A_2) - special.gamma(A_2) * special.gammainc(A_2, X)
+            )  # eq (7) (gamma(A_1)=1, since A_1=2)
+            H_1_norm = H_1_norm - delta_H * (EST - 1)
+
+        H_1_norm = H_1_norm + delta_H * (EST - 1)
+        x_1 = H_1_norm * np.power(
+            np.log(nwave), 1 / k1
+        )  # from 1-F=1/N, F=1-exp(-(x/H)^k)
+        x_2 = H_2_norm * np.power(np.log(nwave), 1 / k2)
+        if x_1 < H_transition_norm:
+            x = x_1
+        else:
+            x = x_2
+
+        x = x * H_rms
+        x = min(
+            x, exponweib.ppf(1 - 1 / nwave, 1, 2, scale=np.sqrt(8)) / 4 * Hm0
+        )  # added this check because otherwise overshoots the Rayleigh distribution
+
+        # dist = "B&G"
+        H_1 = H_1_norm * H_rms
+        H_2 = H_2_norm * H_rms
+
+        if Hm0 < H_transition:
+            P_H_tr = np.exp(-np.power(H_transition / H_1, k1))
+        else:
+            P_H_tr = np.exp(-np.power(H_transition / H_2, k2))
+
+        hwave_BG = np.array([0, H_transition, x])
+        Pexceedance_BG = np.array([1, P_H_tr, 1 / nwave])
+
+    return hwave_BG, Pexceedance_BG
