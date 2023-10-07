@@ -52,7 +52,7 @@ print("Hs :", Hs)
 
 timeseries.plot_hist_waveheight()
 timeseries.plot_exceedance_waveheight()
-timeseries.plot_exceedance_waveheight_Rayleigh()
+timeseries.plot_exceedance_waveheight_Rayleigh(normalize=True)
 
 print("--- wave exceedance ---")
 print("h2perc:", h2perc)

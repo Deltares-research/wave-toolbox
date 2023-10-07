@@ -50,6 +50,17 @@ class WaveHeights:
         Hs = self.highest_waves(1 / 3)
         return Hs
 
+    def get_H2p_Rayleigh(self):
+        """Compute theoretical H2% assuming Rayleigh distribution
+
+        Returns:
+            float: H2p_Rayleigh
+        """
+        H2p_Rayleigh = (
+            self.get_Hs()[0] * rayleigh.ppf(0.98, scale=1 / np.sqrt(2)) / np.sqrt(2)
+        )
+        return H2p_Rayleigh
+
     def get_exceedance_waveheight(self, excPerc):
         """
         EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
@@ -122,7 +133,9 @@ class WaveHeights:
         if savepath is not None:
             plt.savefig(savepath)
 
-    def plot_exceedance_waveheight_Rayleigh(self, savepath=None, fig=None):
+    def plot_exceedance_waveheight_Rayleigh(
+        self, normalize=False, savepath=None, fig=None
+    ):
         """Plot exceedances of wave heights compared to Rayleigh distribution
 
         Args:
@@ -130,11 +143,18 @@ class WaveHeights:
             fig (figure object, optional): figure object. Defaults to None.
         """
 
+        if normalize:
+            # Normalize with significant wave height
+            H_normalize = self.get_Hs()[0]
+            y_label = r"Normalized wave height $\frac{H_{i}}{H_{s}}$ [-]"
+        else:
+            # no normalization
+            H_normalize = 1
+            y_label = r"Wave height $H_{i}$ [$m$]"
+
         Rayleigh_x = np.sqrt(-np.log(np.arange(1, self.nwave + 1) / self.nwave))
-        Rayleigh_theoretical_H2p = (
-            self.get_Hs()[0] * rayleigh.ppf(0.98, scale=1 / np.sqrt(2)) / np.sqrt(2)
-        )
-        Rayleigh_theoretical_dist = Rayleigh_theoretical_H2p * np.sqrt(
+        H2p_Rayleigh = self.get_H2p_Rayleigh()
+        Rayleigh_theoretical_dist = H2p_Rayleigh * np.sqrt(
             np.log(1 - np.arange(self.nwave, 0, -1) / (self.nwave + 1)) / np.log(0.02)
         )
 
@@ -144,15 +164,15 @@ class WaveHeights:
 
         plt.plot(
             Rayleigh_x,
-            Rayleigh_theoretical_dist,
+            Rayleigh_theoretical_dist / H_normalize,
             label="Theoretical Rayleigh distribution",
         )
 
-        plt.plot(Rayleigh_x, self.hwave, label="Wave height distribution")
+        plt.plot(Rayleigh_x, self.hwave / H_normalize, label="Wave height distribution")
 
         plt.grid("on")
         plt.xlabel(r"$P_{exceedance}$ [$\%$]")
-        plt.ylabel("Wave height [$m$]")
+        plt.ylabel(y_label)
         plt.legend()
 
         xtick_positions = np.array([100, 50, 20, 10, 5, 2, 1, 0.1, 0.01, 0.001])
