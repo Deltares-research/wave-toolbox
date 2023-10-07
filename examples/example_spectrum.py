@@ -5,7 +5,10 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(1, os.getcwd())
 
-from deltares_wave_toolbox.cores.core_wavefunctions import create_spectrum_jonswap
+from deltares_wave_toolbox.cores.core_wavefunctions import (
+    create_spectrum_jonswap,
+    compute_BattjesGroenendijk_wave_height_distribution,
+)
 from deltares_wave_toolbox.cores.core_spectral import compute_spectrum_freq_serie
 
 # create JONSWAP Spectrum ##
@@ -52,7 +55,9 @@ print("Hs :", Hs)
 
 timeseries.plot_hist_waveheight()
 timeseries.plot_exceedance_waveheight()
-timeseries.plot_exceedance_waveheight_Rayleigh(normalize=True)
+timeseries.plot_exceedance_waveheight_Rayleigh(
+    normalize=True, plot_BG=True, water_depth=8, cota_slope=250
+)
 
 print("--- wave exceedance ---")
 print("h2perc:", h2perc)
@@ -63,3 +68,7 @@ spec2 = timeseries.get_spectrum(fres=0.01)
 spec2.plot()
 
 spec2.get_Hm0()
+
+compute_BattjesGroenendijk_wave_height_distribution(
+    2, timeseries.nwave, 3, cota_slope=250
+)
