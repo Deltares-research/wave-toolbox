@@ -29,7 +29,7 @@ def wave_spectrum(Hm0, Tp):
     # create JONSWAP Spectrum
     ff = np.linspace(0.01, 2, 1000)
 
-    spectrum = create_spectrum_jonswap(f=ff, fp=1/Tp, hm0=Hm0)
+    spectrum = create_spectrum_jonswap(f=ff, fp=1 / Tp, hm0=Hm0)
 
     return spectrum
 
