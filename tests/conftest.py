@@ -14,13 +14,22 @@ def Hm0():
 
 
 @pytest.fixture(scope="package")
-def wave_spectrum(Hm0):
+def Tp():
+    """Hm0 value to be used in tests."""
+
+    Tp = 10
+
+    return Tp
+
+
+@pytest.fixture(scope="package")
+def wave_spectrum(Hm0, Tp):
     """Generate wave spectrum to be used in tests."""
 
     # create JONSWAP Spectrum
     ff = np.linspace(0.01, 2, 1000)
 
-    spectrum = create_spectrum_jonswap(f=ff, fp=0.1, hm0=Hm0)
+    spectrum = create_spectrum_jonswap(f=ff, fp=1/Tp, hm0=Hm0)
 
     return spectrum
 
