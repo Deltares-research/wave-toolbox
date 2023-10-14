@@ -1,2 +1,3 @@
-from deltares_wave_toolbox.series import *
-from deltares_wave_toolbox.spectrum import *
+from .series import *  # noqa
+from .spectrum import *  # noqa
+from .cores import *  # noqa

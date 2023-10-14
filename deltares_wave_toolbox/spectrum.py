@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-import deltares_wave_toolbox.cores.core_engine as engine_core
+import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
@@ -23,10 +23,10 @@ class Spectrum:
             S (array): array with energy density
             D (array, optional): array with directions for 2D spectrum. Defaults to None.
         """
-        f, fSize = engine_core.convert_to_vector(f)
-        S, SSize = engine_core.convert_to_vector(S)
+        f, fSize = core_engine.convert_to_vector(f)
+        S, SSize = core_engine.convert_to_vector(S)
 
-        assert engine_core.monotonic_increasing_constant_step(
+        assert core_engine.monotonic_increasing_constant_step(
             f
         ), "compute_spectrum_params: Input error: frequency input parameter must be monotonic with constant step size"
         assert (

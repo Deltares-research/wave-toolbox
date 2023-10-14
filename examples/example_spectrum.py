@@ -64,7 +64,3 @@ spec2 = timeseries.get_spectrum(fres=0.01)
 spec2.plot()
 
 spec2.get_Hm0()
-
-dwt.core_wavefunctions.compute_BattjesGroenendijk_wave_height_distribution(
-    2, timeseries.nwave, 3, cota_slope=250
-)

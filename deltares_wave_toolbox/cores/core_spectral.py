@@ -5,7 +5,7 @@ import copy
 
 
 # --- toolbox modules
-import deltares_wave_toolbox.cores.core_engine as engine_core
+import deltares_wave_toolbox.cores.core_engine as core_engine
 
 import deltares_wave_toolbox.series as series
 
@@ -57,8 +57,8 @@ def frequency_averaging(f=None, sFreq=None, dfDesired=None):
     """
 
     # convert input to array type to be able to handle input like e.g. f = [0.2,0.4]
-    f, fSize = engine_core.convert_to_vector(f)
-    sFreq, sFreqSize = engine_core.convert_to_vector(sFreq)
+    f, fSize = core_engine.convert_to_vector(f)
+    sFreq, sFreqSize = core_engine.convert_to_vector(sFreq)
 
     if fSize[1] > 1 or sFreqSize[1] > 1:
         raise ValueError("frequency_averaging: Input error: input should be 1d arrays")
@@ -77,7 +77,7 @@ def frequency_averaging(f=None, sFreq=None, dfDesired=None):
     # --- Initialize arrays
     fCoarse = np.zeros(len(f[0:nCoarse]))
     sFreqCoarse = np.zeros(
-        len(fCoarse), dtype=engine_core.get_parameter_type(sFreq[0])
+        len(fCoarse), dtype=core_engine.get_parameter_type(sFreq[0])
     )  # determine parameter type complex or float?
 
     # --- Perform the averaging
@@ -161,8 +161,8 @@ def unfold_spectrum(f, xFreq, isOdd):
     """
 
     # convert input to array type to be able to handle input like e.g. f = [0.2,0.4]
-    f, fSize = engine_core.convert_to_vector(f)
-    xFreq, xFreqSize = engine_core.convert_to_vector(xFreq)
+    f, fSize = core_engine.convert_to_vector(f)
+    xFreq, xFreqSize = core_engine.convert_to_vector(xFreq)
 
     if fSize[1] > 1 or xFreqSize[1] > 1:
         raise ValueError("unfold_spectrum: Input error: input should be 1d arrays")
@@ -318,7 +318,7 @@ def freq2time(xFreq):
 
     """
 
-    xFreq, xFreqSize = engine_core.convert_to_vector(xFreq)
+    xFreq, xFreqSize = core_engine.convert_to_vector(xFreq)
 
     #
     # Check on input arguments
@@ -405,13 +405,13 @@ def time2freq(t, xTime):
     # t is stijgend, met constante dt
     # length(t) = length(xtime)
     # t en xTime zijn 1D arrays
-    t, tSize = engine_core.convert_to_vector(t)
-    xTime, xTimeSize = engine_core.convert_to_vector(xTime)
+    t, tSize = core_engine.convert_to_vector(t)
+    xTime, xTimeSize = core_engine.convert_to_vector(xTime)
 
     if tSize[1] > 1 or xTimeSize[1] > 1:
         raise ValueError("time2freq: Input error: input should be 1d arrays")
 
-    if not engine_core.monotonic_increasing_constant_step(t):
+    if not core_engine.monotonic_increasing_constant_step(t):
         raise ValueError(
             "time2freq: Input error: time input parameter must be monotonic with constant step size"
         )
@@ -528,13 +528,13 @@ def time2freq_nyquist(t, xTime):
     # length(t) = length(xtime)
     # t en xTime zijn 1D arrays
 
-    t, tSize = engine_core.convert_to_vector(t)
-    xTime, xTimeSize = engine_core.convert_to_vector(xTime)
+    t, tSize = core_engine.convert_to_vector(t)
+    xTime, xTimeSize = core_engine.convert_to_vector(xTime)
 
     if tSize[1] > 1 or xTimeSize[1] > 1:
         raise ValueError("time2freq_nyquist: Input error: input should be 1d arrays")
 
-    if not engine_core.monotonic_increasing_constant_step(t):
+    if not core_engine.monotonic_increasing_constant_step(t):
         raise ValueError(
             "time2freq_nyquist: Input error: time input parameter must be monotonic with constant step size"
         )
@@ -679,15 +679,15 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
     See also
 
     """
-    f, fSize = engine_core.convert_to_vector(f)
-    xFreq, xFreqSize = engine_core.convert_to_vector(xFreq)
+    f, fSize = core_engine.convert_to_vector(f)
+    xFreq, xFreqSize = core_engine.convert_to_vector(xFreq)
 
     if fSize[1] > 1 or xFreqSize[1] > 1:
         raise ValueError(
             "compute_spectrum_freq_serie: Input error: input should be 1d arrays"
         )
 
-    if not engine_core.monotonic_increasing_constant_step(f):
+    if not core_engine.monotonic_increasing_constant_step(f):
         raise ValueError(
             "compute_spectrum_freq_serie: Input error: frequency input parameter must be monotonic with constant step"
             " size"
@@ -752,8 +752,8 @@ def spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed=None, output_object=T
               variance density spectrum
 
     """
-    f, fSize = engine_core.convert_to_vector(f)
-    xFreq, xFreqSize = engine_core.convert_to_vector(sVarDens)
+    f, fSize = core_engine.convert_to_vector(f)
+    xFreq, xFreqSize = core_engine.convert_to_vector(sVarDens)
 
     if fSize[1] > 1 or xFreqSize[1] > 1:
         raise ValueError(
