@@ -5,7 +5,7 @@ from scipy.stats import rayleigh
 
 import deltares_wave_toolbox.spectrum as spectrum
 
-import deltares_wave_toolbox.cores.core_engine as engine_core
+import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
@@ -13,8 +13,8 @@ import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
 class WaveHeights:
     def __init__(self, hwave, twave):
-        hwave, tSize = engine_core.convert_to_vector(hwave)
-        twave, xSize = engine_core.convert_to_vector(twave)
+        hwave, tSize = core_engine.convert_to_vector(hwave)
+        twave, xSize = core_engine.convert_to_vector(twave)
         print("test")
 
         self.hwave = hwave
@@ -241,8 +241,8 @@ class Series(WaveHeights):
     """
 
     def __init__(self, time, x):
-        time, tSize = engine_core.convert_to_vector(time)
-        x, xSize = engine_core.convert_to_vector(x)
+        time, tSize = core_engine.convert_to_vector(time)
+        x, xSize = core_engine.convert_to_vector(x)
 
         assert tSize[0] == xSize[0], "Input error: array sizes differ in dimension"
 
