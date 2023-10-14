@@ -93,7 +93,7 @@ def frequency_averaging(f=None, sFreq=None, dfDesired=None):
     return fCoarse, sFreqCoarse
 
 
-def unfold_spectrum(f, xFreq, isOdd):
+def unfold_spectrum(f, xFreq, isOdd: bool):
     """
     UNFOLDSPECTRUM  Unfolds a folded discrete Fourier transform
 
@@ -713,7 +713,15 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
     return [fCoarse, sCoarse]
 
 
-def spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed=None, output_object=True):
+def spectrum2timeseries(
+    f,
+    sVarDens,
+    tInit: float,
+    tEnd: float,
+    dt: float,
+    seed: int = None,
+    output_object: bool = True,
+):
     """
     SPECTRUM2TIMESERIES  Generates a timeseries based on a given spectrum.
 
@@ -816,7 +824,7 @@ def spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed=None, output_object=T
         return t, xTime
 
 
-def test_doctstrings():
+def test_doctstrings() -> None:
     import doctest
 
     doctest.testmod()

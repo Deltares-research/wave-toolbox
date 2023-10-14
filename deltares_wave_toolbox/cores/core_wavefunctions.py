@@ -11,8 +11,12 @@ import deltares_wave_toolbox.cores.core_engine as engine_core
 import deltares_wave_toolbox.spectrum as spectrum
 
 
-def compute_spectrum_params(f: npt.NDArray[np.float64] = None, S: npt.NDArray[np.float64] = None, fmin: float = None, fmax: float = None
-                            ) -> float | float | float | float | float | float:
+def compute_spectrum_params(
+    f: npt.NDArray[np.float64] = None,
+    S: npt.NDArray[np.float64] = None,
+    fmin: float = None,
+    fmax: float = None,
+) -> float | float | float | float | float | float:
     """
     COMPUTE_SPECTRUM_PARAMS  Computes spectral parameters of given spectrum
 
@@ -144,7 +148,11 @@ def compute_spectrum_params(f: npt.NDArray[np.float64] = None, S: npt.NDArray[np
 
 
 def compute_moment(
-    f=None, S=None, m: int = None, fmin: float = None, fmax: float = None
+    f: npt.NDArray[np.float64] = None,
+    S: npt.NDArray[np.float64] = None,
+    m: int = None,
+    fmin: float = None,
+    fmax: float = None,
 ) -> float:
     """
     COMPUTE_MOMENT  Computes the spectral moment
@@ -287,7 +295,12 @@ def compute_moment(
 
 
 def create_spectrum_jonswap(
-    f=None, fp: float = None, hm0: float = None, gammaPeak: float = 3.3, l_fma: float, x = 0, output_object: bool = True
+    f: npt.NDArray[np.float64] = None,
+    fp: float = None,
+    hm0: float = None,
+    gammaPeak: float = 3.3,
+    l_fmax: float = 0,
+    output_object: bool = True,
 ):
     """
     CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
@@ -432,7 +445,6 @@ def create_spectrum_jonswap(
     #     energy, i.e. corresponding with wave height Hm0
     sVarDens = sVarDens * (hm0 / hm0NonScale) ** 2
 
-    # TODO ! fix this, only one return allowed in the function !
     if output_object:
         return spectrum.Spectrum(f, sVarDens)
     else:
@@ -440,7 +452,11 @@ def create_spectrum_jonswap(
 
 
 def create_spectrum_piersonmoskowitz(
-    f=None, fp: float =None, hm0: float =None, l_fmax: float =0, output_object: bool=True
+    f: npt.NDArray[np.float64] = None,
+    fp: float = None,
+    hm0: float = None,
+    l_fmax: float = 0,
+    output_object: bool = True,
 ):
     """
 
@@ -518,7 +534,9 @@ def create_spectrum_piersonmoskowitz(
         return sVarDens
 
 
-def tpd(freqs: np.ndarray = None, spectrum: np.ndarray = None) -> float:
+def tpd(
+    freqs: npt.NDArray[np.float64] = None, spectrum: npt.NDArray[np.float64] = None
+) -> float:
     """
     TpD : Function which calculates the spectral period (s)
 
@@ -550,7 +568,9 @@ def tpd(freqs: np.ndarray = None, spectrum: np.ndarray = None) -> float:
     return m0 / m1
 
 
-def compute_tps(f=None, S=None) -> float:
+def compute_tps(
+    f: npt.NDArray[np.float64] = None, S: npt.NDArray[np.float64] = None
+) -> float:
     """
     COMPUTE_TPS  Computes smoothed peak period.
 
@@ -686,8 +706,12 @@ def compute_tps(f=None, S=None) -> float:
 
 
 def compute_BattjesGroenendijk_wave_height_distribution(
-    Hm0: float, nwave, water_depth: float, cota_slope: float = 250, tolerance: float = 1e-5
-) -> npt.ArrayLike | npt.ArrayLike:
+    Hm0: float,
+    nwave: int,
+    water_depth: float,
+    cota_slope: float = 250,
+    tolerance: float = 1e-5,
+) -> npt.NDArray[np.float64] | npt.NDArray[np.float64]:
     """
     COMPUTE_BATTJESGROENENDIJK_WAVE_HEIGHT_DISTRIBUTION  Computes wave height distribution following Battjes and
     Groenendijk (2000)
@@ -730,7 +754,6 @@ def compute_BattjesGroenendijk_wave_height_distribution(
         Hm0, nwave, water_depth, cota_slope=cota_slope, tolerance=tolerance
         )
     """
-
     # TODO include check on validity ranges input parameters
 
     gamma_transition = 0.35 + 5.8 * (1 / cota_slope)
