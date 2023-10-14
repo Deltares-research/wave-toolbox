@@ -5,7 +5,7 @@ from deltares_wave_toolbox.cores.core_wavefunctions import create_spectrum_jonsw
 
 
 @pytest.fixture(scope="package")
-def Hm0():
+def Hm0() -> float:
     """Hm0 value to be used in tests."""
 
     Hm0 = 2.0
@@ -14,16 +14,16 @@ def Hm0():
 
 
 @pytest.fixture(scope="package")
-def Tp():
+def Tp() -> float:
     """Hm0 value to be used in tests."""
 
-    Tp = 10
+    Tp = 10.0
 
     return Tp
 
 
 @pytest.fixture(scope="package")
-def wave_spectrum(Hm0, Tp):
+def wave_spectrum(Hm0: float, Tp: float):
     """Generate wave spectrum to be used in tests."""
 
     # create JONSWAP Spectrum
