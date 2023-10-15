@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import rayleigh
 
 
-import deltares_wave_toolbox.spectrum as spectrum
+from deltares_wave_toolbox.spectrum import Spectrum
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_time as core_time
@@ -12,7 +12,7 @@ import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
 
 class WaveHeights:
-    def __init__(self, hwave, twave):
+    def __init__(self, hwave, twave) -> None:
         hwave, tSize = core_engine.convert_to_vector(hwave)
         twave, xSize = core_engine.convert_to_vector(twave)
         print("test")
@@ -21,13 +21,13 @@ class WaveHeights:
         self.nwave = len(hwave)
         self.twave = twave
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Series with {len(self.hwave)} elements"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
-    def sort(self):
+    def sort(self) -> None:
         """Sorts the wave height and wave period.
         The sorting is done such that in hWaveSorted the wave heights of hWave
         are sorted in descending order. This same sorting is applied to
@@ -39,7 +39,7 @@ class WaveHeights:
         Hrms = np.sqrt(np.mean(self.hwave**2))
         return Hrms
 
-    def get_Hmax(self):
+    def get_Hmax(self) -> float:
         return np.max(self.hwave)
 
     def get_Hs(self) -> float:
@@ -240,7 +240,7 @@ class Series(WaveHeights):
         _type_: _description_
     """
 
-    def __init__(self, time, x):
+    def __init__(self, time, x) -> None:
         time, tSize = core_engine.convert_to_vector(time)
         x, xSize = core_engine.convert_to_vector(x)
 
@@ -260,10 +260,10 @@ class Series(WaveHeights):
         ] = self._determine_individual_waves()
         super().__init__(hWave, tWave)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Series with {self.nt} elements"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
     def get_crossing(self, typeCross: str = "down"):
@@ -280,7 +280,7 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, fres: float = 0.01):
+    def get_spectrum(self, fres: float = 0.01) -> Spectrum:
         """create spectrum
 
         Args:

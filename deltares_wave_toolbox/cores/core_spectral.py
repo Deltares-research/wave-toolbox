@@ -1,6 +1,7 @@
 # --- python modules
 import math
 import numpy as np
+import numpy.typing as npt
 import copy
 
 
@@ -566,7 +567,7 @@ def time2freq_nyquist(t, xTime):
 
 def compute_spectrum_time_serie(
     t=None, xTime=None, dfDesired=None
-) -> [np.ndarray, np.ndarray]:
+) -> list[np.ndarray] | list[np.ndarray]:
     """
     @brief
     COMPUTE_SPECTRUM_TIME_SERIE  Computes variance density spectrum from given time
@@ -714,8 +715,8 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
 
 
 def spectrum2timeseries(
-    f,
-    sVarDens,
+    f: npt.NDArray[np.float64],
+    sVarDens: npt.NDArray[np.float64],
     tInit: float,
     tEnd: float,
     dt: float,

@@ -231,7 +231,7 @@ def determine_zero_crossing(t=None, x=None, typeCross="down"):
 
 def highest_waves_params(
     hWaveSorted=None, tWaveSorted=None, fracP=None
-) -> [float, float]:
+) -> list[float] | list[float]:
     """
     HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
     (WAVELAB: highestwavesparams)
@@ -428,7 +428,7 @@ def exceedance_wave_height(hWaveSorted=None, excPerc=None) -> float:
     return hExcPerc
 
 
-def determine_mean(qWave=None):
+def determine_mean(qWave=None) -> float | Any:
     """
     DETERMINE_MEAN  Determines mean of quantity
     (WAVELAB: determinemean)
@@ -650,7 +650,7 @@ def determine_params_individual_waves(tCross=None, t=None, x=None):
     return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
 
-def test_doctstrings():
+def test_doctstrings() -> None:
     import doctest
 
     doctest.testmod()
