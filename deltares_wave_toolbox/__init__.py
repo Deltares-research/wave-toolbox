@@ -1,3 +1,3 @@
-from .series import *  # noqa
-from .spectrum import *  # noqa
+from .series import Series, WaveHeights  # noqa
+from .spectrum import Spectrum  # noqa
 from .cores import *  # noqa
