@@ -1,5 +1,5 @@
 import numpy as np
-import deltares_wave_toolbox.cores.core_engine as engine_core
+import deltares_wave_toolbox.cores.core_engine as core_engine
 
 
 def sort_wave_params(hWave=None, tWave=None):
@@ -53,19 +53,19 @@ def sort_wave_params(hWave=None, tWave=None):
     """
 
     # --- ensure input is of type ndarray
-    hWave = engine_core.convert_to_array_type(hWave)
-    tWave = engine_core.convert_to_array_type(tWave)
+    hWave = core_engine.convert_to_array_type(hWave)
+    tWave = core_engine.convert_to_array_type(tWave)
 
     # Check on input arguments
     # --- Check whether the size of the input arguments is identical
 
-    is1d_array = engine_core.is1darray(
+    is1d_array = core_engine.is1darray(
         hWave
     )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error, Input arrays hWave is not 1D")
 
-    is1d_array = engine_core.is1darray(
+    is1d_array = core_engine.is1darray(
         tWave
     )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
     if not is1d_array:
@@ -163,17 +163,17 @@ def determine_zero_crossing(t=None, x=None, typeCross="down"):
     """
 
     # --- ensure input is of type ndarray
-    t = engine_core.convert_to_array_type(t)
-    x = engine_core.convert_to_array_type(x)
+    t = core_engine.convert_to_array_type(t)
+    x = core_engine.convert_to_array_type(x)
 
     # Perform checks on the input arguments
-    is1d_array = engine_core.is1darray(
+    is1d_array = core_engine.is1darray(
         t
     )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error: Input arrays t is not 1D")
 
-    is1d_array = engine_core.is1darray(
+    is1d_array = core_engine.is1darray(
         x
     )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
     if not is1d_array:
@@ -278,17 +278,17 @@ def highest_waves_params(
     """
 
     # --- ensure input is of type ndarray
-    hWaveSorted = engine_core.convert_to_array_type(hWaveSorted)
-    tWaveSorted = engine_core.convert_to_array_type(tWaveSorted)
+    hWaveSorted = core_engine.convert_to_array_type(hWaveSorted)
+    tWaveSorted = core_engine.convert_to_array_type(tWaveSorted)
 
     # Perform checks on the input arguments
-    is1d_array = engine_core.is1darray(hWaveSorted)
+    is1d_array = core_engine.is1darray(hWaveSorted)
     if not is1d_array:
         raise ValueError(
             "highest_waves_params: Input error: Input arrays hWaveSorted is not 1D"
         )
 
-    is1d_array = engine_core.is1darray(tWaveSorted)
+    is1d_array = core_engine.is1darray(tWaveSorted)
     if not is1d_array:
         raise ValueError(
             "highest_waves_params: Input error: Input arrays tWaveSorted is not 1D"
@@ -382,10 +382,10 @@ def exceedance_wave_height(hWaveSorted=None, excPerc=None) -> float:
 
     """
 
-    hWaveSorted = engine_core.convert_to_array_type(hWaveSorted)
+    hWaveSorted = core_engine.convert_to_array_type(hWaveSorted)
 
     # Perform checks on the input arguments
-    is1d_array = engine_core.is1darray(hWaveSorted)
+    is1d_array = core_engine.is1darray(hWaveSorted)
     if not is1d_array:
         raise ValueError(
             "exceedance_wave_height: Input error: Input arrays hWaveSorted is not 1D"
@@ -468,10 +468,10 @@ def determine_mean(qWave=None):
 
     """
     # --- ensure input is of type ndarray
-    qWave = engine_core.convert_to_array_type(qWave)
+    qWave = core_engine.convert_to_array_type(qWave)
 
     # Perform checks on the input arguments
-    is1d_array = engine_core.is1darray(qWave)
+    is1d_array = core_engine.is1darray(qWave)
     if not is1d_array:
         raise ValueError("determine_mean: Input error: Input arrays qWave is not 1D")
 
@@ -555,9 +555,9 @@ def determine_params_individual_waves(tCross=None, t=None, x=None):
     """
 
     # --- ensure input is of type ndarray
-    tCross = engine_core.convert_to_array_type(tCross)
-    t = engine_core.convert_to_array_type(t)
-    x = engine_core.convert_to_array_type(x)
+    tCross = core_engine.convert_to_array_type(tCross)
+    t = core_engine.convert_to_array_type(t)
+    x = core_engine.convert_to_array_type(x)
 
     # Perform checks on input arguments
     # --- In the possible situation of no zero-crossings, the array tCross is
@@ -569,23 +569,23 @@ def determine_params_individual_waves(tCross=None, t=None, x=None):
     aTrough = []
     tCrest = []
     tTrough = []
-    if engine_core.isempty(tCross):
+    if core_engine.isempty(tCross):
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
     # Perform checks on the input arguments
-    is1d_array = engine_core.is1darray(tCross)
+    is1d_array = core_engine.is1darray(tCross)
     if not is1d_array:
         raise ValueError(
             "determine_params_individual_waves: Input error: Input arrays tCross is not 1D"
         )
 
-    is1d_array = engine_core.is1darray(t)
+    is1d_array = core_engine.is1darray(t)
     if not is1d_array:
         raise ValueError(
             "determine_params_individual_waves: Input error: Input arrays t is not 1D"
         )
 
-    is1d_array = engine_core.is1darray(x)
+    is1d_array = core_engine.is1darray(x)
     if not is1d_array:
         raise ValueError(
             "determine_params_individual_waves: Input error: Input arrays x is not 1D"

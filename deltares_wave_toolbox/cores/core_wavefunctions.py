@@ -7,7 +7,7 @@ import numpy.typing as npt
 
 
 # --- toolbox modules
-import deltares_wave_toolbox.cores.core_engine as engine_core
+import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.spectrum as spectrum
 
 
@@ -71,15 +71,15 @@ def compute_spectrum_params(
     """
 
     # --- Ensure array input is of type ndarray.
-    f, fSize = engine_core.convert_to_vector(f)
-    S, SSize = engine_core.convert_to_vector(S)
+    f, fSize = core_engine.convert_to_vector(f)
+    S, SSize = core_engine.convert_to_vector(S)
 
     if fSize[1] > 1 or SSize[1] > 1:
         raise ValueError(
             "compute_spectrum_params: Input error: input should be 1d arrays"
         )
 
-    if not engine_core.monotonic_increasing_constant_step(f):
+    if not core_engine.monotonic_increasing_constant_step(f):
         raise ValueError(
             "compute_spectrum_params: Input error: frequency input parameter must be monotonic with constant step size"
         )
@@ -211,13 +211,13 @@ def compute_moment(
     """
 
     # --- Ensure array input is of type ndarray.
-    f, fSize = engine_core.convert_to_vector(f)
-    S, SSize = engine_core.convert_to_vector(S)
+    f, fSize = core_engine.convert_to_vector(f)
+    S, SSize = core_engine.convert_to_vector(S)
 
     if fSize[1] > 1 or SSize[1] > 1:
         raise ValueError("compute_moment: Input error: input should be 1d arrays")
 
-    if not engine_core.monotonic_increasing_constant_step(f):
+    if not core_engine.monotonic_increasing_constant_step(f):
         raise ValueError(
             "compute_moment: Input error: frequency input parameter must be monotonic with constant step size"
         )
@@ -261,8 +261,8 @@ def compute_moment(
         if (
             fmax <= freq[len(freq) - 1]
         ):  # matlab freq(end))      NOTE: USE len(freq) here instead of Nf because length is altered on lines 741
-            ifminn = engine_core.approx_array_index(freq, fminn)
-            ifmax = engine_core.approx_array_index(freq, fmax) + 1
+            ifminn = core_engine.approx_array_index(freq, fminn)
+            ifmax = core_engine.approx_array_index(freq, fmax) + 1
             # due to range specification ifminn:ifmax. e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value
             # and not S[Nf])
             moment = integrate.simps(integrand[ifminn:ifmax], freq[ifminn:ifmax])
@@ -270,8 +270,8 @@ def compute_moment(
 
         else:
             # 1: Integral over [fminn,freq(end)]
-            ifminn = engine_core.approx_array_index(freq, fminn)
-            ifmax = engine_core.approx_array_index(freq, freq[len(freq) - 1]) + 1
+            ifminn = core_engine.approx_array_index(freq, fminn)
+            ifmax = core_engine.approx_array_index(freq, freq[len(freq) - 1]) + 1
             # due to range specification ifminn:ifmax.  e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value
             # and not S[Nf])
             moment1 = integrate.simps(
@@ -372,7 +372,7 @@ def create_spectrum_jonswap(
     """
 
     # --- Ensure array input is of type ndarray.
-    f, fSize = engine_core.convert_to_vector(f)
+    f, fSize = core_engine.convert_to_vector(f)
 
     nf = fSize[0]
 
@@ -520,7 +520,7 @@ def create_spectrum_piersonmoskowitz(
     """
 
     # --- Ensure array input is of type ndarray.
-    f, fSize = engine_core.convert_to_vector(f)
+    f, fSize = core_engine.convert_to_vector(f)
 
     # Computational core
     # --- Use the fact that the Pierson-Moskowitz spectrum is identical to the
@@ -549,8 +549,8 @@ def tpd(
     Note: For definition of TpD: Overstap van piekperiode naar spectrale periode bij ontwerp van steenzettingen
     """
 
-    freqs, f_size = engine_core.convert_to_vector(freqs)
-    spectrum, spectrum_size = engine_core.convert_to_vector(spectrum)
+    freqs, f_size = core_engine.convert_to_vector(freqs)
+    spectrum, spectrum_size = core_engine.convert_to_vector(spectrum)
 
     # --- calculate the spectral period (TPD) (s)
     max_spectum = max(spectrum) * 0.8
@@ -609,13 +609,13 @@ def compute_tps(
     """
 
     # --- Ensure array input is of type ndarray.
-    f, fSize = engine_core.convert_to_vector(f)
-    S, SSize = engine_core.convert_to_vector(S)
+    f, fSize = core_engine.convert_to_vector(f)
+    S, SSize = core_engine.convert_to_vector(S)
 
     if fSize[1] > 1 or SSize[1] > 1:
         raise ValueError("compute_moment: Input error: input should be 1d arrays")
 
-    if fSize[1] > 1 and not engine_core.monotonic_increasing_constant_step(f):
+    if fSize[1] > 1 and not core_engine.monotonic_increasing_constant_step(f):
         raise ValueError(
             "compute_moment: Input error: frequency input parameter must be monotonic with constant step size"
         )

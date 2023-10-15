@@ -5,16 +5,12 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(1, os.getcwd())
 
-from deltares_wave_toolbox.cores.core_wavefunctions import (
-    create_spectrum_jonswap,
-    compute_BattjesGroenendijk_wave_height_distribution,
-)
-from deltares_wave_toolbox.cores.core_spectral import compute_spectrum_freq_serie
+import deltares_wave_toolbox as dwt
 
 # create JONSWAP Spectrum ##
 ff = np.linspace(0.01, 2, 1000)
 
-spec = create_spectrum_jonswap(f=ff, fp=0.1, hm0=2)
+spec = dwt.core_wavefunctions.create_spectrum_jonswap(f=ff, fp=0.1, hm0=2)
 
 
 Hm0 = spec.get_Hm0()
@@ -34,7 +30,7 @@ f, xFreq, isOdd = timeseries.get_fourier_comp()
 plt.figure()
 plt.plot(f, xFreq)
 
-[ff, ss] = compute_spectrum_freq_serie(f, xFreq, 0.01, timeseries.nt)
+[ff, ss] = dwt.core_spectral.compute_spectrum_freq_serie(f, xFreq, 0.01, timeseries.nt)
 
 plt.figure()
 plt.plot(ff, ss)
@@ -68,7 +64,3 @@ spec2 = timeseries.get_spectrum(fres=0.01)
 spec2.plot()
 
 spec2.get_Hm0()
-
-compute_BattjesGroenendijk_wave_height_distribution(
-    2, timeseries.nwave, 3, cota_slope=250
-)
