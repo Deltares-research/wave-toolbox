@@ -17,7 +17,7 @@ def Hm0():
 def Tp():
     """Hm0 value to be used in tests."""
 
-    Tp = 10
+    Tp = 10.0
 
     return Tp
 
