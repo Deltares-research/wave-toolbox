@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 import deltares_wave_toolbox.cores.core_time as core_time
 
 
