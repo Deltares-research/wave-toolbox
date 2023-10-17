@@ -505,7 +505,9 @@ def create_spectrum_piersonmoskowitz(
     # --- Use the fact that the Pierson-Moskowitz spectrum is identical to the
     #     Jonswap spectrum with a peak enhancement factor equal to 1.
     gammaPeak = 1
-    sVarDens = create_spectrum_jonswap(f, fp, hm0, gammaPeak, l_fmax)
+    sVarDens = create_spectrum_jonswap(
+        f, fp, hm0, gammaPeak, l_fmax, output_object=False
+    )
 
     if output_object:
         return spectrum.Spectrum(f, sVarDens)
