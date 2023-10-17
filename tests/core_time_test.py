@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 import deltares_wave_toolbox.cores.core_time as core_time
@@ -35,7 +34,7 @@ def test_sort_wave_params(hWave, tWave, hWaveSortedCorrect, tWaveSortedCorrect):
         "tCrossUpCorrect",
     ),
     (
-        (
+        (  # Short synthetic signal, with some 'nasty' situations
             [
                 0.0,
                 0.1,
@@ -77,7 +76,7 @@ def test_sort_wave_params(hWave, tWave, hWaveSortedCorrect, tWaveSortedCorrect):
             2,
             [0.24, 1.1, 1.34],
         ),
-        (
+        (  # Signal constant and zero in time
             [
                 0.0,
                 0.1,
@@ -119,7 +118,7 @@ def test_sort_wave_params(hWave, tWave, hWaveSortedCorrect, tWaveSortedCorrect):
             0,
             [],
         ),
-        (
+        (  # Signal with only one up zero-crossing
             [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
             [-1.0, -0.5, -0.1, 0.1, 0.3, 0.6],
             0,
@@ -193,3 +192,156 @@ def test_exceedance_wave_height(hWaveSorted, excPerc, hExcPercCorrect):
     hExcPerc = core_time.exceedance_wave_height(hWaveSorted, excPerc)
 
     assert hExcPerc == pytest.approx(hExcPercCorrect)
+
+
+@pytest.mark.parametrize(
+    (
+        "t_input",
+        "x_input",
+        "tCrossUp",
+        "tCrossDown",
+        "tWaveUpCorrect",
+        "hWaveUpCorrect",
+        "aCrestUpCorrect",
+        "aTroughUpCorrect",
+        "tCrestUpCorrect",
+        "tTroughUpCorrect",
+        "tWaveDownCorrect",
+        "hWaveDownCorrect",
+        "aCrestDownCorrect",
+        "aTroughDownCorrect",
+        "tCrestDownCorrect",
+        "tTroughDownCorrect",
+    ),
+    (
+        (  # a small synthetic signal (which includes some 'nasty' elements)
+            [
+                0.0,
+                0.1,
+                0.2,
+                0.3,
+                0.4,
+                0.5,
+                0.6,
+                0.7,
+                0.8,
+                0.9,
+                1.0,
+                1.1,
+                1.2,
+                1.3,
+                1.4,
+                1.5,
+            ],
+            [
+                1.0,
+                0.0,
+                -0.2,
+                0.3,
+                -0.2,
+                0.0,
+                0.0,
+                0.0,
+                -0.2,
+                0.0,
+                0.0,
+                0.0,
+                0.5,
+                -0.2,
+                0.3,
+                0.0,
+            ],
+            [0.2400, 1.1000, 1.3400],
+            [0.1000, 0.3600, 0.7000, 1.2714],
+            [0.8600, 0.2400],
+            [0.5000, 0.7000],
+            [0.3000, 0.5000],
+            [-0.2000, -0.2000],
+            [0.3000, 1.2000],
+            [0.4000, 1.3000],
+            [0.2600, 0.3400, 0.5714],
+            [0.5000, 0.2000, 0.7000],
+            [0.3000, 0.0000, 0.5000],
+            [-0.2000, -0.2000, -0.2000],
+            [0.3000, 0.5000, 1.2000],
+            [0.2000, 0.4000, 0.8000],
+        ),
+        (  # A signal with only one zero crossing (hence, zero waves)
+            [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
+            [-1.0, -0.5, -0.1, 0.1, 0.3, 0.6],
+            [0.25],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+        ),
+    ),
+)
+def test_determine_params_individual_waves(
+    t_input,
+    x_input,
+    tCrossUp,
+    tCrossDown,
+    tWaveUpCorrect,
+    hWaveUpCorrect,
+    aCrestUpCorrect,
+    aTroughUpCorrect,
+    tCrestUpCorrect,
+    tTroughUpCorrect,
+    tWaveDownCorrect,
+    hWaveDownCorrect,
+    aCrestDownCorrect,
+    aTroughDownCorrect,
+    tCrestDownCorrect,
+    tTroughDownCorrect,
+):
+    [
+        hWaveUp,
+        tWaveUp,
+        aCrestUp,
+        aTroughUp,
+        tCrestUp,
+        tTroughUp,
+    ] = core_time.determine_params_individual_waves(tCrossUp, t_input, x_input)
+
+    assert hWaveUp == pytest.approx(hWaveUpCorrect)
+
+    assert tWaveUp == pytest.approx(tWaveUpCorrect)
+
+    assert aCrestUp == pytest.approx(aCrestUpCorrect)
+
+    assert aTroughUp == pytest.approx(aTroughUpCorrect)
+
+    assert tCrestUp == pytest.approx(tCrestUpCorrect)
+
+    assert tTroughUp == pytest.approx(tTroughUpCorrect)
+
+    [
+        hWaveDown,
+        tWaveDown,
+        aCrestDown,
+        aTroughDown,
+        tCrestDown,
+        tTroughDown,
+    ] = core_time.determine_params_individual_waves(tCrossDown, t_input, x_input)
+
+    assert hWaveDown == pytest.approx(hWaveDownCorrect)
+
+    assert tWaveDown == pytest.approx(tWaveDownCorrect)
+
+    assert aCrestDown == pytest.approx(aCrestDownCorrect)
+
+    assert aTroughDown == pytest.approx(aTroughDownCorrect)
+
+    assert tCrestDown == pytest.approx(tCrestDownCorrect)
+
+    assert tTroughDown == pytest.approx(tTroughDownCorrect)
