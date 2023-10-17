@@ -1,5 +1,5 @@
 import pytest
-import deltares_wave_toolbox.cores.core_time
+import deltares_wave_toolbox.cores.core_time as core_time
 
 
 def test_determine_zero_crossings_t1():
