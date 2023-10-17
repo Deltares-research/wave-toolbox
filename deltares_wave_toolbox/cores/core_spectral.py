@@ -564,12 +564,12 @@ def time2freq_nyquist(t, xTime):
     return f, xFreq, isOdd
 
 
-def compute_spectrum_time_serie(
+def compute_spectrum_time_series(
     t=None, xTime=None, dfDesired=None
 ) -> [np.ndarray, np.ndarray]:
     """
     @brief
-    COMPUTE_SPECTRUM_TIME_SERIE  Computes variance density spectrum from given time
+    COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
     series  (WAVELAB : computespectrum1)
 
     @section description_xxx Description
@@ -602,7 +602,7 @@ def compute_spectrum_time_serie(
 
 
     Syntax:
-    [fCoarse,sCoarse] = compute_spectrum_time_serie(t,xTime,dfDesired);
+    [fCoarse,sCoarse] = compute_spectrum_time_series(t,xTime,dfDesired);
 
     Example
     >>> import numpy as np
@@ -610,7 +610,7 @@ def compute_spectrum_time_serie(
     >>> t = np.arange(0,1000+dt,dt)  # Time axis
     >>> z = np.sin(t) + np.cos(2*t)  # Surface elevation data
     >>> df = 0.01                    # Choose value for frequency axis
-    >>> [freq,varDens] = compute_spectrum_time_serie(t,z,df)
+    >>> [freq,varDens] = compute_spectrum_time_series(t,z,df)
 
     See also
 
@@ -632,9 +632,9 @@ def compute_spectrum_time_serie(
     return [fCoarse, sCoarse]
 
 
-def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
+def compute_spectrum_freq_series(f=None, xFreq=None, dfDesired=None, Ntime=None):
     """
-    COMPUTE_SPECTRUM_FREQ_SERIE Computes variance density spectrum from given complex
+    COMPUTE_SPECTRUM_FREQ_SERIES Computes variance density spectrum from given complex
     spectrum of Fourier components  (WAVELAB: computespectrum2)
 
     This function computes a variance density spectrum sCoarse = sCoarse(fCoarse)
@@ -665,7 +665,7 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
 
 
     Syntax:
-          [fCoarse,sCoarse] = compute_spectrum_freq_serie(f,xFreq,dfDesired,Ntime)
+          [fCoarse,sCoarse] = compute_spectrum_freq_series(f,xFreq,dfDesired,Ntime)
 
     Example:
     >>> import numpy as np
@@ -674,7 +674,7 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
     >>> z = np.sin(t) + np.cos(2*t)  # Surface elevation data
     >>> [f,xFreq,isOdd] = time2freq_nyquist(t,z)
     >>> df = 0.01                    # Choose value for frequency axis
-    >>> [fS,S] = compute_spectrum_time_serie(t,xFreq,df)
+    >>> [fS,S] = compute_spectrum_time_series(t,xFreq,df)
 
     See also
 
@@ -684,23 +684,23 @@ def compute_spectrum_freq_serie(f=None, xFreq=None, dfDesired=None, Ntime=None):
 
     if fSize[1] > 1 or xFreqSize[1] > 1:
         raise ValueError(
-            "compute_spectrum_freq_serie: Input error: input should be 1d arrays"
+            "compute_spectrum_freq_series: Input error: input should be 1d arrays"
         )
 
     if not core_engine.monotonic_increasing_constant_step(f):
         raise ValueError(
-            "compute_spectrum_freq_serie: Input error: frequency input parameter must be monotonic with constant step"
+            "compute_spectrum_freq_series: Input error: frequency input parameter must be monotonic with constant step"
             " size"
         )
 
     if not (fSize[0] == xFreqSize[0]):
         raise ValueError(
-            "compute_spectrum_freq_serie: Input error: array sizes differ in dimension"
+            "compute_spectrum_freq_series: Input error: array sizes differ in dimension"
         )
 
     if Ntime is None:
         raise ValueError(
-            "compute_spectrum_freq_serie: Input error: Number of time samples not specified"
+            "compute_spectrum_freq_series: Input error: Number of time samples not specified"
         )
 
     # --- Transform to frequency domain
@@ -757,12 +757,12 @@ def spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed=None, output_object=T
 
     if fSize[1] > 1 or xFreqSize[1] > 1:
         raise ValueError(
-            "compute_spectrum_freq_serie: Input error: input should be 1d arrays"
+            "compute_spectrum_freq_series: Input error: input should be 1d arrays"
         )
 
     if not (fSize[0] == xFreqSize[0]):
         raise ValueError(
-            "compute_spectrum_freq_serie: Input error: array sizes differ in dimension"
+            "compute_spectrum_freq_series: Input error: array sizes differ in dimension"
         )
 
     t = np.arange(tInit, tEnd + dt, dt)
