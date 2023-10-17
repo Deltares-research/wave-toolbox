@@ -2,7 +2,7 @@ import pytest
 import deltares_wave_toolbox.cores.core_time
 
 
-def test_determine_zero_crossings_t1(self):
+def test_determine_zero_crossings_t1():
     # === Test 1 =============================================================
     # Short synthetic signal, with some 'nasty' situations
     # --- Test input
