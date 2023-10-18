@@ -305,7 +305,7 @@ def freq2time(xFreq):
     return xTime
 
 
-def time2freq(t, xTime):
+def time2freq(t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]):
     """
     TIME2FREQ  Computes the discrete Fourier transform coefficients (on
                unfolded frequency axis) of a given of time signal
@@ -398,7 +398,7 @@ def time2freq(t, xTime):
     return f, xFreq
 
 
-def time2freq_nyquist(t, xTime):
+def time2freq_nyquist(t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]):
     """
     TIME2FREQNYQUIST  Computes the discrete Fourier transform coefficients (on
                   folded frequency axis) of a given of time signal
@@ -505,7 +505,11 @@ def time2freq_nyquist(t, xTime):
     return f, xFreq, isOdd
 
 
-def compute_spectrum_time_series(t=None, xTime=None, dfDesired=None):
+def compute_spectrum_time_series(
+    t: npt.NDArray[np.float64] = None,
+    xTime: npt.NDArray[np.float64] = None,
+    dfDesired: float = None,
+):
     """
     @brief
     COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
@@ -571,7 +575,12 @@ def compute_spectrum_time_series(t=None, xTime=None, dfDesired=None):
     return fCoarse, sCoarse
 
 
-def compute_spectrum_freq_series(f=None, xFreq=None, dfDesired=None, Ntime=None):
+def compute_spectrum_freq_series(
+    f: npt.NDArray[np.float64] = None,
+    xFreq: npt.NDArray[np.float64] = None,
+    dfDesired: float = None,
+    Ntime: int = None,
+):
     """
     COMPUTE_SPECTRUM_FREQ_SERIES Computes variance density spectrum from given complex
     spectrum of Fourier components  (WAVELAB: computespectrum2)

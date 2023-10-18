@@ -1,8 +1,11 @@
 import numpy as np
+import numpy.typing as npt
 import deltares_wave_toolbox.cores.core_engine as core_engine
 
 
-def sort_wave_params(hWave=None, tWave=None):
+def sort_wave_params(
+    hWave: npt.NDArray[np.float64] = None, tWave: npt.NDArray[np.float64] = None
+):
     """
     SORT_WAVE_PARAMS  Sorts the wave height and wave period
     (WAVELAB: sortwaveparams)
@@ -94,7 +97,11 @@ def sort_wave_params(hWave=None, tWave=None):
     return hWaveSorted, tWaveSorted
 
 
-def determine_zero_crossing(t=None, x=None, typeCross="down"):
+def determine_zero_crossing(
+    t: npt.NDArray[np.float64] = None,
+    x: npt.NDArray[np.float64] = None,
+    typeCross="down",
+):
     """
     DETERMINEZEROCROSSING  Determines zero-crossings (number and positions) of signal.
     This function determines the zero-crossings of a given time signal x =
@@ -213,7 +220,11 @@ def determine_zero_crossing(t=None, x=None, typeCross="down"):
     return nWave, tCross
 
 
-def highest_waves_params(hWaveSorted=None, tWaveSorted=None, fracP=None):
+def highest_waves_params(
+    hWaveSorted: npt.NDArray[np.float64] = None,
+    tWaveSorted: npt.NDArray[np.float64] = None,
+    fracP: float = None,
+):
     """
     HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
     (WAVELAB: highestwavesparams)
@@ -315,7 +326,9 @@ def highest_waves_params(hWaveSorted=None, tWaveSorted=None, fracP=None):
     return hFracP, tFracP
 
 
-def exceedance_wave_height(hWaveSorted=None, excPerc=None) -> float:
+def exceedance_wave_height(
+    hWaveSorted: npt.NDArray[np.float64] = None, excPerc: float = None
+) -> float:
     """
     EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
     (WAVELAB:exceedancewaveheight)
@@ -462,7 +475,11 @@ def determine_mean(qWave=None):
     return qMean
 
 
-def determine_params_individual_waves(tCross=None, t=None, x=None):
+def determine_params_individual_waves(
+    tCross: npt.NDArray[np.float64] = None,
+    t: npt.NDArray[np.float64] = None,
+    x: npt.NDArray[np.float64] = None,
+):
     """
     DETERMINE_PARAMS_INDIVIDUALWAVES  Determines parameters per individual wave
     (WAVELAB: determineparamsindividualwaves)

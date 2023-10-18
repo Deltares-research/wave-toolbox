@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 import matplotlib.pyplot as plt
 from scipy.stats import rayleigh
 from typing import Iterable, Union
@@ -12,10 +13,11 @@ import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
 
 class WaveHeights:
-    def __init__(self, hwave, twave) -> None:
+    def __init__(
+        self, hwave: npt.NDArray[np.float64], twave: npt.NDArray[np.float64]
+    ) -> None:
         hwave, tSize = core_engine.convert_to_vector(hwave)
         twave, xSize = core_engine.convert_to_vector(twave)
-        print("test")
 
         self.hwave = hwave
         self.nwave = len(hwave)
@@ -65,7 +67,7 @@ class WaveHeights:
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
         return core_time.exceedance_wave_height(hWaveSorted=self.hwave, excPerc=excPerc)
 
-    def highest_waves(self, fracP: float) -> Iterable[Union[float, float]]:
+    def highest_waves(self, fracP: float) -> tuple[float, float]:
         """
         HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
 
@@ -221,7 +223,9 @@ class Series(WaveHeights):
         _type_: _description_
     """
 
-    def __init__(self, time, x) -> None:
+    def __init__(
+        self, time: npt.NDArray[np.float64], x: npt.NDArray[np.float64]
+    ) -> None:
         time, tSize = core_engine.convert_to_vector(time)
         x, xSize = core_engine.convert_to_vector(x)
 
