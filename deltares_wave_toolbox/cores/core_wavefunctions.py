@@ -276,7 +276,7 @@ def create_spectrum_jonswap(
     gammaPeak: float = 3.3,
     l_fmax: float = 0,
     output_object: bool = True,
-) -> spectrum:
+) -> spectrum.Spectrum:
     """
     CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
 

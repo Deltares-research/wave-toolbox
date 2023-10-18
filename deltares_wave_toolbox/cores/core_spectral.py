@@ -2,6 +2,7 @@ import math
 import numpy as np
 import numpy.typing as npt
 import copy
+from typing import Iterable, Union
 
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -659,8 +660,7 @@ def spectrum2timeseries(
     tEnd: float,
     dt: float,
     seed: int = None,
-    output_object: bool = True,
-):
+) -> Iterable[Union[npt.NDArray[np.float64], npt.NDArray[np.float64]]]:
     """
     SPECTRUM2TIMESERIES  Generates a timeseries based on a given spectrum.
 
@@ -756,11 +756,19 @@ def spectrum2timeseries(
 
     # --- Take the part corresponding to the time axis
     xTime = xTime[0:nTime]
+    return t, xTime
 
-    if output_object:
-        return series.Series(t, xTime)
-    else:
-        return t, xTime
+
+def spectrum2timeseries_object(
+    f: npt.NDArray[np.float64],
+    sVarDens: npt.NDArray[np.float64],
+    tInit: float,
+    tEnd: float,
+    dt: float,
+    seed: int = None,
+) -> series.Series:
+    t, xTime = spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed)
+    return series.Series(t, xTime)
 
 
 def test_doctstrings() -> None:

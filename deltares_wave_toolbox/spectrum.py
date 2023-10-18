@@ -187,7 +187,9 @@ class Spectrum:
         Returns:
             object: Series class with time series
         """
-        series = core_spectral.spectrum2timeseries(self.f, self.S, tstart, tend, dt)
+        series = core_spectral.spectrum2timeseries_object(
+            self.f, self.S, tstart, tend, dt
+        )
         return series
 
     def plot(
