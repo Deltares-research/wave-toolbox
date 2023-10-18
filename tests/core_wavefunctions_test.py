@@ -17,7 +17,7 @@ import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
         ([0.35, 0.45, 0.5], [1, 1, 1], 1.0 / 0.45),
     ),
 )
-def test_compute_tps_t1(f, S, Tps_exact):
+def test_compute_tps(f, S, Tps_exact):
     Tps_num = core_wavefunctions.compute_tps(f, S)
     assert Tps_num == Tps_exact
 
