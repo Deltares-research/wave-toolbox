@@ -38,10 +38,6 @@ def frequency_averaging(f=None, sFreq=None, dfDesired=None):
     sFreqCoarse :
             band averaged variance density spectrum
 
-    Remark:
-        for tranlation between matlab and python:
-        see https://numpy.org/doc/stable/user/numpy-for-matlab-users.html
-
     Syntax:
         fCoarse,sFreq = frequency_averaging(f,sFreq,dfDesired)
 
@@ -138,7 +134,6 @@ def unfold_spectrum(f, xFreq, isOdd):
 
     Remark:
         See also time2freq_nyquist, freq2time
-        see https://numpy.org/doc/stable/user/numpy-for-matlab-users.html
 
     Syntax:
         fTot,xFreqTot = unfold_spectrum(f,xFreq,isOdd)
@@ -224,10 +219,6 @@ def coherence(f, xFreq1, xFreq2, dfDesired):
     coh2     :
              coherence (magnitude-squared coherence).
 
-    Remark:
-         for tranlation between matlab and python:
-         see https://numpy.org/doc/stable/user/numpy-for-matlab-users.html
-
     Syntax:
          f_coh2,coh2 = coherence(f,xFreq1,xFreq2,dfDesired)
 
@@ -294,9 +285,6 @@ def freq2time(xFreq):
           1D real array containing time series of the signal.
 
     Remark:
-         for tranlation between matlab and python:
-         see https://numpy.org/doc/stable/user/numpy-for-matlab-users.html
-
          See also time2freq, time2freqnyquist, unfoldspectrum
 
     Syntax:
@@ -378,10 +366,6 @@ def time2freq(t, xTime):
           xFreq are the same. This number is the same as the number of
           elements in t and xTime.
 
-    Remark:
-         for tranlation between matlab and python:
-         see https://numpy.org/doc/stable/user/numpy-for-matlab-users.html
-
     Syntax:
          f,xFreq = time2freq(t,xTime)
 
@@ -428,17 +412,7 @@ def time2freq(t, xTime):
 
     # --- Create frequency axis
     df = 1.0 / T
-    # f  =np.arange(0,nT)*df
     f = np.arange(0, nT) * df  # exlcude f=0
-
-    # f  = f.reshape(len(f),1)
-    # xTime = xTime.reshape(len(f),1)
-
-    #    if ( len(t) == nT ):
-    #       # Array t is column vector. Array f must be transposed to become column
-    #       # vector as well
-    #       # f = f'  (matlab)
-    #       f = f.T
 
     # --- Compute Fouriertransform
     xFreq = np.fft.fft(xTime)
@@ -496,10 +470,6 @@ def time2freq_nyquist(t, xTime):
     isOdd :
           logical indicating whether nT, the number of time points in
           xTime, is even (isOdd=0) or odd (isOdd=1)
-
-    Remark:
-        for tranlation between matlab and python:
-        see https://numpy.org/doc/stable/user/numpy-for-matlab-users.html
 
     Syntax:
         f,xFreq,isOdd = time2freq_nyquist(t,xTime)

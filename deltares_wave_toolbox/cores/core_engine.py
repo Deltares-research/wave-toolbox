@@ -386,7 +386,7 @@ def dist2func(x=None, y=None, p=None):
 
     """
     xd = abs(x - p[0])
-    id = np.argsort(xd)  # matlab [dummy, id]=sort(xd);
+    id = np.argsort(xd)
 
     # define function between two nearest points
     a = (y[id[1]] - y[id[0]]) / (x[id[1]] - x[id[0]])
@@ -394,16 +394,6 @@ def dist2func(x=None, y=None, p=None):
     py = a * p[0] + b
 
     d = p[1] - py
-
-    # if d>0:
-    #       # fprint('So point is situated above line');
-    # elif d<0:
-    #       # fprint('So point is situated below line');
-    # elif d==0:
-    #       # fprint('So point is situated exactly at the line');
-    # else:
-    #       # fprint('You silly bastard, your input was not correct!');
-
     return d
 
 

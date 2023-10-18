@@ -117,20 +117,19 @@ def compute_spectrum_params(f=None, S=None, fmin=None, fmax=None):
 
     # --- Make separate arrays containing only part corresponding to
     #     frequencies between fmin and fmax
-    #     Note: first zero selects first element of tuple.
-    iFmin = np.where(f >= fmin)[0][0]  # matlab find( f>= fmin,1,'first');
-    iFmax = np.where(f <= fmax)[0][-1]  # matlab find( f<= fmax,1,'last');
+    iFmin = np.where(f >= fmin)[0][0]
+    iFmax = np.where(f <= fmax)[0][-1]
     fMiMa = f[iFmin : iFmax + 1]
     SMiMa = S[iFmin : iFmax + 1]
 
     # --- Compute peak period -----------------------------------------------
     Smax = max(SMiMa)
-    imax = np.where(SMiMa == Smax)[0]  # matlab find( SMiMa == Smax );
+    imax = np.where(SMiMa == Smax)[0]
     imax = imax.astype(int)
     ifp = max(imax)
     fp = fMiMa[ifp]
-    #
-    if np.all(ifp is None):  # matlab isempty(ifp)
+
+    if np.all(ifp is None):
         ifp = 1
         fp = fMiMa[ifp]
     Tp = 1 / fp
@@ -213,72 +212,49 @@ def compute_moment(f=None, S=None, m=None, fmin=None, fmax=None):
     if not (fSize[0] == SSize[0]):
         raise ValueError("compute_moment: Input error: array sizes differ in dimension")
 
-    # --- Make sure that f and S are either both column vectors or both row vectors
-    # if ( size(f_in,1) == size(S,1) ):
-    #    f = f_in
-    # else
-    #    f = f_in'
-
     # --- Remove the possible situation that f=0 in combination with m<0. This
     #     would lead to division by zero
     if m < 0 and f[0] == 0:
-        freq = f[1:]  # matlab  f(2:end);
-        spec = S[1:]  # matlab  S(2:end);
+        freq = f[1:]
+        spec = S[1:]
     else:
         freq = f
         spec = S
 
-    # --- Compute the integrand, that is the product of f^m * S  (using lambda is an alternatief for using def
-    # <function name> :)
-    func_integrand = (
-        lambda freq, m, spec: freq ** (m) * spec
-    )  # matlab freq.^(m) .* spec;
-    integrand = func_integrand(freq, m, spec)
+    # --- Compute the integrand, that is the product of f^m * S
+    integrand = freq ** (m) * spec
 
     # --- Depending on number of input arguments, compute the moment integral
     if fmin is None or fmax is None:  # integrate over all values in freq interval.
-        moment = integrate.simps(integrand, freq)  # moment = integral1d(freq,integrand)
+        moment = integrate.simps(integrand, freq)
     else:  # integrate over all values in sub interval.
         # fmin and fmax are given
         fminn = fmin
-        if m < 0 and f[0] == 0:  # matlab f(1)
+        if m < 0 and f[0] == 0:
             if fmin == 0:
-                fminn = f[1]  # matlab f(2)
+                fminn = f[1]
 
         #
-        if (
-            fmax <= freq[len(freq) - 1]
-        ):  # matlab freq(end))      NOTE: USE len(freq) here instead of Nf because length is altered on lines 741
+        if fmax <= freq[len(freq) - 1]:
             ifminn = core_engine.approx_array_index(freq, fminn)
             ifmax = core_engine.approx_array_index(freq, fmax) + 1
-            # due to range specification ifminn:ifmax. e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value
-            # and not S[Nf])
             moment = integrate.simps(integrand[ifminn:ifmax], freq[ifminn:ifmax])
-            # moment = integral1d(freq,integrand,fminn,fmax);
 
         else:
             # 1: Integral over [fminn,freq(end)]
             ifminn = core_engine.approx_array_index(freq, fminn)
             ifmax = core_engine.approx_array_index(freq, freq[len(freq) - 1]) + 1
-            # due to range specification ifminn:ifmax.  e.g. S[0:Nf] runs from S[0] to S[Nf-1] (S[Nf-1] has a value
-            # and not S[Nf])
-            moment1 = integrate.simps(
-                integrand[ifminn:ifmax], freq[ifminn:ifmax]
-            )  # moment1 = integral1d(freq,integrand,fminn,freq(end));
+            moment1 = integrate.simps(integrand[ifminn:ifmax], freq[ifminn:ifmax])
             # 2: Integral over [freq(end),fmax]
             #    Variance density spectrum in this range: C * f^power, with
             #    C determined by power and spec(end)
             power = -5  # Power of high-frequency tail
-            C = spec[len(spec) - 1] / (
-                freq[len(freq) - 1] ** power
-            )  # matlab C       = spec(end) / ( freq(end)^power );
+            C = spec[len(spec) - 1] / (freq[len(freq) - 1] ** power)
             moment2 = (C / (m + power + 1)) * (
                 fmax ** (m + power + 1) - freq[len(freq) - 1] ** (m + power + 1)
-            )  # matlab moment2 = (C / (m+power+1)) * (fmax^(m+power+1) - freq(end)^(m+power+1));
+            )
             # Add the two moments
             moment = moment1 + moment2
-
-    #
     return moment
 
 
@@ -361,7 +337,7 @@ def create_spectrum_jonswap(
 
     # Perform check on input arguments
     # --- Check whether input array f is a 1D vector array
-    isvalid_size = nf > 0  # matlab ( numel(size(f))~=2 || min(size(f)) ~= 1 )
+    isvalid_size = nf > 0
     if not isvalid_size:
         raise ValueError(
             "create_spectrum_jonswap:Input error: Input array f is not 1D "
@@ -395,7 +371,7 @@ def create_spectrum_jonswap(
 
     # --- Evaluate variance density spectrum, for the moment omitting the
     #     weighting
-    for iff in np.arange(0, nf):  # matlab 1:length(f);
+    for iff in np.arange(0, nf):
         f_i = f[iff]
 
         # --- Consider only f_i > 0.
@@ -605,8 +581,7 @@ def compute_tps(f=None, S=None) -> float:
         Tps = -999
         return Tps
     nF = fSize[0]
-    # note: [0] selects first part of the tuple.
-    imax = np.where(S == Smax)[0]  # matlab find( S == Smax );
+    imax = np.where(S == Smax)[0]
     imax = imax.astype(int)
     nmax = len(imax)
 
@@ -615,16 +590,13 @@ def compute_tps(f=None, S=None) -> float:
         # --- nF > 2 - default situation
         if nmax == 1:
             # --- nmax = 1
-            # matlab imax   ->in matlab jmax=imax, as imax=np.where() it already account for the fact that indices
-            # starts with zero.
             jmax = imax
             if imax == 0:
-                jmax = 1  # the one after the first one: starting at 0, so jmax must be 1 in python ->matlab jmax=2
+                jmax = 1
             elif imax == nF - 1:
-                jmax = nF - 2  # the one before the last one: matlab nF-1
+                jmax = nF - 2
 
             # --- Find polynomial coefficients. note: due to double brackets reduce dimension by selecting [0]
-            # ff = np.array([f[jmax-1],f[jmax],f[jmax+1]]).reshape(1,3)[0]
             ff = np.asarray([f[jmax - 1], f[jmax], f[jmax + 1]]).reshape(1, 3)[0]
             ee = np.asarray([S[jmax - 1], S[jmax], S[jmax + 1]]).reshape(1, 3)[0]
             p = np.polyfit(ff, ee, 2)

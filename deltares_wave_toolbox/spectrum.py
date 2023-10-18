@@ -111,7 +111,6 @@ class Spectrum:
         """
         # --- Make separate arrays containing only part corresponding to
         #     frequencies between fmin and fmax
-        #     Note: first zero selects first element of tuple.
         fmin, fmax = self._set_flim(fmin, fmax)
         iFmin = np.where(self.f >= fmin)[0][0]
         iFmax = np.where(self.f <= fmax)[0][-1]
@@ -119,12 +118,12 @@ class Spectrum:
         SMiMa = self.S[iFmin : iFmax + 1]
         # --- Compute peak period -----------------------------------------------
         Smax = max(SMiMa)
-        imax = np.where(SMiMa == Smax)[0]  # matlab find( SMiMa == Smax );
+        imax = np.where(SMiMa == Smax)[0]
         imax = imax.astype(int)
         ifp = max(imax)
         fp = fMiMa[ifp]
         #
-        if np.all(ifp is None):  # matlab isempty(ifp)
+        if np.all(ifp is None):
             ifp = 1
             fp = fMiMa[ifp]
         self.Tp = 1 / fp

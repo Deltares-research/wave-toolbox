@@ -58,16 +58,11 @@ def sort_wave_params(hWave=None, tWave=None):
 
     # Check on input arguments
     # --- Check whether the size of the input arguments is identical
-
-    is1d_array = core_engine.is1darray(
-        hWave
-    )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
+    is1d_array = core_engine.is1darray(hWave)
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error, Input arrays hWave is not 1D")
 
-    is1d_array = core_engine.is1darray(
-        tWave
-    )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
+    is1d_array = core_engine.is1darray(tWave)
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error, Input array tWave is not 1D")
 
@@ -88,14 +83,8 @@ def sort_wave_params(hWave=None, tWave=None):
     if nWave < 1:
         return hWaveSorted, tWaveSorted
 
-    # this is checked at the beginning.
-    # --- Check whether the input arrays hWave and tWave are 1D vector arrays
-    # if ( numel(size(hWave))~=2 || min(size(hWave)) ~= 1 )
-    # error('WaveLab:InputError','Input arrays hWave and tWave are not 1D ');
-
     # Computational core
     # --- Sort the wave height in descending order
-    # matlab: [hWaveSorted,iSorted] = np.sort( hWave, 'descend' );
     iSorted = np.argsort(hWave)[
         ::-1
     ]  # term [::-1] reverses the array, meaning descending order.
@@ -167,15 +156,11 @@ def determine_zero_crossing(t=None, x=None, typeCross="down"):
     x = core_engine.convert_to_array_type(x)
 
     # Perform checks on the input arguments
-    is1d_array = core_engine.is1darray(
-        t
-    )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
+    is1d_array = core_engine.is1darray(t)
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error: Input arrays t is not 1D")
 
-    is1d_array = core_engine.is1darray(
-        x
-    )  # matlabmax( abs( _size(hWave) - size(tWave) ) ) > 0
+    is1d_array = core_engine.is1darray(x)
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error: Input arrays x is not 1D")
 
@@ -195,7 +180,7 @@ def determine_zero_crossing(t=None, x=None, typeCross="down"):
     # --- Loop over all time levels, to determine zero-crossings
     if typeCross.lower() == "up":
         # --- Upcrossings
-        for iTime in np.arange(0, nTime - 1):  # matlab iTime = 1:(nTime-1):
+        for iTime in np.arange(0, nTime - 1):
             if x[iTime] <= 0 and x[iTime + 1] > 0:
                 # --- Add 1 to counter number of zero-crossings
                 nWave = nWave + 1
@@ -207,7 +192,7 @@ def determine_zero_crossing(t=None, x=None, typeCross="down"):
 
     elif typeCross.lower() == "down":
         # --- Downcrossings
-        for iTime in np.arange(0, nTime - 1):  # matlab iTime = 1:(nTime-1)
+        for iTime in np.arange(0, nTime - 1):
             if x[iTime] >= 0 and x[iTime + 1] < 0:
                 # --- Add 1 to counter number of zero-crossings
                 nWave = nWave + 1
@@ -317,9 +302,7 @@ def highest_waves_params(
         return [hFracP, tFracP]
 
     # --- Check whether hWaveSorted is indeed sorted
-    issorted = (
-        hWaveSorted == np.sort(hWaveSorted)[::-1]
-    ).all()  # matlab if ( ~issorted( hWaveSorted(end:-1:1)) )
+    issorted = (hWaveSorted == np.sort(hWaveSorted)[::-1]).all()
     if not issorted:
         raise ValueError(
             "highest_waves_params: Input error:Input array hWaveSorted is not correctly sorted "
@@ -327,16 +310,10 @@ def highest_waves_params(
 
     # Computational core
     # --- Number of waves in the fraction that is to be considered
-    nWaveP = int(
-        np.floor(nWave * fracP)
-    )  # note hWaveSorted[0:1] is equal to hWaveSorted[0] (hWaveSorted[0:0])
+    nWaveP = int(np.floor(nWave * fracP))
     if nWaveP > 0:
-        hFracP = determine_mean(
-            hWaveSorted[0:nWaveP]
-        )  # 0:nWaveP means nWaveP elements, starting at index zero # matlab hWaveSorted(1:nWaveP)
-        tFracP = determine_mean(
-            tWaveSorted[0:nWaveP]
-        )  # see statement above, matlab tWaveSorted(1:nWaveP)
+        hFracP = determine_mean(hWaveSorted[0:nWaveP])
+        tFracP = determine_mean(tWaveSorted[0:nWaveP])
 
     return hFracP, tFracP
 
@@ -407,9 +384,7 @@ def exceedance_wave_height(hWaveSorted=None, excPerc=None) -> float:
         return hExcPerc
 
     # --- Check whether hWaveSorted is indeed sorted
-    issorted = (
-        hWaveSorted == np.sort(hWaveSorted)[::-1]
-    ).all()  # matlab if ( ~issorted( hWaveSorted(end:-1:1)) )
+    issorted = (hWaveSorted == np.sort(hWaveSorted)[::-1]).all()
     if not issorted:
         raise ValueError(
             "exceedance_wave_height: Input error:Input array hWaveSorted is not correctly sorted "
@@ -418,8 +393,6 @@ def exceedance_wave_height(hWaveSorted=None, excPerc=None) -> float:
     # Computational core
     # --- Index of the wave corresponding to the given exceedance probability percentage
     iWaveP = int(np.floor(nWave * excPerc / 100.0)) - 1
-    # note here you select the actual value and not the range (e.g. hWaveSorted[ 1: 4]), so substract 1 as array index
-    # start at 0 instead of 1 (MATLAB)
 
     # --- Compute wave height with exceedance probability
     if not (iWaveP < 0):
@@ -604,9 +577,7 @@ def determine_params_individual_waves(tCross=None, t=None, x=None):
     nWave = len(tCross) - 1
 
     # --- Initialize output arrays (could have used append also, without initializing array)
-    tWave = np.zeros((1, nWave), dtype=float)[
-        0
-    ]  # statement creates [[]], so use [0] to select array# matlab size(tCross(1:end-1))
+    tWave = np.zeros((1, nWave), dtype=float)[0]
     hWave = np.zeros((1, nWave), dtype=float)[0]
     aCrest = np.zeros((1, nWave), dtype=float)[0]
     aTrough = np.zeros((1, nWave), dtype=float)[0]
@@ -614,31 +585,23 @@ def determine_params_individual_waves(tCross=None, t=None, x=None):
     tTrough = np.zeros((1, nWave), dtype=float)[0]
 
     # --- Do a loop over all waves
-    for iWave in np.arange(0, nWave):  # matlab iWave = 1:nWave
+    for iWave in np.arange(0, nWave):
         # --- Determine initial and end time of wave, and corresponding
         #     positions in time-array
         tIni = tCross[iWave]  # Initial time
         tEnd = tCross[iWave + 1]  # End time
-        iIni = np.where(t >= tIni)[0][
-            0
-        ]  # find( t >= tIni, 1, 'first' ); # Position initial time
-        iEnd = np.where(t <= tEnd)[0][
-            -1
-        ]  # find( t <= tEnd, 1, 'last'  ); # Position end time
+        iIni = np.where(t >= tIni)[0][0]
+        iEnd = np.where(t <= tEnd)[0][-1]
 
         # --- Find position where maximum and minimum occurs, for the
         #     individual wave
         #     Argument 'first' is included, to account for the possible
         #     situation of two extrema with the same function
         #     value in the given wave
-        tIwave = t[iIni : iEnd + 1]  # no +1, this runs from t[iIni] to t[iEnd]
+        tIwave = t[iIni : iEnd + 1]
         xIwave = x[iIni : iEnd + 1]
-        iMax = np.where(xIwave == max(xIwave))[0][
-            0
-        ]  # matlab find( xIwave == max( xIwave ), 1, 'first' );
-        iMin = np.where(xIwave == min(xIwave))[0][
-            0
-        ]  # matlab find( xIwave == min( xIwave ), 1, 'first' );
+        iMax = np.where(xIwave == max(xIwave))[0][0]
+        iMin = np.where(xIwave == min(xIwave))[0][0]
 
         # --- Fill the output arrays
         tWave[iWave] = tEnd - tIni
