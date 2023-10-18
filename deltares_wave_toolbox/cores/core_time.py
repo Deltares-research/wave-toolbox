@@ -317,8 +317,8 @@ def highest_waves_params(
     # --- Number of waves in the fraction that is to be considered
     nWaveP = int(np.floor(nWave * fracP))
     if nWaveP > 0:
-        hFracP = determine_mean(hWaveSorted[0:nWaveP])
-        tFracP = determine_mean(tWaveSorted[0:nWaveP])
+        hFracP = np.mean(hWaveSorted[0:nWaveP])
+        tFracP = np.mean(tWaveSorted[0:nWaveP])
 
     return hFracP, tFracP
 
@@ -405,69 +405,6 @@ def exceedance_wave_height(
         hExcPerc = float(hWaveSorted[iWaveP])
 
     return hExcPerc
-
-
-# ? Why oh why do we need to implement this ourselves???
-def determine_mean(qWave=None):
-    """
-    DETERMINE_MEAN  Determines mean of quantity
-
-    This function determines the mean of a quantity, for example the mean
-    wave height or the mean wave period. With qWave
-    an array [q_1,...,q_nWave], with q_i pertaining to wave i and
-    nWave the number of waves, the mean is given by:
-       qMean = sum q_i / nWave
-    where the sum is over all wave heights.
-
-    Subject: time domain analysis of waves
-
-    Parameters
-    ----------
-    qWave    : array double (1D)
-             1D array containing parameters of individual waves, for example
-             wave height or wave period
-
-    Returns
-    -------
-    qMean    : doiuble
-             mean of qWave
-
-    Syntax:
-          qMean = determine_mean( qWave )
-
-
-    Example:
-    >>> import numpy as np
-    >>>  hWave = [1.0, 1.2, 0.8, 1.1]  # Wave heights of individual waves
-    >>>  tWave = [2.3, 2.1, 1.8, 2.0]   # Wave periods of individual waves
-    >>>  hMean   = determine_mean( hWave )
-    >>>  tMean   = determine_mean( tWave )
-
-    See also determine_params_individualwaves, determine_hrms
-
-    """
-    # --- ensure input is of type ndarray
-    qWave = core_engine.convert_to_array_type(qWave)
-
-    # Perform checks on the input arguments
-    is1d_array = core_engine.is1darray(qWave)
-    if not is1d_array:
-        raise ValueError("determine_mean: Input error: Input arrays qWave is not 1D")
-
-    # Check on input arguments
-    # --- Number of waves
-    nWave = len(qWave)
-
-    # --- If there are no waves, return to calling function
-    qMean = np.nan
-    if nWave < 1:
-        return qMean
-
-    # Comutational core
-    # --- Compute mean
-    qMean = sum(qWave) / nWave
-
-    return qMean
 
 
 def determine_params_individual_waves(
