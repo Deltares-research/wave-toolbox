@@ -456,7 +456,7 @@ def rfwave_rfw(T=None, t=None, H=None, h=None, xeta=None, xvel=None, zvel=None):
     eta = np.zeros((len(xeta), len(t)), dtype=float)
     u = np.zeros((len(xvel), len(zvel), len(t)), dtype=float)
     w = np.zeros((len(xvel), len(zvel), len(t)), dtype=float)
-    for tt in np.arange(0, len(t)):  # matlab tt = 1:length(t)
+    for tt in np.arange(0, len(t)):
         eta[:, tt] = rfwave_rfeta(
             N, h, ceta, k, xeta / h, c, t[tt] * (g / h) ** (1 / 2)
         )
@@ -517,8 +517,8 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
     while H <= Hin:
         if numapprox == 0:
             #     Initial linear approximation when H<=0.30
-            jj = np.arange(0, N)  # matlab 1:N;
-            mm = np.arange(0, N).conj().T  # matlab [0:N]';
+            jj = np.arange(0, N)
+            mm = np.arange(0, N).conj().T
             eta = 1 + 0.5 * H * np.cos(mm * np.pi / N)
             differ = 100
             k = 2 * np.pi / (tau * c)
@@ -925,12 +925,12 @@ def acceleration(t: np.ndarray = None, x: np.ndarray = None) -> np.ndarray:
     # Computational core
     a = np.zeros(x_size[0], dtype=float)
     nTime = t_size[0]
-    for i in np.arange(1, nTime - 1):  # matlab for i = 2:(nTime-1)
+    for i in np.arange(1, nTime - 1):
         t_p05 = 0.5 * (t[i] + t[i + 1])
         t_m05 = 0.5 * (t[i] + t[i - 1])
         v_p05 = (x[i + 1] - x[i]) / (t[i + 1] - t[i])
         v_m05 = (x[i] - x[i - 1]) / (t[i] - t[i - 1])
-        #
+
         a[i] = (v_p05 - v_m05) / (t_p05 - t_m05)
     # Constant extrapolation
     a[0] = a[1]
@@ -971,7 +971,7 @@ def velocity(t: np.ndarray = None, x: np.ndarray = None) -> np.ndarray:
     nTime = t_size[0]
 
     # Central elements
-    for i in np.arange(1, nTime - 1):  # matlab for i = 2:(nTime-1)
+    for i in np.arange(1, nTime - 1):
         v[i] = (x[i + 1] - x[i - 1]) / (t[i + 1] - t[i - 1])
 
     # One-sided differences
