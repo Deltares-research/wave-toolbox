@@ -203,7 +203,7 @@ def compute_moment(
     >>> m1  = compute_moment(f,sPM,1)
     >>> m2  = compute_moment(f,sPM,2)
 
-    See also wavelab function computemoment, integral1d
+    See also function computemoment, integral1d
     """
 
     # --- Ensure array input is of type ndarray.

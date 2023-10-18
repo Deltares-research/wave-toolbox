@@ -2,7 +2,6 @@ import numpy as np
 import numpy.typing as npt
 import matplotlib.pyplot as plt
 from scipy.stats import rayleigh
-from typing import Iterable, Union
 
 
 from deltares_wave_toolbox.spectrum import Spectrum

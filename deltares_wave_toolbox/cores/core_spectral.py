@@ -513,7 +513,7 @@ def compute_spectrum_time_series(
     """
     @brief
     COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
-    series  (WAVELAB : computespectrum1)
+    series
 
     @section description_xxx Description
     This function computes a variance density spectrum sCoarse = sCoarse(fCoarse)
@@ -583,7 +583,7 @@ def compute_spectrum_freq_series(
 ):
     """
     COMPUTE_SPECTRUM_FREQ_SERIES Computes variance density spectrum from given complex
-    spectrum of Fourier components  (WAVELAB: computespectrum2)
+    spectrum of Fourier components
 
     This function computes a variance density spectrum sCoarse = sCoarse(fCoarse)
     on a frequency axis fCoarse from a given complex spectrum xFreq = xFreq(f)

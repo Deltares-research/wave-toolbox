@@ -8,7 +8,6 @@ def sort_wave_params(
 ):
     """
     SORT_WAVE_PARAMS  Sorts the wave height and wave period
-    (WAVELAB: sortwaveparams)
 
     This functions sorts the wave heights and wave periods in arrays
     hWave and tWave, and stores them in arrays hWaveSorted and tWaveSorted.
@@ -73,7 +72,7 @@ def sort_wave_params(
     isequal_length = len(hWave) == len(tWave)
     if not isequal_length:
         raise ValueError(
-            "WaveLab:InputError", "Input arrays hWave and tWave have different length"
+            "InputError", "Input arrays hWave and tWave have different length"
         )
 
     # --- Number of waves
@@ -108,7 +107,6 @@ def determine_zero_crossing(
     x(t). Here, t stands for time, and x for a given signal (for example,
     time series of measured surface elevation). The type of zero-crossing
     can be either up-crossing or down-crossing.
-    (WAVELAB: sortwaveparams)
 
     Subject: time domain analysis of waves
 
@@ -227,7 +225,6 @@ def highest_waves_params(
 ):
     """
     HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
-    (WAVELAB: highestwavesparams)
 
     This function computes the wave height hFracP and wave period tFracP by
     taking the average of the fraction fracP of the highest waves. When
@@ -331,7 +328,6 @@ def exceedance_wave_height(
 ) -> float:
     """
     EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
-    (WAVELAB:exceedancewaveheight)
 
     This function computes the wave height hExcPerc with given exceedance
     probability percentage excPerc.
@@ -415,7 +411,6 @@ def exceedance_wave_height(
 def determine_mean(qWave=None):
     """
     DETERMINE_MEAN  Determines mean of quantity
-    (WAVELAB: determinemean)
 
     This function determines the mean of a quantity, for example the mean
     wave height or the mean wave period. With qWave
@@ -482,7 +477,6 @@ def determine_params_individual_waves(
 ):
     """
     DETERMINE_PARAMS_INDIVIDUALWAVES  Determines parameters per individual wave
-    (WAVELAB: determineparamsindividualwaves)
 
     This function determines several wave properties (wave period, wave
     height, crest amplitude, trough amplitude, and the time at which the
