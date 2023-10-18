@@ -5,6 +5,7 @@ from deltares_wave_toolbox.cores.core_wavefunctions import create_spectrum_jonsw
 
 
 @pytest.fixture(scope="package")
+
 def Hm0():
     Hm0 = 2.0
     return Hm0

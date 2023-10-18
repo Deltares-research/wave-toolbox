@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import numpy.typing as npt
 import copy
 
 
@@ -82,7 +83,7 @@ def frequency_averaging(f=None, sFreq=None, dfDesired=None):
     return fCoarse, sFreqCoarse
 
 
-def unfold_spectrum(f, xFreq, isOdd):
+def unfold_spectrum(f, xFreq, isOdd: bool):
     """
     UNFOLDSPECTRUM  Unfolds a folded discrete Fourier transform
 
@@ -506,7 +507,7 @@ def time2freq_nyquist(t, xTime):
 
 def compute_spectrum_time_series(
     t=None, xTime=None, dfDesired=None
-) -> [np.ndarray, np.ndarray]:
+) -> list[np.ndarray] | list[np.ndarray]:
     """
     @brief
     COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
@@ -653,7 +654,15 @@ def compute_spectrum_freq_series(f=None, xFreq=None, dfDesired=None, Ntime=None)
     return [fCoarse, sCoarse]
 
 
-def spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed=None, output_object=True):
+def spectrum2timeseries(
+    f: npt.NDArray[np.float64],
+    sVarDens: npt.NDArray[np.float64],
+    tInit: float,
+    tEnd: float,
+    dt: float,
+    seed: int = None,
+    output_object: bool = True,
+):
     """
     SPECTRUM2TIMESERIES  Generates a timeseries based on a given spectrum.
 
@@ -756,7 +765,7 @@ def spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed=None, output_object=T
         return t, xTime
 
 
-def test_doctstrings():
+def test_doctstrings() -> None:
     import doctest
 
     doctest.testmod()

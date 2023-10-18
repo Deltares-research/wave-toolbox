@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import rayleigh
 
 
-import deltares_wave_toolbox.spectrum as spectrum
+from deltares_wave_toolbox.spectrum import Spectrum
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
@@ -11,7 +11,7 @@ import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 
 
 class WaveHeights:
-    def __init__(self, hwave, twave):
+    def __init__(self, hwave, twave) -> None:
         hwave, tSize = core_engine.convert_to_vector(hwave)
         twave, xSize = core_engine.convert_to_vector(twave)
         print("test")
@@ -20,13 +20,13 @@ class WaveHeights:
         self.nwave = len(hwave)
         self.twave = twave
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Series with {len(self.hwave)} elements"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
-    def sort(self):
+    def sort(self) -> None:
         """Sorts the wave height and wave period.
         The sorting is done such that in hWaveSorted the wave heights of hWave
         are sorted in descending order. This same sorting is applied to
@@ -34,14 +34,14 @@ class WaveHeights:
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
 
-    def get_Hrms(self):
+    def get_Hrms(self) -> float:
         Hrms = np.sqrt(np.mean(self.hwave**2))
         return Hrms
 
-    def get_Hmax(self):
+    def get_Hmax(self) -> float:
         return np.max(self.hwave)
 
-    def get_Hs(self):
+    def get_Hs(self) -> float:
         """Compute Hs
 
         Returns:
@@ -50,7 +50,7 @@ class WaveHeights:
         Hs = self.highest_waves(1 / 3)
         return Hs
 
-    def get_H2p_Rayleigh(self):
+    def get_H2p_Rayleigh(self) -> float:
         """Compute theoretical H2% assuming Rayleigh distribution
 
         Returns:
@@ -61,7 +61,7 @@ class WaveHeights:
         )
         return H2p_Rayleigh
 
-    def get_exceedance_waveheight(self, excPerc):
+    def get_exceedance_waveheight(self, excPerc: float) -> float:
         """
         EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
 
@@ -82,7 +82,7 @@ class WaveHeights:
         )
         return hExcPerc
 
-    def highest_waves(self, fracP):
+    def highest_waves(self, fracP: float) -> float | float:
         """
         HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
 
@@ -109,7 +109,7 @@ class WaveHeights:
         )
         return hFracP, tFracP
 
-    def plot_exceedance_waveheight(self, savepath=None, fig=None):
+    def plot_exceedance_waveheight(self, savepath: str = None, fig=None) -> None:
         """Plot exceedances of wave heights
 
         Args:
@@ -134,13 +134,13 @@ class WaveHeights:
 
     def plot_exceedance_waveheight_Rayleigh(
         self,
-        normalize=False,
-        plot_BG=False,
-        water_depth=None,
-        cota_slope=None,
-        savepath=None,
+        normalize: bool = False,
+        plot_BG: bool = False,
+        water_depth: float = None,
+        cota_slope: float = None,
+        savepath: str = None,
         fig=None,
-    ):
+    ) -> None:
         """Plot exceedances of wave heights compared to Rayleigh distribution
 
         Args:
@@ -207,7 +207,7 @@ class WaveHeights:
         if savepath is not None:
             plt.savefig(savepath)
 
-    def plot_hist_waveheight(self, savepath=None, fig=None):
+    def plot_hist_waveheight(self, savepath: str = None, fig=None) -> None:
         """Plot Histogram of wave heights
 
         Args:
@@ -238,7 +238,7 @@ class Series(WaveHeights):
         _type_: _description_
     """
 
-    def __init__(self, time, x):
+    def __init__(self, time, x) -> None:
         time, tSize = core_engine.convert_to_vector(time)
         x, xSize = core_engine.convert_to_vector(x)
 
@@ -258,13 +258,13 @@ class Series(WaveHeights):
         ] = self._determine_individual_waves()
         super().__init__(hWave, tWave)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Series with {self.nt} elements"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
-    def get_crossing(self, typeCross="down"):
+    def get_crossing(self, typeCross: str = "down"):
         """Get zero crossings
 
         Args:
@@ -278,7 +278,7 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, fres=0.01):
+    def get_spectrum(self, fres: float = 0.01) -> Spectrum:
         """create spectrum
 
         Args:
@@ -291,16 +291,16 @@ class Series(WaveHeights):
         [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.x, fres)
         return spectrum.Spectrum(f, S)
 
-    def max(self):
+    def max(self) -> float:
         return np.max(self.x)
 
-    def min(self):
+    def min(self) -> float:
         return np.min(self.x)
 
-    def mean(self):
+    def mean(self) -> float:
         return np.mean(self.x)
 
-    def var(self):
+    def var(self) -> float:
         return np.var(self.x)
 
     def get_fourier_comp(self):
@@ -314,7 +314,7 @@ class Series(WaveHeights):
         f, xFreq, isOdd = core_spectral.time2freq_nyquist(self.time, self.x)
         return f, xFreq, isOdd
 
-    def _determine_individual_waves(self, typeCross="down"):
+    def _determine_individual_waves(self, typeCross: str = "down"):
         """dtermine individual waves in series
 
         Args:
@@ -358,7 +358,7 @@ class Series(WaveHeights):
         )
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
-    def plot(self, savepath=None, fig=None, plot_crossing=False):
+    def plot(self, savepath: dir = None, fig=None, plot_crossing: bool = False) -> None:
         """Plot Series
 
         Args:

@@ -18,7 +18,7 @@ def is_float(element: any) -> bool:
         return False
 
 
-def str2num(string):
+def str2num(string: str):
     return np.asfarray(string, dtype=float)
 
 
@@ -137,7 +137,7 @@ def is1darray(x):
     return is1d
 
 
-def approx_array_index(array, user_value):
+def approx_array_index(array, user_value: float):
     """
     Return index of the array value closest to user specified value.
 
@@ -214,12 +214,6 @@ def list_of_strings_upper(in_list_strings):
 def rfwave(h=None, T=None, H=None):
     """
     rfwave non-linear Rienecker-Fenton wave estimates
-
-
-    -------------------------------------------------------------
-    Copyright (c) Deltares 2010 FOR INTERNAL USE ONLY
-    Version:      Beta Version 2.00, <2012 April 13>
-    -------------------------------------------------------------
 
 
     Parameters

@@ -12,7 +12,7 @@ class Spectrum:
     The wave Spectrum class
     """
 
-    def __init__(self, f, S, D=None):
+    def __init__(self, f: np.ndarray, S, D=None):
         """_The init function
 
         Args:
@@ -48,7 +48,7 @@ class Spectrum:
     def __repr__(self):
         return f"{type(self).__name__} (spec = {self.spec})"
 
-    def _set_flim(self, fmin, fmax):
+    def _set_flim(self, fmin: float, fmax: float) -> float | float:
         """Set frequency limits
 
         Args:
@@ -62,9 +62,9 @@ class Spectrum:
             fmin = self.f[0]
         if fmax is None:
             fmax = self.f[-1]
-            return fmin, fmax
+        return fmin, fmax
 
-    def get_Hm0(self, fmin=None, fmax=None):
+    def get_Hm0(self, fmin: float = None, fmax: float = None) -> float:
         """Compute Hm0 of spectrum
 
         Args:
@@ -79,7 +79,7 @@ class Spectrum:
         self.Hm0 = 4 * np.sqrt(m0)
         return self.Hm0
 
-    def get_Tps(self, fmin=None, fmax=None):
+    def get_Tps(self, fmin: float = None, fmax: float = None) -> float:
         """Compute Tps (smoothed peak period) of spectrum
 
         Args:
@@ -97,7 +97,7 @@ class Spectrum:
         self.Tps = core_wavefunctions.compute_tps(fMiMa, SMiMa)
         return self.Tps
 
-    def get_Tp(self, fmin=None, fmax=None):
+    def get_Tp(self, fmin: float = None, fmax: float = None) -> float:
         """Compute Tp (peak period) of spectrum
 
         Args:
@@ -127,7 +127,7 @@ class Spectrum:
         self.Tp = 1 / fp
         return self.Tp
 
-    def get_Tmm10(self, fmin=None, fmax=None):
+    def get_Tmm10(self, fmin: float = None, fmax: float = None) -> float:
         """Compute Tmm10 spectral period) of spectrum
 
         Args:
@@ -143,7 +143,7 @@ class Spectrum:
         self.Tmm10 = m_1 / m0
         return self.Tmm10
 
-    def get_Tm01(self, fmin=None, fmax=None):
+    def get_Tm01(self, fmin: float = None, fmax: float = None) -> float:
         """Compute Tm01 of spectrum
 
         Args:
@@ -159,7 +159,7 @@ class Spectrum:
         self.Tm01 = m0 / m1
         return self.Tm01
 
-    def get_Tm02(self, fmin=None, fmax=None):
+    def get_Tm02(self, fmin: float = None, fmax: float = None) -> float:
         """Compute Tm02 of spectrum
 
         Args:
@@ -175,7 +175,7 @@ class Spectrum:
         self.Tm02 = np.sqrt(m0 / m2)
         return self.Tm02
 
-    def create_series(self, tstart, tend, dt):
+    def create_series(self, tstart: float, tend: float, dt: float):
         """Construct series from Spectrum with random phase
 
         Args:
@@ -189,7 +189,13 @@ class Spectrum:
         series = core_spectral.spectrum2timeseries(self.f, self.S, tstart, tend, dt)
         return series
 
-    def plot(self, savepath=None, fig=None, plot_periods=True, xlim=None):
+    def plot(
+        self,
+        savepath: str = None,
+        fig=None,
+        plot_periods: bool = True,
+        xlim: float = None,
+    ) -> None:
         """Plot spectrum
 
         Args:
