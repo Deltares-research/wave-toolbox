@@ -290,7 +290,7 @@ class Series(WaveHeights):
             Spectrum object: Spectrum
         """
 
-        [f, S] = core_spectral.compute_spectrum_time_serie(self.time, self.x, fres)
+        [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.x, fres)
         return spectrum.Spectrum(f, S)
 
     def max(self):
