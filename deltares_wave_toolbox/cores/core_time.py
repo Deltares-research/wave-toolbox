@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.typing as npt
+
 import deltares_wave_toolbox.cores.core_engine as core_engine
 
 

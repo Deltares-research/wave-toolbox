@@ -1,8 +1,8 @@
+import copy
 import math
+
 import numpy as np
 import numpy.typing as npt
-import copy
-
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.series as series

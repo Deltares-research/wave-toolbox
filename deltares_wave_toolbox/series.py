@@ -1,14 +1,13 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-import matplotlib.pyplot as plt
 from scipy.stats import rayleigh
 
-
-from deltares_wave_toolbox.spectrum import Spectrum
 import deltares_wave_toolbox.cores.core_engine as core_engine
-import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
+import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
+from deltares_wave_toolbox.spectrum import Spectrum
 
 
 class WaveHeights:

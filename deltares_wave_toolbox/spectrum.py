@@ -1,7 +1,7 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from typing import Iterable, Union
 
+import matplotlib.pyplot as plt
+import numpy as np
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral

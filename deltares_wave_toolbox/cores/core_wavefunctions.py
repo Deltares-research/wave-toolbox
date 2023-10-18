@@ -1,9 +1,8 @@
+import numpy as np
+import numpy.typing as npt
 import scipy.integrate as integrate
 import scipy.special as special
 from scipy.stats import exponweib
-import numpy as np
-import numpy.typing as npt
-
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.spectrum as spectrum
