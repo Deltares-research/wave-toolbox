@@ -4,7 +4,6 @@ from scipy.stats import rayleigh
 
 
 import deltares_wave_toolbox.spectrum as spectrum
-
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
@@ -124,7 +123,6 @@ class WaveHeights:
             self.hwave, np.linspace(0, self.nwave, self.nwave, self.nwave) / self.nwave
         )
 
-        # plt.gca().invert_xaxis()
         plt.yscale("log")
         plt.grid("on")
         plt.xlabel("Wave height [$m$]")

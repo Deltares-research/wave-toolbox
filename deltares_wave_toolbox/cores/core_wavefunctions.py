@@ -1,11 +1,9 @@
-# --- python modules
 import scipy.integrate as integrate
 import scipy.special as special
 from scipy.stats import exponweib
 import numpy as np
 
 
-# --- toolbox modules
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.spectrum as spectrum
 
@@ -99,7 +97,7 @@ def compute_spectrum_params(f=None, S=None, fmin=None, fmax=None):
     # --- Compute wave height -----------------------------------------------
     Hm0 = 4 * np.sqrt(m0)
 
-    # --- Put values to -999 (exception value) in situation that wave height is
+    # --- Put values to NaN (exception value) in situation that wave height is
     #     (virtually) zero
     if Hm0 < 1e-6 or np.isnan(Hm0):
         Hm0 = np.nan
@@ -509,11 +507,9 @@ def tpd(freqs: np.ndarray = None, spectrum: np.ndarray = None) -> float:
 
     # --- calculate the spectral period (TPD) (s)
     max_spectum = max(spectrum) * 0.8
-    itemp = np.where(spectrum / max_spectum >= 0.8)[
-        0
-    ]  # temp=freqs( (spectrum ./ maxSpectum) >= 0.8);
+    itemp = np.where(spectrum / max_spectum >= 0.8)[0]
     temp = freqs[itemp]
-    fp_limits = [min(temp), max(temp)]  # clear temp
+    fp_limits = [min(temp), max(temp)]
 
     #  --- compute zeroth and first moment for selected frequency interval.
     m0 = compute_moment(freqs, spectrum, 0, fp_limits[0], fp_limits[1])
@@ -596,7 +592,7 @@ def compute_tps(f=None, S=None) -> float:
             elif imax == nF - 1:
                 jmax = nF - 2
 
-            # --- Find polynomial coefficients. note: due to double brackets reduce dimension by selecting [0]
+            # --- Find polynomial coefficients
             ff = np.asarray([f[jmax - 1], f[jmax], f[jmax + 1]]).reshape(1, 3)[0]
             ee = np.asarray([S[jmax - 1], S[jmax], S[jmax + 1]]).reshape(1, 3)[0]
             p = np.polyfit(ff, ee, 2)
@@ -625,7 +621,7 @@ def compute_tps(f=None, S=None) -> float:
                 Tps = 1 / f[imax[0]]
                 return Tps
 
-            # --- Find polynomial coefficients. note: due to double brackets reduce dimension by selecting [0]
+            # --- Find polynomial coefficients
             ff = np.asarray([f[kmax - 1], f[kmax], f[kmax + 1]]).reshape(1, 3)[0]
             ee = np.asarray([S[kmax - 1], S[kmax], S[kmax + 1]]).reshape(1, 3)[0]
             p = np.polyfit(ff, ee, 2)
@@ -651,7 +647,7 @@ def compute_tps(f=None, S=None) -> float:
         # --- nF = 1: one point
         Tps = 1 / f[0]
 
-    return Tps  # TODO: check for some reason single value is stored as array,
+    return Tps
 
 
 def compute_BattjesGroenendijk_wave_height_distribution(
@@ -723,7 +719,6 @@ def compute_BattjesGroenendijk_wave_height_distribution(
         print("!!! Rayleigh distributed waves, not Battjes & Groenendijk (2000) !!!")
         # TODO implement nice error handling when not BG but Rayleigh
     else:
-        # Calculate H(p=1/N)
         delta_H = 0.01
         H_1_norm = 100
         k1 = 2
@@ -733,7 +728,6 @@ def compute_BattjesGroenendijk_wave_height_distribution(
             H_2_norm = H_transition_norm / np.power(
                 H_transition_norm / H_1_norm, k1 / k2
             )
-            # so that F1(Htr)=F2(Htr), pag 166
             A_1 = 2 / k1 + 1
             X = np.power(H_transition_norm / H_1_norm, k1)
             A_2 = 2 / k2 + 1
@@ -745,9 +739,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
             H_1_norm = H_1_norm - delta_H * (EST - 1)
 
         H_1_norm = H_1_norm + delta_H * (EST - 1)
-        x_1 = H_1_norm * np.power(
-            np.log(nwave), 1 / k1
-        )  # from 1-F=1/N, F=1-exp(-(x/H)^k)
+        x_1 = H_1_norm * np.power(np.log(nwave), 1 / k1)
         x_2 = H_2_norm * np.power(np.log(nwave), 1 / k2)
         if x_1 < H_transition_norm:
             x = x_1
@@ -755,9 +747,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
             x = x_2
 
         x = x * H_rms
-        x = min(
-            x, exponweib.ppf(1 - 1 / nwave, 1, 2, scale=np.sqrt(8)) / 4 * Hm0
-        )  # added this check because otherwise overshoots the Rayleigh distribution
+        x = min(x, exponweib.ppf(1 - 1 / nwave, 1, 2, scale=np.sqrt(8)) / 4 * Hm0)
 
         # dist = "B&G"
         H_1 = H_1_norm * H_rms

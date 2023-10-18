@@ -12,17 +12,15 @@ class Spectrum:
     The wave Spectrum class
     """
 
-    # load static methods
-    # compute_moment = staticmethod(core_wavefunctions.compute_moment) # WHY does it now work?
-
     def __init__(self, f, S, D=None):
-        """_The innit function
+        """_The init function
 
         Args:
             f (array): array with frequencies
             S (array): array with energy density
             D (array, optional): array with directions for 2D spectrum. Defaults to None.
         """
+
         f, fSize = core_engine.convert_to_vector(f)
         S, SSize = core_engine.convert_to_vector(S)
 

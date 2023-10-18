@@ -1,12 +1,9 @@
-# --- python modules
 import math
 import numpy as np
 import copy
 
 
-# --- toolbox modules
 import deltares_wave_toolbox.cores.core_engine as core_engine
-
 import deltares_wave_toolbox.series as series
 
 
@@ -72,17 +69,13 @@ def frequency_averaging(f=None, sFreq=None, dfDesired=None):
 
     # --- Initialize arrays
     fCoarse = np.zeros(len(f[0:nCoarse]))
-    sFreqCoarse = np.zeros(
-        len(fCoarse), dtype=core_engine.get_parameter_type(sFreq[0])
-    )  # determine parameter type complex or float?
+    sFreqCoarse = np.zeros(len(fCoarse), dtype=core_engine.get_parameter_type(sFreq[0]))
 
     # --- Perform the averaging
     for iFreq in np.arange(0, nCoarse):  # before np.arange(0,nCoarse)
-        # note: python arrays start at index zero!!
         ilow = int((iFreq) * nFactor)
         ihigh = int((iFreq + 1) * nFactor)
 
-        # note: for example f[1:1] is empty where as f[1:2] is equal to f[1]
         fCoarse[iFreq] = np.mean(f[ilow:ihigh])
         sFreqCoarse[iFreq] = np.mean(sFreq[ilow:ihigh])
 
@@ -169,21 +162,13 @@ def unfold_spectrum(f, xFreq, isOdd):
     # Note that the first half part of the frequency axis is equal to the input
     # frequency axis as given in freq
     df = f[1] - f[0]
-    fTot = np.arange(0, nFTot) * df  # fTot = [0:nFTot-1]*df
+    fTot = np.arange(0, nFTot) * df
 
     xFreqTot = np.zeros((len(fTot)), dtype=complex)
-    xFreqTot[0:nF] = copy.deepcopy(xFreq[0:nF])  # .reshape(nF,1) #xFreq[0:nF]
+    xFreqTot[0:nF] = copy.deepcopy(xFreq[0:nF])
 
     # Arrays f and xFreqTot are column vectors. Apply a flip upside-down
     xFreqTot[(nF - 1) + isOdd : nFTot] = np.flipud(np.conj(xFreqTot[1:nF]))
-
-    # not
-    # if (  dims[1] == nF ):
-    #   # Arrays f and xFreqTot are column vectors. Apply a flip upside-down
-    #   xFreqTot[(nF-1)+isOdd:nFTot] = np.flipud( np.conj( xFreqTot[1:nF] ) )
-    # else:
-    #   # Arrays f and xFreqTot are row vectors. Apply a flip left-right
-    #   xFreqTot[(nF)+isOdd:nFTot] = np.fliplr( np.conj( xFreqTot[1:nF] ) )
 
     return fTot, xFreqTot
 
@@ -232,7 +217,6 @@ def coherence(f, xFreq1, xFreq2, dfDesired):
 
     """
 
-    #
     # --- Compute auto-spectral and cross-spectral (absolute value) densities
     #     on original frequency axis
     #     Note: Normalisation factors (2 / (df * Ntime * Ntime)) may be omitted,
@@ -308,11 +292,8 @@ def freq2time(xFreq):
 
     xFreq, xFreqSize = core_engine.convert_to_vector(xFreq)
 
-    #
     # Check on input arguments
     #  xFreq must be a 1D array
-    # assert
-
     if xFreqSize[1] > 1:
         raise ValueError("freq2time: Input error: input should be 1d arrays")
 
@@ -384,11 +365,7 @@ def time2freq(t, xTime):
     >>> f,yFreq = time2freq(t,y)
 
     """
-    # Check on input
-    # aktie Ivo: toevoegen de volgende checks:
-    # t is stijgend, met constante dt
-    # length(t) = length(xtime)
-    # t en xTime zijn 1D arrays
+
     t, tSize = core_engine.convert_to_vector(t)
     xTime, xTimeSize = core_engine.convert_to_vector(xTime)
 
@@ -490,13 +467,6 @@ def time2freq_nyquist(t, xTime):
     >>> f,yFreq,isOdd = time2freq_nyquist(t,y);
 
     """
-    # --- Ensure array input is of type ndarray.
-
-    # Check on input
-    # Aktie Ivo: toevoegen de volgende checks:
-    # t is stijgend, met constante dt
-    # length(t) = length(xtime)
-    # t en xTime zijn 1D arrays
 
     t, tSize = core_engine.convert_to_vector(t)
     xTime, xTimeSize = core_engine.convert_to_vector(xTime)

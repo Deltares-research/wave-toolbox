@@ -67,7 +67,6 @@ def sort_wave_params(hWave=None, tWave=None):
         raise ValueError("sort_wave_params: Input error, Input array tWave is not 1D")
 
     # --- Check whether number of elements in input arguments is identical
-
     isequal_length = len(hWave) == len(tWave)
     if not isequal_length:
         raise ValueError(

@@ -1,4 +1,3 @@
-# --- python modules
 import numpy as np
 import numbers
 import re
@@ -53,9 +52,7 @@ def genvarname(h):
 
 def convert_to_array_type(x):
     if isinstance(x, numbers.Number):
-        x = np.asarray(
-            [x]
-        )  # for some reason in this case the statement x = np.asarray(x) is not sufficient.
+        x = np.asarray([x])
     elif not isinstance(x, (np.ndarray)):
         x = np.asarray(x)
     return x
@@ -63,16 +60,13 @@ def convert_to_array_type(x):
 
 def convert_to_vector(x):
     if isinstance(x, numbers.Number):
-        x = np.asarray(
-            [x]
-        )  # for some reason in this case the statement x = np.asarray(x) is not sufficient.
+        x = np.asarray([x])
     elif not isinstance(x, (np.ndarray)):
         x = np.asarray(x)
 
     # ensure vector convention if 1d array is used either (n,1) or (n,)
     xSize = _size(x)
     if xSize[1] == 1:
-        # ensure 1d vector format of (n,) instead of (n,1)
         x = x.flatten()
 
     return x, xSize
@@ -99,7 +93,7 @@ def _len(x):
         if isinstance(x, list):
             lenx = len(x)
         elif isinstance(x, np.ndarray):
-            # todo: need to handle lenx =0 and leny!=0 and lenx >0 and leny>0
+            # TODO: need to handle lenx =0 and leny!=0 and lenx >0 and leny>0
             lenx, leny = _size(x)
     return lenx
 
@@ -516,7 +510,7 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
 
     while H <= Hin:
         if numapprox == 0:
-            #     Initial linear approximation when H<=0.30
+            # Initial linear approximation when H<=0.30
             jj = np.arange(0, N)
             mm = np.arange(0, N).conj().T
             eta = 1 + 0.5 * H * np.cos(mm * np.pi / N)
@@ -538,7 +532,7 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
         numiter = 0
 
         while max(z) > 1e-12 and numiter < 100:
-            #     Fill the f vector
+            # Fill the f vector
             matLeft = np.ones((N + 1, 1)) * B
             matMid = np.sinh(eta * jj * k) / np.cosh(np.ones((N + 1, 1)) * jj * k * D)
             matRight = np.cos(mm * jj * np.pi / N)
@@ -556,20 +550,14 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
             toSum = matLeft * matMid * matRight
             v = k * sum(toSum, 2)
 
-            f = np.concatenate(
-                (f, 0.5 * u**2 + 0.5 * v**2 + eta - R), axis=None
-            )  # [f; 0.5*u.^2 + 0.5*v.^2 + eta - R]
+            f = np.concatenate((f, 0.5 * u**2 + 0.5 * v**2 + eta - R), axis=None)
             f = np.concatenate(
                 (f, 1 / (2 * N) * (eta[0] + eta[N] + 2 * sum(eta[1 : N + 1])) - 1),
                 axis=None,
-            )  # [f; 1/(2*N)*(eta(1) + eta(N+1) + 2*sum(eta(2:N))) - 1];
-            f = np.concatenate(
-                (f, eta[0] - eta[N] - H), axis=None
-            )  # [f; eta(1) - eta(N+1) - H];
-            f = np.concatenate(
-                (f, k * c * tau - 2 * np.pi), axis=None
-            )  # [f; k*c*tau - 2*pi];
-            f = np.concatenate((f, c - cE + B0), axis=None)  # [f; c - cE + B0];
+            )
+            f = np.concatenate((f, eta[0] - eta[N] - H), axis=None)
+            f = np.concatenate((f, k * c * tau - 2 * np.pi), axis=None)
+            f = np.concatenate((f, c - cE + B0), axis=None)
 
             #     Fill the A matrix. For i = 1:N+1:
             dfideta = np.diag(u)
@@ -588,9 +576,8 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
             dfidR = np.zeros((N + 1, 1))
             A = np.concatenate(
                 (dfideta, dfidB0, dfidBj, dfidc, dfidk, dfidQ, dfidR), axis=None
-            )  # [dfideta dfidB0 dfidBj dfidc dfidk dfidQ dfidR];
+            )
 
-            #     For i = N+2:2N+2
             C1 = (
                 np.cosh(eta * jj * k)
                 / np.cosh(np.ones((N + 1, 1)) * jj * k * D)
@@ -615,12 +602,6 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
             dfidBj = u * jj * k * C2 + v * jj * k * S2
             dfidc = np.zeros((N + 1, 1))
 
-            # dfidk   = u.*((u-B0)/k + k*eta.*sum(ones(N+1,1)*(jj.^2.*B).*S1,2) - ...
-            #              k*D*sum(ones(N+1,1)*(jj.^2.*B.*tanh(jj*k*D)).*C2,2)) +    ...
-            #              v.*(v/k + k*eta.*sum(ones(N+1,1)*(jj.^2.*B).*C1,2) -      ...
-            #              k*D*sum(ones(N+1,1)*(jj.^2.*B.*tanh(jj*k*D)).*S2,2)
-            #             );
-
             dfidk = u * (
                 (u - B0) / k
                 + k * eta * sum(np.ones((N + 1, 1)) * (jj**2 * B) * S1, 2)
@@ -639,45 +620,36 @@ def rfwave_rfcoef(H=None, tau=None, N=None):
             dfidR = -np.ones((N + 1, 1))
             A = np.concatenate(
                 (A, dfideta, dfidB0, dfidBj, dfidc, dfidk, dfidQ, dfidR), axis=None
-            )  # [A; dfideta dfidB0 dfidBj dfidc dfidk dfidQ dfidR];
-            #     For i = 2N+3
+            )
             dfideta = np.concatenate(
                 (1 / (2 * N), np.ones((1, N - 1)) / N, 1 / (2 * N)), axis=None
-            )  # [1/(2*N) ones(1,N-1)/N 1/(2*N)];
-            A = np.concatenate(
-                (A, dfideta, np.zeros((1, N + 5))), axis=None
-            )  # [A; dfideta zeros(1, N+5)];
-            #     For i = 2N+4
+            )
+            A = np.concatenate((A, dfideta, np.zeros((1, N + 5))), axis=None)
             dfideta = np.zeros((1, N + 1))
             dfideta[0] = 1
             dfideta[N] = -1
-            A = np.concatenate(
-                (A, dfideta, np.zeros((1, N + 5))), axis=None
-            )  # [A; dfideta zeros(1, N+5)];
-            #     For i = 2N+5
+            A = np.concatenate((A, dfideta, np.zeros((1, N + 5))), axis=None)
             dfidc = k * tau
             dfidk = c * tau
             A = np.concatenate(
                 (A, np.zeros((1, 2 * N + 2)), dfidc, dfidk, 0, 0), axis=None
-            )  # [A; zeros(1,2*N+2) dfidc dfidk 0 0];
-            #     For i = 2N+6
+            )
             dfidc = 1
             dfidB0 = 1
             A = np.concatenate(
                 (A, np.zeros((1, N + 1)), dfidB0, np.zeros((1, N)), dfidc, 0, 0, 0),
                 axis=None,
-            )  # [A; zeros(1,N+1) dfidB0 zeros(1,N) dfidc 0 0 0];
-
+            )
             #     Solution
-            z = np.linalg.solve(A, -f)  # z       = A\-f
+            z = np.linalg.solve(A, -f)
 
-            eta = z[0:N] + eta  # z(1:N+1) + eta;
-            B0 = z[N + 1] + B0  # z(N+2) + B0;
-            B = z[N + 2 : 2 * N + 2].T + B  # z(N+3:2*N+2)' + B;
-            c = z[2 * N + 3 - 1] + c  # z(2*N+3) + c;
-            k = z[2 * N + 4 - 1] + k  # z(2*N+4) + k;
-            Q = z[2 * N + 5 - 1] + Q  # z(2*N+5) + Q;
-            R = z[2 * N + 6 - 1] + R  # z(2*N+6) + R;
+            eta = z[0:N] + eta
+            B0 = z[N + 1] + B0
+            B = z[N + 2 : 2 * N + 2].T + B
+            c = z[2 * N + 3 - 1] + c
+            k = z[2 * N + 4 - 1] + k
+            Q = z[2 * N + 5 - 1] + Q
+            R = z[2 * N + 6 - 1] + R
 
             #     Start new iteration
             numiter = numiter + 1
@@ -722,8 +694,8 @@ def rfwave_rfeta(N=None, h=None, ceta=None, k=None, x=None, c=None, t=None):
 
     """
 
-    jj = np.arange(0, N)  # 1:N;
-    mm = np.arange[0:N].T  # [0:N]';
+    jj = np.arange(0, N)
+    mm = np.arange[0:N].T
     ceta = k * (ceta - 1) * h
     Nceta = len(ceta)
     # TODO check index value -3
@@ -785,14 +757,14 @@ def rfwave_rfvel(B0=None, B=None, c=None, k=None, x=None, z=None, t=None):
     x0 = 0
 
     # Make the arrays 3D.
-    JJ = []  # python required otherwise JJ unknown
-    JJ[0, 0, :] = np.arange(0, len(B))  # JJ(1,1,:) = 1:length(B);
-    JJ = np.tile(JJ, (len(x), len(z), 1))  # repmat(JJ,[length(x), length(z),1]);
+    JJ = []
+    JJ[0, 0, :] = np.arange(0, len(B))
+    JJ = np.tile(JJ, (len(x), len(z), 1))
     BB = []
-    BB[0, 0, :] = B  # BB(1,1,:) = B;
-    BB = np.tile(BB, (len(x), len(z), 1))  # repmat(BB,[length(x), length(z),1]);
-    X = np.tile(x, (1, len(z), len(B)))  # repmat(x, [1, length(z), length(B)]);
-    Z = np.tile(z, (len(x), 1, len(B)))  # repmat(z, [length(x), 1, length(B)]);
+    BB[0, 0, :] = B
+    BB = np.tile(BB, (len(x), len(z), 1))
+    X = np.tile(x, (1, len(z), len(B)))
+    Z = np.tile(z, (len(x), 1, len(B)))
 
     # Determine the horizontal velocity u.
     UJ = (
@@ -801,9 +773,9 @@ def rfwave_rfvel(B0=None, B=None, c=None, k=None, x=None, z=None, t=None):
         * np.cosh(Z * JJ * k)
         / np.cosh(JJ * k * D)
         * np.cos((X - x0 - c * t) * JJ * k)
-    )  # JJ.*BB.*cosh(Z.*JJ*k)./cosh(JJ*k*D).*cos((X-x0-c*t).*JJ*k);
+    )
     u = c + B0 + k * sum(UJ, 3)
-    UJ = []  # clear UJ;
+    UJ = []
 
     # Determine the vertical velocity v.
     WJ = (
@@ -812,7 +784,7 @@ def rfwave_rfvel(B0=None, B=None, c=None, k=None, x=None, z=None, t=None):
         * np.sinh(Z * JJ * k)
         / np.cosh(JJ * k * D)
         * np.sin((X - x0 - c * t) * JJ * k)
-    )  # JJ.*BB.*sinh(Z.*JJ*k)./cosh(JJ*k*D).*sin((X-x0-c*t).*JJ*k);
+    )
     w = k * sum(WJ, 3)
 
     return u, w
@@ -850,7 +822,7 @@ def calc_l_lin(T, h, g):
     y = (2 * np.pi) ** 2 / T**2 * h / g  # omega^2*h/g
     x_o = 0.1  # old estimate
     x_n = 1  # new estimate
-    #
+
     # iteration
     while abs((x_n - x_o)) / x_n > 1e-12:
         x_o = x_n
@@ -877,7 +849,7 @@ def str2num_if_numeric(value: str = None) -> [(int or float or complex), bool]:
     ):
         number = value
         is_converted = True
-    elif value.strip().isnumeric():  # basically detects integers, without "."
+    elif value.strip().isnumeric():
         number = int(value)
         is_converted = True
     elif value.strip() == "":
@@ -1026,7 +998,6 @@ def interp_measurement_timeseries(
     set_interp = interp1d(in_time, in_signal, kind="cubic")
     y = set_interp(new_time)
     return y
-    # return np.interp(new_time, in_time, in_signal, left = np.nan, right = np.nan)
 
 
 def test_doctstrings():
