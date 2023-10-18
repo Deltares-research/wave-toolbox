@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import rayleigh
+from typing import Iterable, Union
 
 
 from deltares_wave_toolbox.spectrum import Spectrum
@@ -82,7 +83,7 @@ class WaveHeights:
         )
         return hExcPerc
 
-    def highest_waves(self, fracP: float) -> float | float:
+    def highest_waves(self, fracP: float) -> Iterable[Union[float, float]]:
         """
         HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
 

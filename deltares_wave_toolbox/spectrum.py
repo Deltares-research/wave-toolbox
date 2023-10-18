@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Iterable, Union
 
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -48,7 +49,7 @@ class Spectrum:
     def __repr__(self):
         return f"{type(self).__name__} (spec = {self.spec})"
 
-    def _set_flim(self, fmin: float, fmax: float) -> float | float:
+    def _set_flim(self, fmin: float, fmax: float) -> Iterable[Union[float, float]]:
         """Set frequency limits
 
         Args:

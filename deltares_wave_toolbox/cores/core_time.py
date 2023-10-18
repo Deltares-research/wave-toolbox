@@ -213,9 +213,7 @@ def determine_zero_crossing(t=None, x=None, typeCross="down"):
     return nWave, tCross
 
 
-def highest_waves_params(
-    hWaveSorted=None, tWaveSorted=None, fracP=None
-) -> list[float] | list[float]:
+def highest_waves_params(hWaveSorted=None, tWaveSorted=None, fracP=None):
     """
     HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
     (WAVELAB: highestwavesparams)

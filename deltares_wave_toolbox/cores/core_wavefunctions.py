@@ -3,6 +3,7 @@ import scipy.special as special
 from scipy.stats import exponweib
 import numpy as np
 import numpy.typing as npt
+from typing import Iterable, Union
 
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -681,7 +682,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
     water_depth: float,
     cota_slope: float = 250,
     tolerance: float = 1e-5,
-) -> npt.NDArray[np.float64] | npt.NDArray[np.float64]:
+) -> Iterable[Union[npt.NDArray[np.float64], npt.NDArray[np.float64]]]:
     """
     COMPUTE_BATTJESGROENENDIJK_WAVE_HEIGHT_DISTRIBUTION  Computes wave height distribution following Battjes and
     Groenendijk (2000)
