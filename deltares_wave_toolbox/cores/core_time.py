@@ -401,7 +401,7 @@ def exceedance_wave_height(hWaveSorted=None, excPerc=None) -> float:
 
 
 # ? Why oh why do we need to implement this ourselves???
-def determine_mean(qWave=None) -> float | Any:
+def determine_mean(qWave=None):
     """
     DETERMINE_MEAN  Determines mean of quantity
     (WAVELAB: determinemean)

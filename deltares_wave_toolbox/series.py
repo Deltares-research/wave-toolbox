@@ -289,7 +289,7 @@ class Series(WaveHeights):
         """
 
         [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.x, fres)
-        return spectrum.Spectrum(f, S)
+        return Spectrum(f, S)
 
     def max(self) -> float:
         return np.max(self.x)

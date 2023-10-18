@@ -6,7 +6,7 @@ import numpy.typing as npt
 
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
-from deltares_wave_toolbox.spectrum import Spectrum
+import deltares_wave_toolbox.spectrum as spectrum
 
 
 def compute_spectrum_params(
@@ -275,7 +275,7 @@ def create_spectrum_jonswap(
     gammaPeak: float = 3.3,
     l_fmax: float = 0,
     output_object: bool = True,
-) -> Spectrum | Any:
+) -> spectrum:
     """
     CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
 
