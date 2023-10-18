@@ -19,7 +19,6 @@ Tmm10 = spec.get_Tmm10()
 
 spec.plot(xlim=[0, 0.5])
 
-wpar = dwt.core_wavefunctions.compute_spectrum_params(spec.f, spec.S)
 # create Series from spectrum ##
 timeseries = spec.create_series(10, 3600, 0.1)
 

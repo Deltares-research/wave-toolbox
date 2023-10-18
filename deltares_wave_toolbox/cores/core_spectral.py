@@ -568,7 +568,7 @@ def compute_spectrum_time_series(t=None, xTime=None, dfDesired=None):
     else:
         [fCoarse, sCoarse] = frequency_averaging(f, sFine, dfDesired)
 
-    return [fCoarse, sCoarse]
+    return fCoarse, sCoarse
 
 
 def compute_spectrum_freq_series(f=None, xFreq=None, dfDesired=None, Ntime=None):
@@ -649,7 +649,7 @@ def compute_spectrum_freq_series(f=None, xFreq=None, dfDesired=None, Ntime=None)
     # --- Perform averaging
     [fCoarse, sCoarse] = frequency_averaging(f, sFine, dfDesired)
 
-    return [fCoarse, sCoarse]
+    return fCoarse, sCoarse
 
 
 def spectrum2timeseries(

@@ -296,7 +296,7 @@ def highest_waves_params(hWaveSorted=None, tWaveSorted=None, fracP=None):
     # --- Number of waves
     nWave = len(hWaveSorted)
     if nWave < 1:
-        return [hFracP, tFracP]
+        return hFracP, tFracP
 
     # --- Check whether hWaveSorted is indeed sorted
     issorted = (hWaveSorted == np.sort(hWaveSorted)[::-1]).all()
