@@ -10,7 +10,7 @@ import deltares_wave_toolbox as dwt
 # create JONSWAP Spectrum ##
 ff = np.linspace(0.01, 2, 1000)
 
-spec = dwt.core_wavefunctions.create_spectrum_jonswap(f=ff, fp=0.1, hm0=2)
+spec = dwt.core_wavefunctions.create_spectrum_object_jonswap(f=ff, fp=0.1, hm0=2)
 
 
 Hm0 = spec.get_Hm0()
@@ -19,6 +19,7 @@ Tmm10 = spec.get_Tmm10()
 
 spec.plot(xlim=[0, 0.5])
 
+wpar = dwt.core_wavefunctions.compute_spectrum_params(spec.f, spec.S)
 # create Series from spectrum ##
 timeseries = spec.create_series(10, 3600, 0.1)
 

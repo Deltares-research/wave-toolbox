@@ -279,7 +279,7 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, fres: float = 0.01) -> Spectrum:
+    def get_spectrum(self, fres: float = 0.01):
         """create spectrum
 
         Args:

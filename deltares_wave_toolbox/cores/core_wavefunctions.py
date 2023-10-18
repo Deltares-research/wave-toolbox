@@ -3,7 +3,6 @@ import scipy.special as special
 from scipy.stats import exponweib
 import numpy as np
 import numpy.typing as npt
-from typing import Iterable, Union
 
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -15,7 +14,7 @@ def compute_spectrum_params(
     S: npt.NDArray[np.float64] = None,
     fmin: float = None,
     fmax: float = None,
-):
+) -> tuple[float, float, float, float, float, float]:
     """
     COMPUTE_SPECTRUM_PARAMS  Computes spectral parameters of given spectrum
 
@@ -113,7 +112,7 @@ def compute_spectrum_params(
         Tmm10 = np.nan
         Tm01 = np.nan
         Tm02 = np.nan
-        return [Hm0, Tp, Tps, Tmm10, Tm01, Tm02]
+        return Hm0, Tp, Tps, Tmm10, Tm01, Tm02
 
     # --- Compute mean wave periods -----------------------------------------
     Tmm10 = m_1 / m0
@@ -141,8 +140,7 @@ def compute_spectrum_params(
 
     # --- Compute smoothed peak period --------------------------------------
     Tps = compute_tps(fMiMa, SMiMa)
-
-    return [Hm0, Tp, Tps, Tmm10, Tm01, Tm02]
+    return Hm0, Tp, Tps, Tmm10, Tm01, Tm02
 
 
 def compute_moment(
@@ -275,8 +273,7 @@ def create_spectrum_jonswap(
     hm0: float = None,
     gammaPeak: float = 3.3,
     l_fmax: float = 0,
-    output_object: bool = True,
-) -> spectrum.Spectrum:
+):
     """
     CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
 
@@ -419,11 +416,18 @@ def create_spectrum_jonswap(
     # --- Perform scaling, to obtain a variance density that has the proper
     #     energy, i.e. corresponding with wave height Hm0
     sVarDens = sVarDens * (hm0 / hm0NonScale) ** 2
+    return sVarDens
 
-    if output_object:
-        return spectrum.Spectrum(f, sVarDens)
-    else:
-        return sVarDens
+
+def create_spectrum_object_jonswap(
+    f: npt.NDArray[np.float64] = None,
+    fp: float = None,
+    hm0: float = None,
+    gammaPeak: float = 3.3,
+    l_fmax: float = 0.0,
+):
+    sVarDens = create_spectrum_jonswap(f, fp, hm0, gammaPeak, l_fmax)
+    return spectrum.Spectrum(f, sVarDens)
 
 
 def create_spectrum_piersonmoskowitz(
@@ -431,7 +435,6 @@ def create_spectrum_piersonmoskowitz(
     fp: float = None,
     hm0: float = None,
     l_fmax: float = 0,
-    output_object: bool = True,
 ):
     """
 
@@ -501,14 +504,18 @@ def create_spectrum_piersonmoskowitz(
     # --- Use the fact that the Pierson-Moskowitz spectrum is identical to the
     #     Jonswap spectrum with a peak enhancement factor equal to 1.
     gammaPeak = 1
-    sVarDens = create_spectrum_jonswap(
-        f, fp, hm0, gammaPeak, l_fmax, output_object=False
-    )
+    sVarDens = create_spectrum_jonswap(f, fp, hm0, gammaPeak, l_fmax)
+    return sVarDens
 
-    if output_object:
-        return spectrum.Spectrum(f, sVarDens)
-    else:
-        return sVarDens
+
+def create_spectrum_object_piersonmoskowitz(
+    f: npt.NDArray[np.float64] = None,
+    fp: float = None,
+    hm0: float = None,
+    l_fmax: float = 0,
+):
+    gammaPeak = 1
+    return create_spectrum_object_jonswap(f, fp, hm0, gammaPeak, l_fmax)
 
 
 def tpd(
@@ -682,7 +689,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
     water_depth: float,
     cota_slope: float = 250,
     tolerance: float = 1e-5,
-) -> Iterable[Union[npt.NDArray[np.float64], npt.NDArray[np.float64]]]:
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     COMPUTE_BATTJESGROENENDIJK_WAVE_HEIGHT_DISTRIBUTION  Computes wave height distribution following Battjes and
     Groenendijk (2000)
