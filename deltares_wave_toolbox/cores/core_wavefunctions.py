@@ -14,7 +14,7 @@ def compute_spectrum_params(
     S: npt.NDArray[np.float64] = None,
     fmin: float = None,
     fmax: float = None,
-) -> float | float | float | float | float | float:
+):
     """
     COMPUTE_SPECTRUM_PARAMS  Computes spectral parameters of given spectrum
 
