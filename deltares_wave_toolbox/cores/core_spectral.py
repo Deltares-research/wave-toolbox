@@ -777,13 +777,3 @@ def spectrum2timeseries_object(
 ):
     t, xTime = spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed)
     return series.Series(t, xTime)
-
-
-def test_doctstrings() -> None:
-    import doctest
-
-    doctest.testmod()
-
-
-if __name__ == "__main__":
-    test_doctstrings()

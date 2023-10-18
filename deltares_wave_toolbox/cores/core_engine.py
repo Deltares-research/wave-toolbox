@@ -1,53 +1,6 @@
 import numpy as np
 import numbers
-import re
 import sys
-from scipy.interpolate import interp1d
-
-
-# --- functions
-# ---- see https://stackoverflow.com/questions/736043/checking-if-a-string-can-be-converted-to-float-in-python
-def is_float(element: any) -> bool:
-    # If you expect None to be passed:
-    if element is None:
-        return False
-    try:
-        float(element)
-        return True
-    except ValueError:
-        return False
-
-
-def str2num(string: str):
-    return np.asfarray(string, dtype=float)
-
-
-def contains(src, substr):
-    if substr in src:
-        return True
-    return False
-
-
-def is_of_type_float(**kwargs):
-    for key, value in kwargs.items():
-        if not (isinstance(value, float)):
-            raise ValueError("Parameter" + key + " must be of type float")
-
-
-def genvarname(h):
-    # Remove invalid characters
-    if not iscell(h):
-        h = {h}
-
-    par = set()
-    for item in h:
-        s = re.sub(r"[^0-9a-zA-Z_]", "", item)
-        # Remove leading characters until we find a letter or underscore
-        s = re.sub(r"^[^a-zA-Z_]+", "", s)
-        s = re.sub(r"\W+|^(?=\d)", "_", s)
-        par.add(s.lower())
-
-    return par
 
 
 def convert_to_array_type(x):
@@ -87,21 +40,6 @@ def monotonic_increasing_constant_step(x):
     return xMonotonic and isUniform
 
 
-def _len(x):
-    lenx = 0
-    if x is not None:
-        if isinstance(x, list):
-            lenx = len(x)
-        elif isinstance(x, np.ndarray):
-            # TODO: need to handle lenx =0 and leny!=0 and lenx >0 and leny>0
-            lenx, leny = _size(x)
-    return lenx
-
-
-def ischar(h):
-    return h.isalpha()
-
-
 def _size(x):
     dimx = 0
     dimy = 0
@@ -123,10 +61,6 @@ def isempty(x):
     if dimx == 0 and dimy == 0:
         is_empty = True
     return is_empty
-
-
-def iscell(h):
-    return isinstance(h, set)
 
 
 def is1darray(x):
@@ -157,35 +91,6 @@ def approx_array_index(array, user_value: float):
     array = np.asarray(array)
     idx = (np.abs(array - user_value)).argmin()
     return idx
-
-
-def is_digit(inStr):
-    """
-    Returns a list of True/False on the location of a digit (or .) (True) in a string
-
-    Parameters
-    ----------
-    inStr : str
-        String to identify digits in.
-
-
-    Returns
-    -------
-    outIndx : list
-        True/False at locations of Digits/Characters.
-
-    """
-
-    if not isinstance(inStr, str):
-        raise TypeError("Input should be of type str")
-
-    outIndx = list()
-    for indx, char in enumerate(inStr):
-        if char.isdigit() or char == ".":
-            outIndx.append(True)
-        else:
-            outIndx.append(False)
-    return outIndx
 
 
 def list_of_strings_upper(in_list_strings):
@@ -829,37 +734,6 @@ def calc_l_lin(T, h, g):
     return L_lin
 
 
-def str2num_if_numeric(value: str = None) -> [(int or float or complex), bool]:
-    if (
-        not isinstance(value, str)
-        or isinstance(value, float)
-        or isinstance(value, int)
-        or isinstance(value, complex)
-    ):
-        number = value
-        is_converted = False
-    elif (
-        isinstance(value, float) or isinstance(value, int) or isinstance(value, complex)
-    ):
-        number = value
-        is_converted = True
-    elif value.strip().isnumeric():
-        number = int(value)
-        is_converted = True
-    elif value.strip() == "":
-        number = None
-        is_converted = True
-    else:
-        try:
-            number = float(value)
-            is_converted = True
-        except:
-            number = value
-            is_converted = False
-
-    return number, is_converted
-
-
 def acceleration(t: np.ndarray = None, x: np.ndarray = None) -> np.ndarray:
     """
     ACCELERATION  Computes the acceleration from a time signal x = x(t)
@@ -944,61 +818,3 @@ def velocity(t: np.ndarray = None, x: np.ndarray = None) -> np.ndarray:
     v[0] = (x[1] - x[0]) / (t[1] - t[0])
     v[nTime - 1] = (x[nTime - 1] - x[nTime - 2]) / (t[nTime - 1] - t[nTime - 2])
     return v
-
-
-def interp_measurement_timeseries(
-    in_time: list or np.ndarray,
-    in_signal: list or np.ndarray,
-    new_time: list or np.ndarray,
-):
-    """
-    Interpolates one timeseries onto another
-
-    Parameters
-    ----------
-    in_time : list or np.ndarray
-        DESCRIPTION.
-    in_signal : list or np.ndarray
-        DESCRIPTION.
-    new_time : list or np.ndarray
-        DESCRIPTION.
-
-    Raises
-    ------
-    ValueError
-        DESCRIPTION.
-
-    Returns
-    -------
-    TYPE
-        DESCRIPTION.
-
-    """
-
-    if (
-        not isinstance(in_time, (list, np.ndarray))
-        or not isinstance(in_signal, (list, np.ndarray))
-        or not isinstance(new_time, (list, np.ndarray))
-    ):
-        raise ValueError("Input should be in the form of lists or np,array")
-
-    if isinstance(in_time, list):
-        in_time = np.ndarray(in_time)
-    if isinstance(in_signal, list):
-        in_signal = np.ndarray(in_signal)
-    if isinstance(new_time, list):
-        new_time = np.ndarray(new_time)
-
-    set_interp = interp1d(in_time, in_signal, kind="cubic")
-    y = set_interp(new_time)
-    return y
-
-
-def test_doctstrings():
-    import doctest
-
-    doctest.testmod()
-
-
-if __name__ == "__main__":
-    test_doctstrings()

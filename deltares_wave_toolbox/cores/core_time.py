@@ -558,13 +558,3 @@ def determine_params_individual_waves(
         hWave[iWave] = aCrest[iWave] - aTrough[iWave]
 
     return hWave, tWave, aCrest, aTrough, tCrest, tTrough
-
-
-def test_doctstrings() -> None:
-    import doctest
-
-    doctest.testmod()
-
-
-if __name__ == "__main__":
-    test_doctstrings()
