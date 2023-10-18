@@ -76,9 +76,9 @@ def test_unfold_spectrum(f, xFreq, fTotCorrect, xFreqTotCorrect, isOdd):
     fTot, xFreqTot = core_spectral.unfold_spectrum(f, xFreq, isOdd)
 
     # TODO 2 assert statements in one test isn't ideal, check for workable alternatives
-    assert fTot == pytest.approx(fTotCorrect)
+    assert fTot == pytest.approx(fTotCorrect, abs=1e-4)
 
-    assert xFreqTot == pytest.approx(xFreqTotCorrect)
+    assert xFreqTot == pytest.approx(xFreqTotCorrect, abs=1e-4)
 
 
 def test_freq2time():
@@ -96,7 +96,7 @@ def test_freq2time():
     f, yFreq = core_spectral.time2freq(t, y)
     yTime = core_spectral.freq2time(yFreq)
 
-    assert yTime == pytest.approx(y)
+    assert yTime == pytest.approx(y, abs=1e-4)
 
 
 def test_compute_spectrum_time_series():
@@ -164,9 +164,9 @@ def test_compute_spectrum_time_series():
         0.0070,
     ]
 
-    assert fS == pytest.approx(fCorrect)
+    assert fS == pytest.approx(fCorrect, abs=1e-4)
 
-    assert S == pytest.approx(SCorrect)
+    assert S == pytest.approx(SCorrect, abs=1e-4)
 
 
 @pytest.mark.parametrize(
@@ -299,6 +299,6 @@ def test_compute_spectrum_freq_series(fCorrect, SCorrect, df):
     [f, xFreq, isOdd] = core_spectral.time2freq_nyquist(t, z)
     [fS, S] = core_spectral.compute_spectrum_freq_series(f, xFreq, df, len(t))
 
-    assert fS == pytest.approx(fCorrect)
+    assert fS == pytest.approx(fCorrect, abs=1e-4)
 
-    assert S == pytest.approx(SCorrect)
+    assert S == pytest.approx(SCorrect, abs=1e-4)

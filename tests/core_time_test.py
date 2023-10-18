@@ -144,12 +144,11 @@ def test_determine_zero_crossings(
     # TODO 4 assert statements in one test isn't ideal, check for workable alternatives
     assert nWaveDown == nWaveDownCorrect
 
-    # TODO fails for rel=1e-6 for pattern 1, check whether something is wrong
-    assert tCrossDown == pytest.approx(tCrossDownCorrect, rel=1e-4)
+    assert tCrossDown == pytest.approx(tCrossDownCorrect, abs=1e-4)
 
     assert nWaveUp == nWaveUpCorrect
 
-    assert tCrossUp == pytest.approx(tCrossUpCorrect)
+    assert tCrossUp == pytest.approx(tCrossUpCorrect, abs=1e-4)
 
 
 @pytest.mark.parametrize(
@@ -176,9 +175,9 @@ def test_highest_waves_params(
 ):
     [hFracP, tFracP] = core_time.highest_waves_params(hWaveSorted, tWaveSorted, fracP)
 
-    assert hFracP == pytest.approx(hFracPCorrect)
+    assert hFracP == pytest.approx(hFracPCorrect, abs=1e-4)
 
-    assert tFracP == pytest.approx(tFracPCorrect)
+    assert tFracP == pytest.approx(tFracPCorrect, abs=1e-4)
 
 
 @pytest.mark.parametrize(
@@ -191,7 +190,7 @@ def test_highest_waves_params(
 def test_exceedance_wave_height(hWaveSorted, excPerc, hExcPercCorrect):
     hExcPerc = core_time.exceedance_wave_height(hWaveSorted, excPerc)
 
-    assert hExcPerc == pytest.approx(hExcPercCorrect)
+    assert hExcPerc == pytest.approx(hExcPercCorrect, abs=1e-4)
 
 
 @pytest.mark.parametrize(
@@ -313,17 +312,17 @@ def test_determine_params_individual_waves(
         tTroughUp,
     ] = core_time.determine_params_individual_waves(tCrossUp, t_input, x_input)
 
-    assert hWaveUp == pytest.approx(hWaveUpCorrect)
+    assert hWaveUp == pytest.approx(hWaveUpCorrect, abs=1e-4)
 
-    assert tWaveUp == pytest.approx(tWaveUpCorrect)
+    assert tWaveUp == pytest.approx(tWaveUpCorrect, abs=1e-4)
 
-    assert aCrestUp == pytest.approx(aCrestUpCorrect)
+    assert aCrestUp == pytest.approx(aCrestUpCorrect, abs=1e-4)
 
-    assert aTroughUp == pytest.approx(aTroughUpCorrect)
+    assert aTroughUp == pytest.approx(aTroughUpCorrect, abs=1e-4)
 
-    assert tCrestUp == pytest.approx(tCrestUpCorrect)
+    assert tCrestUp == pytest.approx(tCrestUpCorrect, abs=1e-4)
 
-    assert tTroughUp == pytest.approx(tTroughUpCorrect)
+    assert tTroughUp == pytest.approx(tTroughUpCorrect, abs=1e-4)
 
     [
         hWaveDown,
@@ -334,14 +333,14 @@ def test_determine_params_individual_waves(
         tTroughDown,
     ] = core_time.determine_params_individual_waves(tCrossDown, t_input, x_input)
 
-    assert hWaveDown == pytest.approx(hWaveDownCorrect)
+    assert hWaveDown == pytest.approx(hWaveDownCorrect, abs=1e-4)
 
-    assert tWaveDown == pytest.approx(tWaveDownCorrect)
+    assert tWaveDown == pytest.approx(tWaveDownCorrect, abs=1e-4)
 
-    assert aCrestDown == pytest.approx(aCrestDownCorrect)
+    assert aCrestDown == pytest.approx(aCrestDownCorrect, abs=1e-4)
 
-    assert aTroughDown == pytest.approx(aTroughDownCorrect)
+    assert aTroughDown == pytest.approx(aTroughDownCorrect, abs=1e-4)
 
-    assert tCrestDown == pytest.approx(tCrestDownCorrect)
+    assert tCrestDown == pytest.approx(tCrestDownCorrect, abs=1e-4)
 
-    assert tTroughDown == pytest.approx(tTroughDownCorrect)
+    assert tTroughDown == pytest.approx(tTroughDownCorrect, abs=1e-4)

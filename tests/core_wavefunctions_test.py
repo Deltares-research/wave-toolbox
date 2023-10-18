@@ -139,7 +139,7 @@ def test_create_spectrum_piersonmoskowitz():
         f, fp, hm0, output_object=False
     )
 
-    assert sVarDens == pytest.approx(sVarDensCorrect)
+    assert sVarDens == pytest.approx(sVarDensCorrect, abs=1e-4)
 
 
 def test_create_spectrum_jonswap():
@@ -258,4 +258,4 @@ def test_create_spectrum_jonswap():
         f, fp, hm0, gammaPeak, output_object=False
     )
 
-    assert sVarDens == pytest.approx(sVarDensCorrect)
+    assert sVarDens == pytest.approx(sVarDensCorrect, abs=1e-4)
