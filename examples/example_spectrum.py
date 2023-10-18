@@ -30,7 +30,7 @@ f, xFreq, isOdd = timeseries.get_fourier_comp()
 plt.figure()
 plt.plot(f, xFreq)
 
-[ff, ss] = dwt.core_spectral.compute_spectrum_freq_serie(f, xFreq, 0.01, timeseries.nt)
+[ff, ss] = dwt.core_spectral.compute_spectrum_freq_series(f, xFreq, 0.01, timeseries.nt)
 
 plt.figure()
 plt.plot(ff, ss)
