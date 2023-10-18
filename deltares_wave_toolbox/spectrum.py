@@ -13,7 +13,7 @@ class Spectrum:
     The wave Spectrum class
     """
 
-    def __init__(self, f: np.ndarray, S, D=None):
+    def __init__(self, f: np.ndarray, S, D=None) -> None:
         """_The init function
 
         Args:
@@ -43,10 +43,10 @@ class Spectrum:
         else:
             self.spec = "2D"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.spec} wave spectrum with {self.nf} number of frequencies"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__} (spec = {self.spec})"
 
     def _set_flim(self, fmin: float, fmax: float) -> Iterable[Union[float, float]]:
