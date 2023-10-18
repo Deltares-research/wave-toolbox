@@ -36,31 +36,16 @@ class WaveHeights:
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
 
     def get_Hrms(self) -> float:
-        Hrms = np.sqrt(np.mean(self.hwave**2))
-        return Hrms
+        return np.sqrt(np.mean(self.hwave**2))
 
     def get_Hmax(self) -> float:
         return np.max(self.hwave)
 
     def get_Hs(self) -> float:
-        """Compute Hs
-
-        Returns:
-            float: Hs
-        """
-        Hs = self.highest_waves(1 / 3)
-        return Hs
+        return self.highest_waves(1 / 3)
 
     def get_H2p_Rayleigh(self) -> float:
-        """Compute theoretical H2% assuming Rayleigh distribution
-
-        Returns:
-            float: H2p_Rayleigh
-        """
-        H2p_Rayleigh = (
-            self.get_Hs()[0] * rayleigh.ppf(0.98, scale=1 / np.sqrt(2)) / np.sqrt(2)
-        )
-        return H2p_Rayleigh
+        return self.get_Hs()[0] * rayleigh.ppf(0.98, scale=1 / np.sqrt(2)) / np.sqrt(2)
 
     def get_exceedance_waveheight(self, excPerc: float) -> float:
         """
@@ -78,10 +63,7 @@ class WaveHeights:
             hExcPerc(float):  wave height with given exceedance probability
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
-        hExcPerc = core_time.exceedance_wave_height(
-            hWaveSorted=self.hwave, excPerc=excPerc
-        )
-        return hExcPerc
+        return core_time.exceedance_wave_height(hWaveSorted=self.hwave, excPerc=excPerc)
 
     def highest_waves(self, fracP: float) -> Iterable[Union[float, float]]:
         """
@@ -316,7 +298,7 @@ class Series(WaveHeights):
         return f, xFreq, isOdd
 
     def _determine_individual_waves(self, typeCross: str = "down"):
-        """dtermine individual waves in series
+        """determine individual waves in series
 
         Args:
             typeCross (str, optional): type of crossing (down or up). Defaults to 'down'.
