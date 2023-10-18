@@ -505,9 +505,7 @@ def time2freq_nyquist(t, xTime):
     return f, xFreq, isOdd
 
 
-def compute_spectrum_time_series(
-    t=None, xTime=None, dfDesired=None
-) -> list[np.ndarray] | list[np.ndarray]:
+def compute_spectrum_time_series(t=None, xTime=None, dfDesired=None):
     """
     @brief
     COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
