@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -5,6 +7,7 @@ import numpy.typing as npt
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
+import deltares_wave_toolbox.series as series
 
 
 class Spectrum:
@@ -180,7 +183,7 @@ class Spectrum:
         self.Tm02 = np.sqrt(m0 / m2)
         return self.Tm02
 
-    def create_series(self, tstart: float, tend: float, dt: float):
+    def create_series(self, tstart: float, tend: float, dt: float) -> series.Series:
         """Construct series from Spectrum with random phase
 
         Args:
@@ -198,10 +201,10 @@ class Spectrum:
 
     def plot(
         self,
-        savepath: str = None,
+        savepath: str = "",
         fig=None,
         plot_periods: bool = True,
-        xlim: float = None,
+        xlim: float = -999.0,
     ) -> None:
         """Plot spectrum
 
@@ -229,7 +232,7 @@ class Spectrum:
         plt.xlabel("f [$Hz$]")
         plt.ylabel("S [$m^2/Hz$]")
         plt.legend()
-        if xlim is not None:
+        if xlim != -999.0:
             plt.xlim(xlim)
-        if savepath is not None:
+        if savepath != "":
             plt.savefig(savepath)

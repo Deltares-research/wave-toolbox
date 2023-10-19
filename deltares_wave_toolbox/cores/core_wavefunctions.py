@@ -143,9 +143,9 @@ def compute_spectrum_params(
 
 
 def compute_moment(
-    f: npt.NDArray[np.float64] = None,
-    S: npt.NDArray[np.float64] = None,
-    m: int = None,
+    f: npt.NDArray[np.float64],
+    S: npt.NDArray[np.float64],
+    m: int,
     fmin: float = None,
     fmax: float = None,
 ) -> float:
@@ -267,12 +267,12 @@ def compute_moment(
 
 
 def create_spectrum_jonswap(
-    f: npt.NDArray[np.float64] = None,
-    fp: float = None,
-    hm0: float = None,
+    f: npt.NDArray[np.float64],
+    fp: float,
+    hm0: float,
     gammaPeak: float = 3.3,
     l_fmax: float = 0,
-):
+) -> npt.NDArray[np.float64]:
     """
     CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
 
@@ -419,22 +419,23 @@ def create_spectrum_jonswap(
 
 
 def create_spectrum_object_jonswap(
-    f: npt.NDArray[np.float64] = None,
-    fp: float = None,
-    hm0: float = None,
+    f: npt.NDArray[np.float64],
+    fp: float,
+    hm0: float,
     gammaPeak: float = 3.3,
     l_fmax: float = 0.0,
-):
+) -> spectrum.Spectrum:
     sVarDens = create_spectrum_jonswap(f, fp, hm0, gammaPeak, l_fmax)
     return spectrum.Spectrum(f, sVarDens)
 
 
 def create_spectrum_piersonmoskowitz(
-    f: npt.NDArray[np.float64] = None,
-    fp: float = None,
-    hm0: float = None,
+    f: npt.NDArray[np.float64],
+    fp: float,
+    hm0: float,
+    gammaPeak: float = 1.0,
     l_fmax: float = 0,
-):
+) -> npt.NDArray[np.float64]:
     """
 
     CREATE_SPECTRUM_PIERSONMOSKOWITZ  Creates a Pierson-Moskowitz spectrum
@@ -497,28 +498,25 @@ def create_spectrum_piersonmoskowitz(
     """
 
     # --- Ensure array input is of type ndarray.
-    f, fSize = core_engine.convert_to_vector(f)
+    f, _ = core_engine.convert_to_vector(f)
 
     # Computational core
     # --- Use the fact that the Pierson-Moskowitz spectrum is identical to the
     #     Jonswap spectrum with a peak enhancement factor equal to 1.
-    gammaPeak = 1
     return create_spectrum_jonswap(f, fp, hm0, gammaPeak, l_fmax)
 
 
 def create_spectrum_object_piersonmoskowitz(
-    f: npt.NDArray[np.float64] = None,
-    fp: float = None,
-    hm0: float = None,
+    f: npt.NDArray[np.float64],
+    fp: float,
+    hm0: float,
+    gammaPeak: float = 1.0,
     l_fmax: float = 0,
-):
-    gammaPeak = 1
+) -> spectrum.Spectrum:
     return create_spectrum_object_jonswap(f, fp, hm0, gammaPeak, l_fmax)
 
 
-def tpd(
-    freqs: npt.NDArray[np.float64] = None, spectrum: npt.NDArray[np.float64] = None
-) -> float:
+def tpd(freqs: npt.NDArray[np.float64], spectrum: npt.NDArray[np.float64]) -> float:
     """
     TpD : Function which calculates the spectral period (s)
 
@@ -531,8 +529,8 @@ def tpd(
     Note: For definition of TpD: Overstap van piekperiode naar spectrale periode bij ontwerp van steenzettingen
     """
 
-    freqs, f_size = core_engine.convert_to_vector(freqs)
-    spectrum, spectrum_size = core_engine.convert_to_vector(spectrum)
+    freqs, _ = core_engine.convert_to_vector(freqs)
+    spectrum, _ = core_engine.convert_to_vector(spectrum)
 
     # --- calculate the spectral period (TPD) (s)
     max_spectum = max(spectrum) * 0.8
@@ -548,9 +546,7 @@ def tpd(
     return m0 / m1
 
 
-def compute_tps(
-    f: npt.NDArray[np.float64] = None, S: npt.NDArray[np.float64] = None
-) -> float:
+def compute_tps(f: npt.NDArray[np.float64], S: npt.NDArray[np.float64]) -> float:
     """
     COMPUTE_TPS  Computes smoothed peak period.
 
@@ -791,7 +787,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
         else:
             P_H_tr = np.exp(-np.power(H_transition / H_2, k2))
 
-        hwave_BG = np.array([0, H_transition, x])
-        Pexceedance_BG = np.array([1, P_H_tr, 1 / nwave])
+        hwave_BG = np.array([0.0, H_transition, float(x)])
+        Pexceedance_BG = np.array([1, float(P_H_tr), 1 / nwave])
 
     return hwave_BG, Pexceedance_BG

@@ -38,10 +38,10 @@ class WaveHeights:
     def get_Hrms(self) -> float:
         return np.sqrt(np.mean(self.hwave**2))
 
-    def get_Hmax(self) -> float:
+    def get_Hmax(self) -> np.float64:
         return np.max(self.hwave)
 
-    def get_Hs(self) -> float:
+    def get_Hs(self) -> tuple[float, float]:
         return self.highest_waves(1 / 3)
 
     def get_H2p_Rayleigh(self) -> float:
@@ -92,7 +92,7 @@ class WaveHeights:
         )
         return hFracP, tFracP
 
-    def plot_exceedance_waveheight(self, savepath: str = None, fig=None) -> None:
+    def plot_exceedance_waveheight(self, savepath: str = "", fig=None) -> None:
         """Plot exceedances of wave heights
 
         Args:
@@ -112,18 +112,18 @@ class WaveHeights:
         plt.ylabel("P exceedance ")
         plt.legend()
 
-        if savepath is not None:
+        if savepath != "":
             plt.savefig(savepath)
 
     def plot_exceedance_waveheight_Rayleigh(
         self,
+        savepath: str = "",
+        fig=None,
         normalize: bool = False,
         plot_BG: bool = False,
-        water_depth: float = None,
-        cota_slope: float = None,
-        Hm0: float = None,
-        savepath: str = None,
-        fig=None,
+        water_depth: float = -1.0,
+        cota_slope: float = 250.0,
+        Hm0: float = -1.0,
     ) -> None:
         """Plot exceedances of wave heights compared to Rayleigh distribution
 
@@ -190,10 +190,10 @@ class WaveHeights:
             labels=xtick_positions,
         )
 
-        if savepath is not None:
+        if savepath != "":
             plt.savefig(savepath)
 
-    def plot_hist_waveheight(self, savepath: str = None, fig=None) -> None:
+    def plot_hist_waveheight(self, savepath: str = "", fig=None) -> None:
         """Plot Histogram of wave heights
 
         Args:
@@ -210,7 +210,7 @@ class WaveHeights:
         plt.ylabel("P ")
         plt.legend()
 
-        if savepath is not None:
+        if savepath != "":
             plt.savefig(savepath)
 
 
@@ -359,7 +359,7 @@ class Series(WaveHeights):
         )
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
-    def plot(self, savepath: str = None, fig=None, plot_crossing: bool = False) -> None:
+    def plot(self, savepath: str = "", fig=None, plot_crossing: bool = False) -> None:
         """Plot Series
 
         Args:
@@ -380,5 +380,5 @@ class Series(WaveHeights):
         plt.ylabel("z [$m$]")
         plt.legend()
 
-        if savepath is not None:
+        if savepath != "":
             plt.savefig(savepath)
