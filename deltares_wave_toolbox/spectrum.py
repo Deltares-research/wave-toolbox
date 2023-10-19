@@ -13,23 +13,24 @@ import deltares_wave_toolbox.series as series
 
 
 class Spectrum:
+    """The wave Spectrum class
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        array with frequencies
+    S : NDArray[float64]
+        array with energy density
+    D : NDArray[float64], optional
+        array with directions for 2D spectrum, by default np.empty((0, 0))
+    """
+
     def __init__(
         self,
         f: NDArray[float64],
         S: NDArray[float64],
         D: NDArray[float64] = np.empty((0, 0)),
     ) -> None:
-        """The wave Spectrum class
-
-        Parameters
-        ----------
-        f : NDArray[float64]
-            array with frequencies
-        S : NDArray[float64]
-            array with energy density
-        D : NDArray[float64], optional
-            array with directions for 2D spectrum, by default np.empty((0, 0))
-        """
         f, fSize = core_engine.convert_to_vector(f)
         S, SSize = core_engine.convert_to_vector(S)
 

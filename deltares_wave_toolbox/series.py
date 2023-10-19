@@ -13,16 +13,17 @@ import deltares_wave_toolbox.spectrum as spectrum
 
 
 class WaveHeights:
-    def __init__(self, hwave: NDArray[float64], twave: NDArray[float64]) -> None:
-        """The WaveHeights class
+    """The WaveHeights class
 
-        Parameters
-        ----------
-        hwave : NDArray[float64]
-            Array of wave heights
-        twave : NDArray[float64]
-            Array of wave periods
-        """
+    Parameters
+    ----------
+    hwave : NDArray[float64]
+        Array of wave heights
+    twave : NDArray[float64]
+        Array of wave periods
+    """
+
+    def __init__(self, hwave: NDArray[float64], twave: NDArray[float64]) -> None:
         hwave, _ = core_engine.convert_to_vector(hwave)
         twave, _ = core_engine.convert_to_vector(twave)
 
@@ -286,27 +287,19 @@ class WaveHeights:
 
 
 class Series(WaveHeights):
-    """
+    """The wave Series class
 
-    Args:
-        WaveHeights (_type_): _description_
+    Contains a time series (typically) of water level elevations. Inherits from WaveHeights class.
 
-    Returns:
-        _type_: _description_
+    Parameters
+    ----------
+    time : NDArray[float64]
+        time array
+    x : NDArray[float64]
+        varying quantity (typically water level elevation)
     """
 
     def __init__(self, time: NDArray[float64], x: NDArray[float64]) -> None:
-        """The wave Series class
-
-        Contains a time series (typically) of water level elevations. Inherits from WaveHeights class.
-
-        Parameters
-        ----------
-        time : NDArray[float64]
-            time array
-        x : NDArray[float64]
-            varying quantity (typically water level elevation)
-        """
         time, tSize = core_engine.convert_to_vector(time)
         x, xSize = core_engine.convert_to_vector(x)
 
