@@ -1,6 +1,6 @@
 import numbers
 import sys
-from typing import Any, Union
+from typing import Any
 
 import numpy as np
 import numpy.typing as npt
@@ -9,7 +9,7 @@ import numpy.typing as npt
 def convert_to_array_type(x: npt.ArrayLike) -> npt.NDArray[Any]:
     if isinstance(x, numbers.Number):
         x = np.asarray([x])
-    elif not isinstance(x, (np.ndarray)):
+    elif not isinstance(x, np.ndarray):
         x = np.asarray(x)
     return x
 
@@ -23,13 +23,6 @@ def convert_to_vector(x: npt.ArrayLike) -> tuple[npt.NDArray[Any], tuple[int, in
         x = x.flatten()
 
     return x, xSize
-
-
-def get_parameter_type(x: npt.ArrayLike) -> Union[type[complex], type[float]]:
-    if isinstance(x, complex):
-        return complex
-    else:
-        return float
 
 
 def monotonic_increasing_constant_step(x: npt.ArrayLike) -> bool:

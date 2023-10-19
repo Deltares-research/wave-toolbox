@@ -74,7 +74,7 @@ def frequency_averaging(
 
     # --- Initialize arrays
     fCoarse = np.zeros(len(f[0:nCoarse]))
-    sFreqCoarse = np.zeros(len(fCoarse), dtype=core_engine.get_parameter_type(sFreq[0]))
+    sFreqCoarse = np.zeros(len(fCoarse), dtype=type(sFreq[0]))
 
     # --- Perform the averaging
     for iFreq in np.arange(0, nCoarse):  # before np.arange(0,nCoarse)
