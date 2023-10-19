@@ -1,7 +1,8 @@
 import numpy as np
-import numpy.typing as npt
 import scipy.integrate as integrate
 import scipy.special as special
+from numpy import float64
+from numpy.typing import NDArray
 from scipy.stats import exponweib
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -9,8 +10,8 @@ import deltares_wave_toolbox.spectrum as spectrum
 
 
 def compute_spectrum_params(
-    f: npt.NDArray[np.float64],
-    S: npt.NDArray[np.float64],
+    f: NDArray[float64],
+    S: NDArray[float64],
     fmin: float = -1.0,
     fmax: float = -1.0,
 ) -> tuple[float, float, float, float, float, float]:
@@ -143,8 +144,8 @@ def compute_spectrum_params(
 
 
 def compute_moment(
-    f: npt.NDArray[np.float64],
-    S: npt.NDArray[np.float64],
+    f: NDArray[float64],
+    S: NDArray[float64],
     m: int,
     fmin: float = -1.0,
     fmax: float = -1.0,
@@ -267,12 +268,12 @@ def compute_moment(
 
 
 def create_spectrum_jonswap(
-    f: npt.NDArray[np.float64],
+    f: NDArray[float64],
     fp: float,
     hm0: float,
     gammaPeak: float = 3.3,
     l_fmax: float = 0,
-) -> npt.NDArray[np.float64]:
+) -> NDArray[float64]:
     """
     CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
 
@@ -419,7 +420,7 @@ def create_spectrum_jonswap(
 
 
 def create_spectrum_object_jonswap(
-    f: npt.NDArray[np.float64],
+    f: NDArray[float64],
     fp: float,
     hm0: float,
     gammaPeak: float = 3.3,
@@ -430,12 +431,12 @@ def create_spectrum_object_jonswap(
 
 
 def create_spectrum_piersonmoskowitz(
-    f: npt.NDArray[np.float64],
+    f: NDArray[float64],
     fp: float,
     hm0: float,
     gammaPeak: float = 1.0,
     l_fmax: float = 0,
-) -> npt.NDArray[np.float64]:
+) -> NDArray[float64]:
     """
 
     CREATE_SPECTRUM_PIERSONMOSKOWITZ  Creates a Pierson-Moskowitz spectrum
@@ -507,7 +508,7 @@ def create_spectrum_piersonmoskowitz(
 
 
 def create_spectrum_object_piersonmoskowitz(
-    f: npt.NDArray[np.float64],
+    f: NDArray[float64],
     fp: float,
     hm0: float,
     gammaPeak: float = 1.0,
@@ -516,7 +517,7 @@ def create_spectrum_object_piersonmoskowitz(
     return create_spectrum_object_jonswap(f, fp, hm0, gammaPeak, l_fmax)
 
 
-def tpd(freqs: npt.NDArray[np.float64], spectrum: npt.NDArray[np.float64]) -> float:
+def tpd(freqs: NDArray[float64], spectrum: NDArray[float64]) -> float:
     """
     TpD : Function which calculates the spectral period (s)
 
@@ -546,7 +547,7 @@ def tpd(freqs: npt.NDArray[np.float64], spectrum: npt.NDArray[np.float64]) -> fl
     return m0 / m1
 
 
-def compute_tps(f: npt.NDArray[np.float64], S: npt.NDArray[np.float64]) -> float:
+def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
     """
     COMPUTE_TPS  Computes smoothed peak period.
 
@@ -683,7 +684,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
     water_depth: float,
     cota_slope: float = 250.0,
     tolerance: float = 1e-5,
-) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+) -> tuple[NDArray[float64], NDArray[float64]]:
     """
     COMPUTE_BATTJESGROENENDIJK_WAVE_HEIGHT_DISTRIBUTION  Computes wave height distribution following Battjes and
     Groenendijk (2000)

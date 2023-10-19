@@ -3,10 +3,10 @@ import sys
 from typing import Any
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray, ArrayLike
 
 
-def convert_to_array_type(x: npt.ArrayLike) -> npt.NDArray[Any]:
+def convert_to_array_type(x: ArrayLike) -> NDArray[Any]:
     if isinstance(x, numbers.Number):
         x = np.asarray([x])
     elif not isinstance(x, np.ndarray):
@@ -14,7 +14,7 @@ def convert_to_array_type(x: npt.ArrayLike) -> npt.NDArray[Any]:
     return x
 
 
-def convert_to_vector(x: npt.ArrayLike) -> tuple[npt.NDArray[Any], tuple[int, int]]:
+def convert_to_vector(x: ArrayLike) -> tuple[NDArray[Any], tuple[int, int]]:
     x = convert_to_array_type(x)
 
     # ensure vector convention if 1d array is used either (n,1) or (n,)
@@ -25,7 +25,7 @@ def convert_to_vector(x: npt.ArrayLike) -> tuple[npt.NDArray[Any], tuple[int, in
     return x, xSize
 
 
-def monotonic_increasing_constant_step(x: npt.ArrayLike) -> bool:
+def monotonic_increasing_constant_step(x: ArrayLike) -> bool:
     xDiff = np.diff(x)
     isUniform = bool(np.all((xDiff - xDiff[0]) < 1000000 * sys.float_info.epsilon))
     xMonotonic = bool(np.all(xDiff > 0))
@@ -33,7 +33,7 @@ def monotonic_increasing_constant_step(x: npt.ArrayLike) -> bool:
     return xMonotonic and isUniform
 
 
-def _size(x: npt.ArrayLike) -> tuple[int, int]:
+def _size(x: ArrayLike) -> tuple[int, int]:
     dimx = 0
     dimy = 0
     if x.size != 0:
@@ -48,7 +48,7 @@ def _size(x: npt.ArrayLike) -> tuple[int, int]:
     return dimx, dimy
 
 
-def is1darray(x: npt.ArrayLike) -> bool:
+def is1darray(x: ArrayLike) -> bool:
     is1d = False
     dimx, dimy = _size(x)
     if dimx != 0 and dimy == 0:
@@ -56,7 +56,7 @@ def is1darray(x: npt.ArrayLike) -> bool:
     return is1d
 
 
-def approx_array_index(array: npt.ArrayLike, user_value: float) -> int:
+def approx_array_index(array: ArrayLike, user_value: float) -> int:
     """
     Return index of the array value closest to user specified value.
 

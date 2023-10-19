@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import numpy.typing as npt
 from matplotlib import figure
+from numpy import complex128, float64
+from numpy.typing import NDArray
 from scipy.stats import rayleigh
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -12,9 +13,7 @@ import deltares_wave_toolbox.spectrum as spectrum
 
 
 class WaveHeights:
-    def __init__(
-        self, hwave: npt.NDArray[np.float64], twave: npt.NDArray[np.float64]
-    ) -> None:
+    def __init__(self, hwave: NDArray[float64], twave: NDArray[float64]) -> None:
         hwave, _ = core_engine.convert_to_vector(hwave)
         twave, _ = core_engine.convert_to_vector(twave)
 
@@ -39,7 +38,7 @@ class WaveHeights:
     def get_Hrms(self) -> float:
         return np.sqrt(np.mean(self.hwave**2))
 
-    def get_Hmax(self) -> np.float64:
+    def get_Hmax(self) -> float64:
         return np.max(self.hwave)
 
     def get_Hs(self) -> tuple[float, float]:
@@ -224,9 +223,7 @@ class Series(WaveHeights):
         _type_: _description_
     """
 
-    def __init__(
-        self, time: npt.NDArray[np.float64], x: npt.NDArray[np.float64]
-    ) -> None:
+    def __init__(self, time: NDArray[float64], x: NDArray[float64]) -> None:
         time, tSize = core_engine.convert_to_vector(time)
         x, xSize = core_engine.convert_to_vector(x)
 
@@ -252,9 +249,7 @@ class Series(WaveHeights):
     def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
-    def get_crossing(
-        self, typeCross: str = "down"
-    ) -> tuple[int, npt.NDArray[np.float64]]:
+    def get_crossing(self, typeCross: str = "down") -> tuple[int, NDArray[float64]]:
         """Get zero crossings
 
         Args:
@@ -295,7 +290,7 @@ class Series(WaveHeights):
 
     def get_fourier_comp(
         self,
-    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.complex128], bool]:
+    ) -> tuple[NDArray[float64], NDArray[complex128], bool]:
         """get Fourier components from series
 
         Returns:
@@ -309,12 +304,12 @@ class Series(WaveHeights):
     def _determine_individual_waves(
         self, typeCross: str = "down"
     ) -> tuple[
-        npt.NDArray[np.float64],
-        npt.NDArray[np.float64],
-        npt.NDArray[np.float64],
-        npt.NDArray[np.float64],
-        npt.NDArray[np.float64],
-        npt.NDArray[np.float64],
+        NDArray[float64],
+        NDArray[float64],
+        NDArray[float64],
+        NDArray[float64],
+        NDArray[float64],
+        NDArray[float64],
     ]:
         """determine individual waves in series
 

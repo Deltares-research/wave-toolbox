@@ -1,12 +1,13 @@
 import numpy as np
-import numpy.typing as npt
+from numpy import float64
+from numpy.typing import NDArray
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 
 
 def sort_wave_params(
-    hWave: npt.NDArray[np.float64], tWave: npt.NDArray[np.float64]
-) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+    hWave: NDArray[float64], tWave: NDArray[float64]
+) -> tuple[NDArray[float64], NDArray[float64]]:
     """
     SORT_WAVE_PARAMS  Sorts the wave height and wave period
 
@@ -98,10 +99,10 @@ def sort_wave_params(
 
 
 def determine_zero_crossing(
-    t: npt.NDArray[np.float64],
-    x: npt.NDArray[np.float64],
+    t: NDArray[float64],
+    x: NDArray[float64],
     typeCross: str = "down",
-) -> tuple[int, npt.NDArray[np.float64]]:
+) -> tuple[int, NDArray[float64]]:
     """
     DETERMINEZEROCROSSING  Determines zero-crossings (number and positions) of signal.
     This function determines the zero-crossings of a given time signal x =
@@ -220,8 +221,8 @@ def determine_zero_crossing(
 
 
 def highest_waves_params(
-    hWaveSorted: npt.NDArray[np.float64],
-    tWaveSorted: npt.NDArray[np.float64],
+    hWaveSorted: NDArray[float64],
+    tWaveSorted: NDArray[float64],
     fracP: float,
 ) -> tuple[float, float]:
     """
@@ -324,9 +325,7 @@ def highest_waves_params(
     return hFracP, tFracP
 
 
-def exceedance_wave_height(
-    hWaveSorted: npt.NDArray[np.float64], excPerc: float
-) -> float:
+def exceedance_wave_height(hWaveSorted: NDArray[float64], excPerc: float) -> float:
     """
     EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
 
@@ -409,16 +408,16 @@ def exceedance_wave_height(
 
 
 def determine_params_individual_waves(
-    tCross: npt.NDArray[np.float64],
-    t: npt.NDArray[np.float64],
-    x: npt.NDArray[np.float64],
+    tCross: NDArray[float64],
+    t: NDArray[float64],
+    x: NDArray[float64],
 ) -> tuple[
-    npt.NDArray[np.float64],
-    npt.NDArray[np.float64],
-    npt.NDArray[np.float64],
-    npt.NDArray[np.float64],
-    npt.NDArray[np.float64],
-    npt.NDArray[np.float64],
+    NDArray[float64],
+    NDArray[float64],
+    NDArray[float64],
+    NDArray[float64],
+    NDArray[float64],
+    NDArray[float64],
 ]:
     """
     DETERMINE_PARAMS_INDIVIDUALWAVES  Determines parameters per individual wave

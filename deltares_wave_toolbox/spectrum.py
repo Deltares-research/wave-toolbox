@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
-import numpy.typing as npt
+from numpy import float64
+from numpy.typing import NDArray
 from matplotlib import figure
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -18,9 +19,9 @@ class Spectrum:
 
     def __init__(
         self,
-        f: npt.NDArray[np.float64],
-        S: npt.NDArray[np.float64],
-        D: npt.NDArray[np.float64] = np.empty((0, 0)),
+        f: NDArray[float64],
+        S: NDArray[float64],
+        D: NDArray[float64] = np.empty((0, 0)),
     ) -> None:
         """_The init function
 
