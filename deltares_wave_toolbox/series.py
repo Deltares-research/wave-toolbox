@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
+from matplotlib import figure
 from scipy.stats import rayleigh
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
@@ -92,7 +93,7 @@ class WaveHeights:
         )
         return hFracP, tFracP
 
-    def plot_exceedance_waveheight(self, savepath: str = "", fig=None) -> None:
+    def plot_exceedance_waveheight(self, savepath: str = "") -> figure.Figure:
         """Plot exceedances of wave heights
 
         Args:
@@ -100,8 +101,7 @@ class WaveHeights:
             fig (figure object, optional): figure object. Defaults to None.
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
-        if fig is None:
-            fig = plt.figure()
+        fig = plt.figure()
         plt.plot(
             self.hwave, np.linspace(0, self.nwave, self.nwave, self.nwave) / self.nwave
         )
@@ -114,17 +114,17 @@ class WaveHeights:
 
         if savepath != "":
             plt.savefig(savepath)
+        return fig
 
     def plot_exceedance_waveheight_Rayleigh(
         self,
         savepath: str = "",
-        fig=None,
         normalize: bool = False,
         plot_BG: bool = False,
         water_depth: float = -1.0,
         cota_slope: float = 250.0,
         Hm0: float = -1.0,
-    ) -> None:
+    ) -> figure.Figure:
         """Plot exceedances of wave heights compared to Rayleigh distribution
 
         Args:
@@ -148,8 +148,7 @@ class WaveHeights:
         )
 
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
-        if fig is None:
-            fig = plt.figure()
+        fig = plt.figure()
 
         plt.plot(
             Rayleigh_x,
@@ -158,7 +157,7 @@ class WaveHeights:
         )
 
         if plot_BG:
-            if Hm0 is None:
+            if Hm0 == -1.0:
                 raise ValueError(
                     "Please provide Hm0 when using Battjes & Groenendijk distribution"
                 )
@@ -192,8 +191,9 @@ class WaveHeights:
 
         if savepath != "":
             plt.savefig(savepath)
+        return fig
 
-    def plot_hist_waveheight(self, savepath: str = "", fig=None) -> None:
+    def plot_hist_waveheight(self, savepath: str = "") -> figure.Figure:
         """Plot Histogram of wave heights
 
         Args:
@@ -201,8 +201,7 @@ class WaveHeights:
             fig (figure object, optional): figure object. Defaults to None.
         """
 
-        if fig is None:
-            fig = plt.figure()
+        fig = plt.figure()
         plt.hist(self.hwave, label="Distribution")
 
         plt.grid("on")
@@ -212,6 +211,7 @@ class WaveHeights:
 
         if savepath != "":
             plt.savefig(savepath)
+        return fig
 
 
 class Series(WaveHeights):
@@ -359,7 +359,7 @@ class Series(WaveHeights):
         )
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
-    def plot(self, savepath: str = "", fig=None, plot_crossing: bool = False) -> None:
+    def plot(self, savepath: str = "", plot_crossing: bool = False) -> figure.Figure:
         """Plot Series
 
         Args:
@@ -367,14 +367,11 @@ class Series(WaveHeights):
             fig (figure object, optional): figure object. Defaults to None.
         """
 
-        if fig is None:
-            fig = plt.figure()
+        fig = plt.figure()
         plt.plot(self.time, self.x, label="series")
         if plot_crossing:
-            nWave, tCross = self.get_crossing()
-            plt.plot(
-                tCross, np.asarray(tCross) * 0, "ro", label="crossing"
-            )  # TODO make tCross array?
+            _, tCross = self.get_crossing()
+            plt.plot(tCross, np.asarray(tCross) * 0, "ro", label="crossing")
         plt.grid("on")
         plt.xlabel("time [$s$]")
         plt.ylabel("z [$m$]")
@@ -382,3 +379,4 @@ class Series(WaveHeights):
 
         if savepath != "":
             plt.savefig(savepath)
+        return fig

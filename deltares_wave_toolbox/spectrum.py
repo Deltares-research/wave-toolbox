@@ -3,6 +3,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
+from matplotlib import figure
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
@@ -202,10 +203,9 @@ class Spectrum:
     def plot(
         self,
         savepath: str = "",
-        fig=None,
         plot_periods: bool = True,
         xlim: float = -999.0,
-    ) -> None:
+    ) -> figure.Figure:
         """Plot spectrum
 
         Args:
@@ -213,8 +213,7 @@ class Spectrum:
             fig (figure object, optional): figure object. Defaults to None.
         """
 
-        if fig is None:
-            fig = plt.figure()
+        fig = plt.figure()
         plt.plot(self.f, self.S, label="Spectrum")
 
         if plot_periods:
@@ -236,3 +235,4 @@ class Spectrum:
             plt.xlim(xlim)
         if savepath != "":
             plt.savefig(savepath)
+        return fig
