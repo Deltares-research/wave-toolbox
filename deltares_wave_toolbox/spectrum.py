@@ -1,7 +1,6 @@
-from typing import Iterable, Union
-
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
@@ -13,7 +12,12 @@ class Spectrum:
     The wave Spectrum class
     """
 
-    def __init__(self, f: np.ndarray, S, D=None) -> None:
+    def __init__(
+        self,
+        f: npt.NDArray[np.float64],
+        S: npt.NDArray[np.float64],
+        D: npt.NDArray[np.float64] = None,
+    ) -> None:
         """_The init function
 
         Args:
@@ -49,7 +53,7 @@ class Spectrum:
     def __repr__(self) -> str:
         return f"{type(self).__name__} (spec = {self.spec})"
 
-    def _set_flim(self, fmin: float, fmax: float) -> Iterable[Union[float, float]]:
+    def _set_flim(self, fmin: float, fmax: float) -> tuple[float, float]:
         """Set frequency limits
 
         Args:

@@ -249,7 +249,9 @@ class Series(WaveHeights):
     def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
-    def get_crossing(self, typeCross: str = "down"):
+    def get_crossing(
+        self, typeCross: str = "down"
+    ) -> tuple[int, npt.NDArray[np.float64]]:
         """Get zero crossings
 
         Args:
@@ -263,7 +265,7 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, fres: float = 0.01):
+    def get_spectrum(self, fres: float = 0.01) -> Spectrum:
         """create spectrum
 
         Args:
