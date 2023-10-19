@@ -22,10 +22,10 @@ class WaveHeights:
         self.twave = twave
 
     def __str__(self) -> str:
-        return f"Series with {len(self.hwave)} elements"
+        return f"Series with {self.nwave} elements"
 
     def __repr__(self) -> str:
-        return f"{type(self).__name__} (series  nt = {self.nt})"
+        return f"{type(self).__name__} (series  nt = {self.nwave})"
 
     def sort(self) -> None:
         """Sorts the wave height and wave period.
@@ -239,10 +239,10 @@ class Series(WaveHeights):
         [
             hWave,
             tWave,
-            aCrest,
-            aTrough,
-            tCrest,
-            tTrough,
+            _,
+            _,
+            _,
+            _,
         ] = self._determine_individual_waves()
         super().__init__(hWave, tWave)
 
@@ -293,7 +293,9 @@ class Series(WaveHeights):
     def var(self) -> float:
         return np.var(self.x)
 
-    def get_fourier_comp(self):
+    def get_fourier_comp(
+        self,
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.complex128], bool]:
         """get Fourier components from series
 
         Returns:
@@ -333,7 +335,7 @@ class Series(WaveHeights):
                 * The values of aTrough are always smaller than zero
                 * hWave = aCrest - aTrough
         """
-        nWave, tCross = core_time.determine_zero_crossing(
+        _, tCross = core_time.determine_zero_crossing(
             t=self.time, x=self.x, typeCross=typeCross
         )
         (
@@ -348,7 +350,7 @@ class Series(WaveHeights):
         )
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
-    def plot(self, savepath: dir = None, fig=None, plot_crossing: bool = False) -> None:
+    def plot(self, savepath: str = None, fig=None, plot_crossing: bool = False) -> None:
         """Plot Series
 
         Args:

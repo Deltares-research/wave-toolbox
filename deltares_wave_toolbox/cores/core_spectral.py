@@ -398,7 +398,9 @@ def time2freq(t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]):
     return f, xFreq
 
 
-def time2freq_nyquist(t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]):
+def time2freq_nyquist(
+    t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.complex128], bool]:
     """
     TIME2FREQNYQUIST  Computes the discrete Fourier transform coefficients (on
                   folded frequency axis) of a given of time signal
@@ -491,7 +493,7 @@ def time2freq_nyquist(t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]
 
     # --- Number of time points, and check whether this number is even or odd
     nT = tSize[0]
-    isOdd = nT % 2
+    isOdd = bool(nT % 2)
 
     # --- Index in array that corresponds to the Nyquist frequency
     #     Nyquist frequency = 1 / (2*dt)
