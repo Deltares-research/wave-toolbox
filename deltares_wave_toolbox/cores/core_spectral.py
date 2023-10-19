@@ -8,7 +8,11 @@ import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.series as series
 
 
-def frequency_averaging(f=None, sFreq=None, dfDesired=None):
+def frequency_averaging(
+    f: npt.NDArray[np.float64] = None,
+    sFreq: npt.NDArray[np.float64] = None,
+    dfDesired: float = None,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     FREQUENCYAVERAGING  Band averaging of given variance density spectrum
 
@@ -562,7 +566,7 @@ def compute_spectrum_time_series(
     """
 
     # --- Transform to frequency domain ( input check is done in time2freq_nyquist)
-    [f, xFreq, isOdd] = time2freq_nyquist(t, xTime)
+    [f, xFreq, _] = time2freq_nyquist(t, xTime)
     df = f[1] - f[0]
     Ntime = len(t)
     sFine = 2 * xFreq * np.conj(xFreq) / (df * Ntime * Ntime)

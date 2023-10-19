@@ -6,7 +6,7 @@ import deltares_wave_toolbox.cores.core_engine as core_engine
 
 def sort_wave_params(
     hWave: npt.NDArray[np.float64] = None, tWave: npt.NDArray[np.float64] = None
-):
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     SORT_WAVE_PARAMS  Sorts the wave height and wave period
 
@@ -80,8 +80,8 @@ def sort_wave_params(
     nWave = len(hWave)
 
     # --- If there are no waves, return to calling function
-    hWaveSorted = []
-    tWaveSorted = []
+    hWaveSorted = np.empty((0, 0))
+    tWaveSorted = np.empty((0, 0))
     if nWave < 1:
         return hWaveSorted, tWaveSorted
 
@@ -223,7 +223,7 @@ def highest_waves_params(
     hWaveSorted: npt.NDArray[np.float64] = None,
     tWaveSorted: npt.NDArray[np.float64] = None,
     fracP: float = None,
-):
+) -> tuple[float, float]:
     """
     HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
 
@@ -299,8 +299,8 @@ def highest_waves_params(
         )
 
     # --- If there are no waves, return to calling function
-    hFracP = None
-    tFracP = None
+    hFracP = 0.0
+    tFracP = 0.0
 
     # --- Number of waves
     nWave = len(hWaveSorted)
