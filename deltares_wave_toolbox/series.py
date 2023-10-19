@@ -7,7 +7,9 @@ import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
 import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
-from deltares_wave_toolbox.spectrum import Spectrum
+import deltares_wave_toolbox.spectrum as spectrum
+
+# from deltares_wave_toolbox.spectrum import Spectrum
 
 
 class WaveHeights:
@@ -268,7 +270,7 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, fres: float = 0.01) -> Spectrum:
+    def get_spectrum(self, fres: float = 0.01) -> spectrum.Spectrum:
         """create spectrum
 
         Args:
@@ -279,7 +281,7 @@ class Series(WaveHeights):
         """
 
         [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.x, fres)
-        return Spectrum(f, S)
+        return spectrum.Spectrum(f, S)
 
     def max(self) -> float:
         return np.max(self.x)
