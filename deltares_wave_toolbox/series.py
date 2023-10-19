@@ -9,8 +9,6 @@ import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
 import deltares_wave_toolbox.spectrum as spectrum
 
-# from deltares_wave_toolbox.spectrum import Spectrum
-
 
 class WaveHeights:
     def __init__(
