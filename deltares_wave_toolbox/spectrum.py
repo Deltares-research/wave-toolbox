@@ -77,12 +77,18 @@ class Spectrum:
     def get_Hm0(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Hm0 of spectrum
 
-        Args:
-            fmin (float, optional): Minimum frequency. Defaults to None.
-            fmax (float, optional): Maximum frequency. Defaults to None.
 
-        Returns:
-            float: Hm0
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+
+        Returns
+        -------
+        float
+            Hm0
         """
         fmin, fmax = self._set_flim(fmin, fmax)
         m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
@@ -92,12 +98,17 @@ class Spectrum:
     def get_Tps(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tps (smoothed peak period) of spectrum
 
-        Args:
-            fmin (float, optional): Minimum frequency. Defaults to None.
-            fmax (float, optional): Maximum frequency. Defaults to None.
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
 
-        Returns:
-            float: Tps
+        Returns
+        -------
+        float
+            Tps
         """
         fmin, fmax = self._set_flim(fmin, fmax)
         iFmin = np.where(self.f >= fmin)[0][0]
@@ -110,12 +121,17 @@ class Spectrum:
     def get_Tp(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tp (peak period) of spectrum
 
-        Args:
-            fmin (float, optional): Minimum frequency. Defaults to None.
-            fmax (float, optional): Maximum frequency. Defaults to None.
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
 
-        Returns:
-            float: Tp
+        Returns
+        -------
+        float
+            Tp
         """
         # --- Make separate arrays containing only part corresponding to
         #     frequencies between fmin and fmax
@@ -140,12 +156,17 @@ class Spectrum:
     def get_Tmm10(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tmm10 spectral period) of spectrum
 
-        Args:
-            fmin (float, optional): Minimum frequency. Defaults to None.
-            fmax (float, optional): Maximum frequency. Defaults to None.
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
 
-        Returns:
-            float: Tmm10
+        Returns
+        -------
+        float
+            Tmm10
         """
         fmin, fmax = self._set_flim(fmin, fmax)
         m_1 = core_wavefunctions.compute_moment(self.f, self.S, -1, fmin, fmax)
@@ -156,12 +177,17 @@ class Spectrum:
     def get_Tm01(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tm01 of spectrum
 
-        Args:
-            fmin (float, optional): Minimum frequency. Defaults to None.
-            fmax (float, optional): Maximum frequency. Defaults to None.
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
 
-        Returns:
-            float: Tm01
+        Returns
+        -------
+        float
+            Tm01
         """
         fmin, fmax = self._set_flim(fmin, fmax)
         m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
@@ -172,12 +198,17 @@ class Spectrum:
     def get_Tm02(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tm02 of spectrum
 
-        Args:
-            fmin (float, optional): Minimum frequency. Defaults to None.
-            fmax (float, optional): Maximum frequency. Defaults to None.
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
 
-        Returns:
-            float: Tm02
+        Returns
+        -------
+        float
+            Tm02
         """
         fmin, fmax = self._set_flim(fmin, fmax)
         m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
@@ -188,13 +219,19 @@ class Spectrum:
     def create_series(self, tstart: float, tend: float, dt: float) -> series.Series:
         """Construct series from Spectrum with random phase
 
-        Args:
-            tstart (float): Start time of time series
-            tend (float): End time of time series
-            dt (float): Time step
+        Parameters
+        ----------
+        tstart : float
+            Start time of time series
+        tend : float
+            End time of time series
+        dt : float
+            Time step
 
-        Returns:
-            object: Series class with time series
+        Returns
+        -------
+        series.Series
+            Series class with time series
         """
         series = core_spectral.spectrum2timeseries_object(
             self.f, self.S, tstart, tend, dt
@@ -209,11 +246,20 @@ class Spectrum:
     ) -> figure.Figure:
         """Plot spectrum
 
-        Args:
-            savepath (str, optional): path to save figure. Defaults to None.
-            fig (figure object, optional): figure object. Defaults to None.
-        """
+        Parameters
+        ----------
+        savepath : str, optional
+            path to save figure, by default ""
+        plot_periods : bool, optional
+            show different periods in the plot, by default True
+        xlim : float, optional
+            limit the extent of the x-axis (frequency), by default -999.0
 
+        Returns
+        -------
+        figure.Figure
+            figure object
+        """
         fig = plt.figure()
         plt.plot(self.f, self.S, label="Spectrum")
 
