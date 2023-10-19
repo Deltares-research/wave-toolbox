@@ -9,9 +9,9 @@ import deltares_wave_toolbox.series as series
 
 
 def frequency_averaging(
-    f: npt.NDArray[np.float64] = None,
-    sFreq: npt.NDArray[np.float64] = None,
-    dfDesired: float = None,
+    f: npt.NDArray[np.float64],
+    sFreq: npt.NDArray[np.float64],
+    dfDesired: float = 0.0,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     FREQUENCYAVERAGING  Band averaging of given variance density spectrum
@@ -64,7 +64,7 @@ def frequency_averaging(
     # --- Determine some coefficients
     nFine = fSize[0]
     nFactor = 1
-    if not (dfDesired is None):
+    if dfDesired == 0.0:
         nFactor = round(dfDesired / (f[1] - f[0]))
 
     # --- Avoid nFactor being equal to zero, which may occur if
@@ -87,7 +87,9 @@ def frequency_averaging(
     return fCoarse, sFreqCoarse
 
 
-def unfold_spectrum(f, xFreq, isOdd: bool):
+def unfold_spectrum(
+    f: npt.NDArray[np.float64], xFreq: npt.NDArray[np.complex128], isOdd: bool
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.complex128]]:
     """
     UNFOLDSPECTRUM  Unfolds a folded discrete Fourier transform
 
@@ -178,7 +180,12 @@ def unfold_spectrum(f, xFreq, isOdd: bool):
     return fTot, xFreqTot
 
 
-def coherence(f, xFreq1, xFreq2, dfDesired):
+def coherence(
+    f: npt.NDArray[np.float64],
+    xFreq1: npt.NDArray[np.complex128],
+    xFreq2: npt.NDArray[np.complex128],
+    dfDesired: float = 0.0,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     COHERENCE  Function to compute the coherence in spectral domain.
 
@@ -251,7 +258,7 @@ def coherence(f, xFreq1, xFreq2, dfDesired):
     return f_coh2, coh2
 
 
-def freq2time(xFreq):
+def freq2time(xFreq: npt.NDArray[np.complex128]) -> npt.NDArray[np.float64]:
     """
     FREQ2TIME  Transforms (unfolded) discrete Fourier transform back to time
                 signal
@@ -309,7 +316,9 @@ def freq2time(xFreq):
     return xTime
 
 
-def time2freq(t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]):
+def time2freq(
+    t: npt.NDArray[np.float64], xTime: npt.NDArray[np.float64]
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.complex128]]:
     """
     TIME2FREQ  Computes the discrete Fourier transform coefficients (on
                unfolded frequency axis) of a given of time signal
@@ -512,10 +521,10 @@ def time2freq_nyquist(
 
 
 def compute_spectrum_time_series(
-    t: npt.NDArray[np.float64] = None,
-    xTime: npt.NDArray[np.float64] = None,
-    dfDesired: float = None,
-):
+    t: npt.NDArray[np.float64],
+    xTime: npt.NDArray[np.float64],
+    dfDesired: float = 0.0,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     @brief
     COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
@@ -573,7 +582,7 @@ def compute_spectrum_time_series(
     sFine = sFine.real
 
     # --- Perform averaging
-    if dfDesired is None:
+    if dfDesired == 0.0:
         [fCoarse, sCoarse] = frequency_averaging(f, sFine)
     else:
         [fCoarse, sCoarse] = frequency_averaging(f, sFine, dfDesired)
@@ -582,11 +591,11 @@ def compute_spectrum_time_series(
 
 
 def compute_spectrum_freq_series(
-    f: npt.NDArray[np.float64] = None,
-    xFreq: npt.NDArray[np.float64] = None,
-    dfDesired: float = None,
-    Ntime: int = None,
-):
+    f: npt.NDArray[np.float64],
+    xFreq: npt.NDArray[np.float64],
+    dfDesired: float = 0.0,
+    Ntime: int = 0,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     COMPUTE_SPECTRUM_FREQ_SERIES Computes variance density spectrum from given complex
     spectrum of Fourier components
@@ -652,7 +661,7 @@ def compute_spectrum_freq_series(
             "compute_spectrum_freq_series: Input error: array sizes differ in dimension"
         )
 
-    if Ntime is None:
+    if Ntime == 0:
         raise ValueError(
             "compute_spectrum_freq_series: Input error: Number of time samples not specified"
         )
@@ -673,7 +682,7 @@ def spectrum2timeseries(
     tInit: float,
     tEnd: float,
     dt: float,
-    seed: int = None,
+    seed: int = -1,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     SPECTRUM2TIMESERIES  Generates a timeseries based on a given spectrum.
@@ -751,7 +760,7 @@ def spectrum2timeseries(
     # --- Chose nF random phases and, if requested, reset the state.
     #     Resetting the state means that a renewed call to the present function
     #     with the same arguments will give the same random numbers
-    if seed is not None:
+    if seed >= 0:
         np.random.seed(seed)
 
     phase = 2 * np.pi * np.random.rand(1, nF)
@@ -779,7 +788,7 @@ def spectrum2timeseries_object(
     tInit: float,
     tEnd: float,
     dt: float,
-    seed: int = None,
+    seed: int = -1,
 ):
     t, xTime = spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed)
     return series.Series(t, xTime)
