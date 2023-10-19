@@ -1,5 +1,7 @@
 import copy
 import math
+from scipy.signal import welch
+
 
 import numpy as np
 import numpy.typing as npt
@@ -64,8 +66,8 @@ def frequency_averaging(
     # --- Determine some coefficients
     nFine = fSize[0]
     nFactor = 1
-    if dfDesired == 0.0:
-        nFactor = round(dfDesired / (f[1] - f[0]))
+    if dfDesired != 0.0:
+        nFactor = np.round(dfDesired / (f[1] - f[0]))
 
     # --- Avoid nFactor being equal to zero, which may occur if
     #     dfDesired < 0.5 * (f2 - f1)
@@ -792,3 +794,35 @@ def spectrum2timeseries_object(
 ):
     t, xTime = spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed)
     return series.Series(t, xTime)
+
+
+def compute_spectrum_welch_wrapper(
+    signal, dt, nperseg=None, noverlap=None, nfft=None, window_type="hann"
+):
+    """Wrapper arround the Scipy Welch method
+
+    Args:
+        signal (array): signal
+        dt (float): time step of signal
+        nperseg (int, optional): Length of each segment. Defaults to None.
+        noverlap (int, optional): number of points in overlap. Defaults to None.
+        nfft (int, optional): lentth of fft. Defaults to None.
+        window_type (str, optional): window type. Defaults to "hann".
+
+    Returns:
+        f, Pxx: frequency and spectral density
+    """
+    f, Pxx = welch(
+        signal,
+        fs=1 / dt,
+        window=window_type,
+        nperseg=nperseg,
+        noverlap=noverlap,
+        nfft=nfft,
+        detrend="constant",
+        return_onesided=True,
+        scaling="density",
+        axis=-1,
+        average="mean",
+    )
+    return f, Pxx
