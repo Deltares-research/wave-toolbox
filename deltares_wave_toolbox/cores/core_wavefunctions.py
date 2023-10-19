@@ -9,10 +9,10 @@ import deltares_wave_toolbox.spectrum as spectrum
 
 
 def compute_spectrum_params(
-    f: npt.NDArray[np.float64] = None,
-    S: npt.NDArray[np.float64] = None,
-    fmin: float = None,
-    fmax: float = None,
+    f: npt.NDArray[np.float64],
+    S: npt.NDArray[np.float64],
+    fmin: float = -1.0,
+    fmax: float = -1.0,
 ) -> tuple[float, float, float, float, float, float]:
     """
     COMPUTE_SPECTRUM_PARAMS  Computes spectral parameters of given spectrum
@@ -88,9 +88,9 @@ def compute_spectrum_params(
 
     #
     # --- Find values of fmin and fmax
-    if fmin is None:
+    if fmin == -1.0:
         fmin = f[0]
-    if fmax is None:
+    if fmax == -1.0:
         fmax = f[fSize[0] - 1]
 
     # --- Compute moments
@@ -100,7 +100,7 @@ def compute_spectrum_params(
     m2 = compute_moment(f, S, 2, fmin, fmax)
 
     # --- Compute wave height -----------------------------------------------
-    Hm0 = 4 * np.sqrt(m0)
+    Hm0 = float(4 * np.sqrt(m0))
 
     # --- Put values to NaN (exception value) in situation that wave height is
     #     (virtually) zero
@@ -116,7 +116,7 @@ def compute_spectrum_params(
     # --- Compute mean wave periods -----------------------------------------
     Tmm10 = m_1 / m0
     Tm01 = m0 / m1
-    Tm02 = np.sqrt(m0 / m2)
+    Tm02 = float(np.sqrt(m0 / m2))
 
     # --- Make separate arrays containing only part corresponding to
     #     frequencies between fmin and fmax
@@ -135,7 +135,7 @@ def compute_spectrum_params(
     if np.all(ifp is None):
         ifp = 1
         fp = fMiMa[ifp]
-    Tp = 1 / fp
+    Tp = float(1 / fp)
 
     # --- Compute smoothed peak period --------------------------------------
     Tps = compute_tps(fMiMa, SMiMa)
@@ -146,8 +146,8 @@ def compute_moment(
     f: npt.NDArray[np.float64],
     S: npt.NDArray[np.float64],
     m: int,
-    fmin: float = None,
-    fmax: float = None,
+    fmin: float = -1.0,
+    fmax: float = -1.0,
 ) -> float:
     """
     COMPUTE_MOMENT  Computes the spectral moment
@@ -233,7 +233,7 @@ def compute_moment(
     integrand = freq ** (m) * spec
 
     # --- Depending on number of input arguments, compute the moment integral
-    if fmin is None or fmax is None:  # integrate over all values in freq interval.
+    if fmin == -1.0 or fmax == -1.0:  # integrate over all values in freq interval.
         moment = integrate.simps(integrand, freq)
     else:  # integrate over all values in sub interval.
         # fmin and fmax are given

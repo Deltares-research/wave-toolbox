@@ -19,7 +19,7 @@ class Spectrum:
         self,
         f: npt.NDArray[np.float64],
         S: npt.NDArray[np.float64],
-        D: npt.NDArray[np.float64] = None,
+        D: npt.NDArray[np.float64] = np.empty((0, 0)),
     ) -> None:
         """_The init function
 
@@ -45,7 +45,7 @@ class Spectrum:
         self.nf = len(f)
 
         # 1D or 2D spectrum
-        if self.D is None:
+        if self.D.size == 0:
             self.spec = "1D"
         else:
             self.spec = "2D"
@@ -56,7 +56,7 @@ class Spectrum:
     def __repr__(self) -> str:
         return f"{type(self).__name__} (spec = {self.spec})"
 
-    def _set_flim(self, fmin: float = None, fmax: float = None) -> tuple[float, float]:
+    def _set_flim(self, fmin: float = -1.0, fmax: float = -1.0) -> tuple[float, float]:
         """Set frequency limits
 
         Args:
@@ -66,13 +66,13 @@ class Spectrum:
         Returns:
             float: minimum and maximum frequency
         """
-        if fmin is None:
+        if fmin == -1.0:
             fmin = self.f[0]
-        if fmax is None:
+        if fmax == -1.0:
             fmax = self.f[-1]
         return fmin, fmax
 
-    def get_Hm0(self, fmin: float = None, fmax: float = None) -> float:
+    def get_Hm0(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Hm0 of spectrum
 
         Args:
@@ -87,7 +87,7 @@ class Spectrum:
         self.Hm0 = 4 * np.sqrt(m0)
         return self.Hm0
 
-    def get_Tps(self, fmin: float = None, fmax: float = None) -> float:
+    def get_Tps(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tps (smoothed peak period) of spectrum
 
         Args:
@@ -105,7 +105,7 @@ class Spectrum:
         self.Tps = core_wavefunctions.compute_tps(fMiMa, SMiMa)
         return self.Tps
 
-    def get_Tp(self, fmin: float = None, fmax: float = None) -> float:
+    def get_Tp(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tp (peak period) of spectrum
 
         Args:
@@ -135,7 +135,7 @@ class Spectrum:
         self.Tp = 1 / fp
         return self.Tp
 
-    def get_Tmm10(self, fmin: float = None, fmax: float = None) -> float:
+    def get_Tmm10(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tmm10 spectral period) of spectrum
 
         Args:
@@ -151,7 +151,7 @@ class Spectrum:
         self.Tmm10 = m_1 / m0
         return self.Tmm10
 
-    def get_Tm01(self, fmin: float = None, fmax: float = None) -> float:
+    def get_Tm01(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tm01 of spectrum
 
         Args:
@@ -167,7 +167,7 @@ class Spectrum:
         self.Tm01 = m0 / m1
         return self.Tm01
 
-    def get_Tm02(self, fmin: float = None, fmax: float = None) -> float:
+    def get_Tm02(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tm02 of spectrum
 
         Args:

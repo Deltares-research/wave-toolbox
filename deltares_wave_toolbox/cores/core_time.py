@@ -5,7 +5,7 @@ import deltares_wave_toolbox.cores.core_engine as core_engine
 
 
 def sort_wave_params(
-    hWave: npt.NDArray[np.float64] = None, tWave: npt.NDArray[np.float64] = None
+    hWave: npt.NDArray[np.float64], tWave: npt.NDArray[np.float64]
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     SORT_WAVE_PARAMS  Sorts the wave height and wave period
@@ -98,8 +98,8 @@ def sort_wave_params(
 
 
 def determine_zero_crossing(
-    t: npt.NDArray[np.float64] = None,
-    x: npt.NDArray[np.float64] = None,
+    t: npt.NDArray[np.float64],
+    x: npt.NDArray[np.float64],
     typeCross: str = "down",
 ) -> tuple[int, npt.NDArray[np.float64]]:
     """
@@ -220,9 +220,9 @@ def determine_zero_crossing(
 
 
 def highest_waves_params(
-    hWaveSorted: npt.NDArray[np.float64] = None,
-    tWaveSorted: npt.NDArray[np.float64] = None,
-    fracP: float = None,
+    hWaveSorted: npt.NDArray[np.float64],
+    tWaveSorted: npt.NDArray[np.float64],
+    fracP: float,
 ) -> tuple[float, float]:
     """
     HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
@@ -325,7 +325,7 @@ def highest_waves_params(
 
 
 def exceedance_wave_height(
-    hWaveSorted: npt.NDArray[np.float64] = None, excPerc: float = None
+    hWaveSorted: npt.NDArray[np.float64], excPerc: float
 ) -> float:
     """
     EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
@@ -409,9 +409,9 @@ def exceedance_wave_height(
 
 
 def determine_params_individual_waves(
-    tCross: npt.NDArray[np.float64] = None,
-    t: npt.NDArray[np.float64] = None,
-    x: npt.NDArray[np.float64] = None,
+    tCross: npt.NDArray[np.float64],
+    t: npt.NDArray[np.float64],
+    x: npt.NDArray[np.float64],
 ) -> tuple[
     npt.NDArray[np.float64],
     npt.NDArray[np.float64],
