@@ -14,8 +14,8 @@ class WaveHeights:
     def __init__(
         self, hwave: npt.NDArray[np.float64], twave: npt.NDArray[np.float64]
     ) -> None:
-        hwave, tSize = core_engine.convert_to_vector(hwave)
-        twave, xSize = core_engine.convert_to_vector(twave)
+        hwave, _ = core_engine.convert_to_vector(hwave)
+        twave, _ = core_engine.convert_to_vector(twave)
 
         self.hwave = hwave
         self.nwave = len(hwave)
