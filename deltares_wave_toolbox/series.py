@@ -413,7 +413,8 @@ class Series(WaveHeights):
 
         Returns
         -------
-        tuple[ NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], ]
+        tuple[ NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64],
+        NDArray[float64], ]
             tWave : NDArray[float64]
                 1D array containing the periods of the individual waves
             hWave : NDArray[float64]
