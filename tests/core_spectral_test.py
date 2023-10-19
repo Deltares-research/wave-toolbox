@@ -288,7 +288,7 @@ def test_compute_spectrum_time_series():
                 0.0071,
                 0.0070,
             ],
-            None,
+            0.0,
         ),
     ),
 )
