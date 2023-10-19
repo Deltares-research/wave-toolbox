@@ -1,9 +1,12 @@
-import numpy as np
 import numbers
 import sys
+from typing import Any, Union
+
+import numpy as np
+import numpy.typing as npt
 
 
-def convert_to_array_type(x):
+def convert_to_array_type(x: npt.ArrayLike) -> npt.NDArray[Any]:
     if isinstance(x, numbers.Number):
         x = np.asarray([x])
     elif not isinstance(x, (np.ndarray)):
@@ -11,11 +14,8 @@ def convert_to_array_type(x):
     return x
 
 
-def convert_to_vector(x):
-    if isinstance(x, numbers.Number):
-        x = np.asarray([x])
-    elif not isinstance(x, (np.ndarray)):
-        x = np.asarray(x)
+def convert_to_vector(x: npt.ArrayLike) -> tuple[npt.NDArray[Any], tuple[int, int]]:
+    x = convert_to_array_type(x)
 
     # ensure vector convention if 1d array is used either (n,1) or (n,)
     xSize = _size(x)
@@ -25,25 +25,25 @@ def convert_to_vector(x):
     return x, xSize
 
 
-def get_parameter_type(x):
+def get_parameter_type(x: npt.ArrayLike) -> Union[type[complex], type[float]]:
     if isinstance(x, complex):
         return complex
     else:
         return float
 
 
-def monotonic_increasing_constant_step(x):
+def monotonic_increasing_constant_step(x: npt.ArrayLike) -> bool:
     xDiff = np.diff(x)
-    isUniform = np.all((xDiff - xDiff[0]) < 1000000 * sys.float_info.epsilon)  #
-    xMonotonic = np.all(xDiff > 0)
+    isUniform = bool(np.all((xDiff - xDiff[0]) < 1000000 * sys.float_info.epsilon))
+    xMonotonic = bool(np.all(xDiff > 0))
 
     return xMonotonic and isUniform
 
 
-def _size(x):
+def _size(x: npt.ArrayLike) -> tuple[int, int]:
     dimx = 0
     dimy = 0
-    if x is not None:
+    if x.size != 0:
         dims = x.shape
 
         # handle up to two dimensions.
@@ -55,15 +55,7 @@ def _size(x):
     return dimx, dimy
 
 
-def isempty(x):
-    is_empty = False
-    dimx, dimy = _size(x)
-    if dimx == 0 and dimy == 0:
-        is_empty = True
-    return is_empty
-
-
-def is1darray(x):
+def is1darray(x: npt.ArrayLike) -> bool:
     is1d = False
     dimx, dimy = _size(x)
     if dimx != 0 and dimy == 0:
@@ -71,7 +63,7 @@ def is1darray(x):
     return is1d
 
 
-def approx_array_index(array, user_value: float):
+def approx_array_index(array: npt.ArrayLike, user_value: float) -> int:
     """
     Return index of the array value closest to user specified value.
 
@@ -90,4 +82,4 @@ def approx_array_index(array, user_value: float):
     """
     array = np.asarray(array)
     idx = (np.abs(array - user_value)).argmin()
-    return idx
+    return int(idx)

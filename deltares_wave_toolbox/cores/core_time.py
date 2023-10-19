@@ -496,7 +496,7 @@ def determine_params_individual_waves(
     aTrough = np.empty((0, 0))
     tCrest = np.empty((0, 0))
     tTrough = np.empty((0, 0))
-    if core_engine.isempty(tCross):
+    if tCross.size == 0:
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
     # Perform checks on the input arguments
