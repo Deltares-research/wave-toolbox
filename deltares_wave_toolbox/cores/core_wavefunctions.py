@@ -685,7 +685,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
     Hm0: float,
     nwave: int,
     water_depth: float,
-    cota_slope: float = 250,
+    cota_slope: float = 250.0,
     tolerance: float = 1e-5,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
@@ -735,7 +735,6 @@ def compute_BattjesGroenendijk_wave_height_distribution(
     gamma_transition = 0.35 + 5.8 * (1 / cota_slope)
     H_transition = gamma_transition * water_depth
     m0 = np.power(Hm0 / 4, 2)
-    # TODO check if we need to directly calc H_rms from series
     H_rms = np.sqrt(m0) * (2.69 + 3.24 * np.sqrt(m0) / water_depth)
 
     H_transition_norm = H_transition / H_rms

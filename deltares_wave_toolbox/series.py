@@ -121,6 +121,7 @@ class WaveHeights:
         plot_BG: bool = False,
         water_depth: float = None,
         cota_slope: float = None,
+        Hm0: float = None,
         savepath: str = None,
         fig=None,
     ) -> None:
@@ -157,21 +158,23 @@ class WaveHeights:
         )
 
         if plot_BG:
-            # TODO !!! implement proper way to get Hm0 here (via spectrum?)
-            Hm0 = self.get_Hs()[0]
+            if Hm0 is None:
+                raise ValueError(
+                    "Please provide Hm0 when using Battjes & Groenendijk distribution"
+                )
+            else:
+                (
+                    hwave_BG,
+                    Pexceedance_BG,
+                ) = core_wavefunctions.compute_BattjesGroenendijk_wave_height_distribution(
+                    Hm0, self.nwave, water_depth, cota_slope=cota_slope
+                )
 
-            (
-                hwave_BG,
-                Pexceedance_BG,
-            ) = core_wavefunctions.compute_BattjesGroenendijk_wave_height_distribution(
-                Hm0, self.nwave, water_depth, cota_slope=cota_slope
-            )
-
-            plt.plot(
-                np.sqrt(-np.log(Pexceedance_BG)),
-                hwave_BG / H_normalize,
-                label="Battjes & Groenendijk (2000) distribution",
-            )
+                plt.plot(
+                    np.sqrt(-np.log(Pexceedance_BG)),
+                    hwave_BG / H_normalize,
+                    label="Battjes & Groenendijk (2000) distribution",
+                )
 
         plt.plot(Rayleigh_x, self.hwave / H_normalize, label="Wave height distribution")
 
