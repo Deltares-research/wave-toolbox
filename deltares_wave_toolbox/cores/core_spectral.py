@@ -15,7 +15,7 @@ def frequency_averaging(
     sFreq: NDArray[float64],
     dfDesired: float = 0.0,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
-    """FREQUENCYAVERAGING  Band averaging of given variance density spectrum
+    """Band averaging of given variance density spectrum
 
     This function performs a band averaging on a given variance density
     spectrum sFreq = sFreq(f) on a frequency axis f onto a coarser
@@ -34,9 +34,9 @@ def frequency_averaging(
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-        fCoarse: NDArray[float64]
+        fCoarse : NDArray[float64]
             frequency axis of band averaged spectrum. The frequency spacing is (close to) dfDesired
-        sFreqCoarse: NDArray[float64]
+        sFreqCoarse : NDArray[float64]
             band averaged variance density spectrum
 
     Raises
@@ -53,7 +53,6 @@ def frequency_averaging(
     >>> dfDesired =0.02
     >>> fCoarse,sFreq = frequency_averaging(f,sFreq,dfDesired)
     """
-
     # convert input to array type to be able to handle input like e.g. f = [0.2,0.4]
     f, fSize = core_engine.convert_to_vector(f)
     sFreq, sFreqSize = core_engine.convert_to_vector(sFreq)
@@ -90,53 +89,42 @@ def frequency_averaging(
 def unfold_spectrum(
     f: NDArray[float64], xFreq: NDArray[complex128], isOdd: bool
 ) -> tuple[NDArray[float64], NDArray[complex128]]:
-    """
-    UNFOLDSPECTRUM  Unfolds a folded discrete Fourier transform
+    """Unfolds a folded discrete Fourier transform
 
-    This function unfolds a folded discrete Fourier transform xFreq that
-    is given at frequency axis f. Note that this frequency axis goes up to
-    the Nyquist frequency. Parameter isOdd indicates whether the underlying
-    original time signal - of which xFreq is the discrete Fourier transform
-    - has even (isOdd=0) or odd (isOdd=1) time points.
+    This function unfolds a folded discrete Fourier transform xFreq that is given at frequency axis f. Note that this
+    frequency axis goes up to the Nyquist frequency. Parameter isOdd indicates whether the underlying original time
+    signal - of which xFreq is the discrete Fourier transform - has even (isOdd=0) or odd (isOdd=1) time points.
 
-    The unfolded discrete Fourier xFreqTot, at frequency axis fTot, can be
-    inverted back to time domain using function freq2time
-
+    The unfolded discrete Fourier xFreqTot, at frequency axis fTot, can be inverted back to time domain using
+    function freq2time
 
     Parameters
     ----------
-    f     :
-           1D real array containing frequency values, for folded Fourier
-           transform. The frequency axis runs from 0 to the Nyquist
-           frequency.
-    xFreq :
-          1D array (complex!) containing the folded Fourier coefficients
-          of original time series. The value xFreq(i) must be the Fourier
-          coefficient at frequency f(i). The number of elements in f and
-          xFreq are the same.
-    isOdd :
-          logical indicating whether nT, the number of time points in
-          original time series, is even (isOdd=0) or odd (isOdd=1)
-
+    f : NDArray[float64]
+        1D real array containing frequency values, for folded Fouriertransform. The frequency axis runs from 0 to the
+        Nyquist frequency
+    xFreq : NDArray[complex128]
+        1D array (complex!) containing the folded Fourier coefficients of original time series. The value xFreq(i)
+        must be the Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same
+    isOdd : bool
+        logical indicating whether nT, the number of time points in original time series, is even (isOdd=False) or
+        odd (isOdd=True)
 
     Returns
     -------
-    fTot     :
-             1D real array containing frequency values, for unfolded
-             Fourier transform. The frequency axis runs from 0 to twice
-             the Nyquist frequency. Array f contains as many elements as
-             the original time series.
-    xFreqTot :
-             1D array (complex!) containing the unfolded Fourier
-             coefficients of original time series. The value xFreqTot(i)
-             must be the Fourier coefficient at frequency fTot(i). The
-             number of elements in fTot and xFreqTot are the same.
+    tuple[NDArray[float64], NDArray[complex128]]
+        fTot : NDArray[float64]
+            1D real array containing frequency values, for unfolded Fourier transform. The frequency axis runs
+            from 0 to twice the Nyquist frequency. Array f contains as many elements as the original time series.
+        xFreqTot : NDArray[complex128]
+            1D array (complex!) containing the unfolded Fourier coefficients of original time series. The value
+            xFreqTot(i) must be the Fourier coefficient at frequency fTot(i). The number of elements in fTot and
+            xFreqTot are the same.
 
-    Remark:
-        See also time2freq_nyquist, freq2time
-
-    Syntax:
-        fTot,xFreqTot = unfold_spectrum(f,xFreq,isOdd)
+    Raises
+    ------
+    ValueError
+        Input error: input should be 1d arrays
 
     Example
     -------
@@ -152,9 +140,7 @@ def unfold_spectrum(
     >>> fTot,yFreqTot = unfold_spectrum(f,yFreq,isOdd)
     >>> # --- Return to time domain
     >>> yTime         = freq2time(yFreqTot)  # yTime must be identical to y
-
     """
-
     # convert input to array type to be able to handle input like e.g. f = [0.2,0.4]
     f, fSize = core_engine.convert_to_vector(f)
     xFreq, xFreqSize = core_engine.convert_to_vector(xFreq)
@@ -186,49 +172,32 @@ def coherence(
     xFreq2: NDArray[complex128],
     dfDesired: float = 0.0,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
-    """
-    COHERENCE  Function to compute the coherence in spectral domain.
+    """Function to compute the coherence in spectral domain.
 
-    This function computes the coherence (magnitude-squared cohorence) of
-    two complex spectral signal xFreq1 = xFreq1(f) and xFreq2 = xFreq2(f),
-    given on frequency axis f. The output coh2 = coh2(f_coh2) is given on a
-    frequency axis with frequency resolution dfDesired.
-    Note: the coherence is real, and always between 0 and 1.
+    This function computes the coherence (magnitude-squared cohorence) of two complex spectral signal
+    xFreq1 = xFreq1(f) and xFreq2 = xFreq2(f), given on frequency axis f. The output coh2 = coh2(f_coh2) is given on
+    a frequency axis with frequency resolution dfDesired. Note: the coherence is real, and always between 0 and 1.
 
     Parameters
     ----------
-     f        :
-              1d array frequency axis [Hz]
-    xFreq1    :
-              wave spectrum 1 of complex Fourier coefficients
-    xFreq2    :
-              wave spectrum 1 of complex Fourier coefficients
-    dfDesired :
-              (optional parameter) desired frequency spacing in Hertz on
-              which sFreq must be computed.
-              If this parameter is omitted, then dfDesired = f(2) - f(1)
+    f : NDArray[float64]
+        1d array frequency axis
+    xFreq1 : NDArray[complex128]
+        wave spectrum 1 of complex Fourier coefficients
+    xFreq2 : NDArray[complex128]
+        wave spectrum 2 of complex Fourier coefficients
+    dfDesired : float, optional
+        desired frequency spacing in Hertz on which sFreq must be computed. If this parameter is omitted, then
+        dfDesired = f(2) - f(1), by default 0.0
 
     Returns
     -------
-    f_coh2   :
-             frequency axis of coherence. The frequency
-             spacing is (close to) dfDesired
-    coh2     :
-             coherence (magnitude-squared coherence).
-
-    Syntax:
-         f_coh2,coh2 = coherence(f,xFreq1,xFreq2,dfDesired)
-
-    Example
-    -------
-    >>> import numpy as np
-    >>>
-    >>>
-    >>>
-    >>>
-
+    tuple[NDArray[float64], NDArray[float64]]
+        f_coh2 : NDArray[float64]
+            frequency axis of coherence. The frequency spacing is (close to) dfDesired
+        coh2 : NDArray[float64]
+            coherence (magnitude-squared coherence).
     """
-
     # --- Compute auto-spectral and cross-spectral (absolute value) densities
     #     on original frequency axis
     #     Note: Normalisation factors (2 / (df * Ntime * Ntime)) may be omitted,
@@ -259,32 +228,26 @@ def coherence(
 
 
 def freq2time(xFreq: NDArray[complex128]) -> NDArray[float64]:
-    """
-    FREQ2TIME  Transforms (unfolded) discrete Fourier transform back to time
-                signal
+    """Transforms (unfolded) discrete Fourier transform back to time signal
 
-    This function transforms a given discrete and unfolded Fourier
-    transform xFreq (in general a complex quantity!) back to time domain.
-    Note that the input Fourier transform xFreq must be unfolded. A given
-    folded Fourier transform can be unfolded using the function
-    unfoldspectrum.
-
+    This function transforms a given discrete and unfolded Fourier transform xFreq (in general a complex quantity!)
+    back to time domain. Note that the input Fourier transform xFreq must be unfolded. A given folded Fourier
+    transform can be unfolded using the function unfoldspectrum.
 
     Parameters
     ----------
-    xFreq :
-          1D array (complex!) containing unfolded Fourier coefficients.
+    xFreq : NDArray[complex128]
+        1D array (complex!) containing unfolded Fourier coefficients.
 
     Returns
     -------
-    xTime :
-          1D real array containing time series of the signal.
+    NDArray[float64]
+        1D real array containing time series of the signal.
 
-    Remark:
-         See also time2freq, time2freqnyquist, unfoldspectrum
-
-    Syntax:
-         xTime = freq2time(xFreq)
+    Raises
+    ------
+    ValueError
+        Input error: input should be 1d arrays
 
     Example
     -------
@@ -299,9 +262,7 @@ def freq2time(xFreq: NDArray[complex128]) -> NDArray[float64]:
     >>> f,yFreq = time2freq(t,y)
     >>> # --- Return to time domain
     >>> yTime = freq2time(yFreq)  # yTime must be identical to y
-
     """
-
     xFreq, xFreqSize = core_engine.convert_to_vector(xFreq)
 
     # Check on input arguments
@@ -319,6 +280,31 @@ def freq2time(xFreq: NDArray[complex128]) -> NDArray[float64]:
 def time2freq(
     t: NDArray[float64], xTime: NDArray[float64]
 ) -> tuple[NDArray[float64], NDArray[complex128]]:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    t : NDArray[float64]
+        _description_
+    xTime : NDArray[float64]
+        _description_
+
+    Returns
+    -------
+    tuple[NDArray[float64], NDArray[complex128]]
+        _description_
+
+    Raises
+    ------
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    """
     """
     TIME2FREQ  Computes the discrete Fourier transform coefficients (on
                unfolded frequency axis) of a given of time signal
@@ -414,6 +400,31 @@ def time2freq(
 def time2freq_nyquist(
     t: NDArray[float64], xTime: NDArray[float64]
 ) -> tuple[NDArray[float64], NDArray[complex128], bool]:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    t : NDArray[float64]
+        _description_
+    xTime : NDArray[float64]
+        _description_
+
+    Returns
+    -------
+    tuple[NDArray[float64], NDArray[complex128], bool]
+        _description_
+
+    Raises
+    ------
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    """
     """
     TIME2FREQNYQUIST  Computes the discrete Fourier transform coefficients (on
                   folded frequency axis) of a given of time signal
@@ -525,6 +536,24 @@ def compute_spectrum_time_series(
     xTime: NDArray[float64],
     dfDesired: float = 0.0,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    t : NDArray[float64]
+        _description_
+    xTime : NDArray[float64]
+        _description_
+    dfDesired : float, optional
+        _description_, by default 0.0
+
+    Returns
+    -------
+    tuple[NDArray[float64], NDArray[float64]]
+        _description_
+    """
     """
     @brief
     COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
@@ -596,6 +625,37 @@ def compute_spectrum_freq_series(
     dfDesired: float = 0.0,
     Ntime: int = 0,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        _description_
+    xFreq : NDArray[float64]
+        _description_
+    dfDesired : float, optional
+        _description_, by default 0.0
+    Ntime : int, optional
+        _description_, by default 0
+
+    Returns
+    -------
+    tuple[NDArray[float64], NDArray[float64]]
+        _description_
+
+    Raises
+    ------
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    """
     """
     COMPUTE_SPECTRUM_FREQ_SERIES Computes variance density spectrum from given complex
     spectrum of Fourier components
@@ -684,6 +744,37 @@ def spectrum2timeseries(
     dt: float,
     seed: int = -1,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        _description_
+    sVarDens : NDArray[float64]
+        _description_
+    tInit : float
+        _description_
+    tEnd : float
+        _description_
+    dt : float
+        _description_
+    seed : int, optional
+        _description_, by default -1
+
+    Returns
+    -------
+    tuple[NDArray[float64], NDArray[float64]]
+        _description_
+
+    Raises
+    ------
+    ValueError
+        _description_
+    ValueError
+        _description_
+    """
     """
     SPECTRUM2TIMESERIES  Generates a timeseries based on a given spectrum.
 
@@ -795,20 +886,37 @@ def spectrum2timeseries_object(
 
 
 def compute_spectrum_welch_wrapper(
-    signal, dt, nperseg=None, noverlap=None, nfft=None, window_type="hann"
-):
+    signal: NDArray[float64],
+    dt: float,
+    nperseg: int = None,
+    noverlap: int = None,
+    nfft: int = None,
+    window_type: str = "hann",
+) -> tuple[NDArray[float64], NDArray[float64]]:
     """Wrapper arround the Scipy Welch method
 
-    Args:
-        signal (array): signal
-        dt (float): time step of signal
-        nperseg (int, optional): Length of each segment. Defaults to None.
-        noverlap (int, optional): number of points in overlap. Defaults to None.
-        nfft (int, optional): lentth of fft. Defaults to None.
-        window_type (str, optional): window type. Defaults to "hann".
+    Parameters
+    ----------
+    signal : NDArray[float64]
+        signal
+    dt : float
+        time step of signal
+    nperseg : int, optional
+        Length of each segment, by default None
+    noverlap : int, optional
+        number of points in overlap, by default None
+    nfft : int, optional
+        length of fft, by default None
+    window_type : str, optional
+        window type, by default "hann"
 
-    Returns:
-        f, Pxx: frequency and spectral density
+    Returns
+    -------
+    tuple[NDArray[float64], NDArray[float64]]
+        f : NDArray[float64]
+            frequency axis
+        Pxx : NDArray[float64]
+            spectral density
     """
     f, Pxx = welch(
         signal,

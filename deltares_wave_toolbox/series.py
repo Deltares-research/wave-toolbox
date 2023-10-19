@@ -123,9 +123,9 @@ class WaveHeights:
         Returns
         -------
         tuple[float, float]
-            hFracP: float
+            hFracP : float
                 average of the wave heights of the highest fracP waves
-            tFracP: float
+            tFracP : float
                 average of the wave periods of the highest fracP waves
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
@@ -338,9 +338,9 @@ class Series(WaveHeights):
         Returns
         -------
         tuple[int, NDArray[float64]]
-            nWave: int
+            nWave : int
                 number of waves detected
-            tCross: NDArray[float64]
+            tCross : NDArray[float64]
                 moments in time with a crossing
         """
         nWave, tCross = core_time.determine_zero_crossing(
@@ -384,11 +384,11 @@ class Series(WaveHeights):
         Returns
         -------
         tuple[NDArray[float64], NDArray[complex128], bool]
-            f: NDArray[float64]
+            f : NDArray[float64]
                 frequency array
-            xFreq: NDArray[complex128]
+            xFreq : NDArray[complex128]
                 fourrier components
-            isOdd: bool
+            isOdd : bool
                 indicates whether the number of time points in xTime is odd (True) or even (False)
         """
         f, xFreq, isOdd = core_spectral.time2freq_nyquist(self.time, self.x)
@@ -414,17 +414,17 @@ class Series(WaveHeights):
         Returns
         -------
         tuple[ NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], ]
-            tWave: NDArray[float64]
+            tWave : NDArray[float64]
                 1D array containing the periods of the individual waves
-            hWave: NDArray[float64]
+            hWave : NDArray[float64]
                 1D array containing the wave heights of the individual waves
-            aCrest: NDArray[float64]
+            aCrest : NDArray[float64]
                 1D array containing the maximum amplitudes of the crest of the individual waves
-            aTrough: NDArray[float64]
+            aTrough : NDArray[float64]
                 1D array containing the maximum amplitudes of the trough of the individual waves
-            tCrest: NDArray[float64]
+            tCrest : NDArray[float64]
                 1D array containing the time at which maximum crest amplitude of the individual waves occurs
-            tTrough: NDArray[float64]
+            tTrough : NDArray[float64]
                 1D array containing the time at which maximum trough amplitude of the individual waves occurs
 
         Notes:
