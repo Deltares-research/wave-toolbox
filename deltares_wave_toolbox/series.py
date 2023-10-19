@@ -7,15 +7,15 @@ import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
 import deltares_wave_toolbox.cores.core_time as core_time
 import deltares_wave_toolbox.cores.core_wavefunctions as core_wavefunctions
-from deltares_wave_toolbox.spectrum import Spectrum
+import deltares_wave_toolbox.spectrum as spectrum
 
 
 class WaveHeights:
     def __init__(
         self, hwave: npt.NDArray[np.float64], twave: npt.NDArray[np.float64]
     ) -> None:
-        hwave, tSize = core_engine.convert_to_vector(hwave)
-        twave, xSize = core_engine.convert_to_vector(twave)
+        hwave, _ = core_engine.convert_to_vector(hwave)
+        twave, _ = core_engine.convert_to_vector(twave)
 
         self.hwave = hwave
         self.nwave = len(hwave)
@@ -121,6 +121,7 @@ class WaveHeights:
         plot_BG: bool = False,
         water_depth: float = None,
         cota_slope: float = None,
+        Hm0: float = None,
         savepath: str = None,
         fig=None,
     ) -> None:
@@ -157,21 +158,23 @@ class WaveHeights:
         )
 
         if plot_BG:
-            # TODO !!! implement proper way to get Hm0 here (via spectrum?)
-            Hm0 = self.get_Hs()[0]
+            if Hm0 is None:
+                raise ValueError(
+                    "Please provide Hm0 when using Battjes & Groenendijk distribution"
+                )
+            else:
+                (
+                    hwave_BG,
+                    Pexceedance_BG,
+                ) = core_wavefunctions.compute_BattjesGroenendijk_wave_height_distribution(
+                    Hm0, self.nwave, water_depth, cota_slope=cota_slope
+                )
 
-            (
-                hwave_BG,
-                Pexceedance_BG,
-            ) = core_wavefunctions.compute_BattjesGroenendijk_wave_height_distribution(
-                Hm0, self.nwave, water_depth, cota_slope=cota_slope
-            )
-
-            plt.plot(
-                np.sqrt(-np.log(Pexceedance_BG)),
-                hwave_BG / H_normalize,
-                label="Battjes & Groenendijk (2000) distribution",
-            )
+                plt.plot(
+                    np.sqrt(-np.log(Pexceedance_BG)),
+                    hwave_BG / H_normalize,
+                    label="Battjes & Groenendijk (2000) distribution",
+                )
 
         plt.plot(Rayleigh_x, self.hwave / H_normalize, label="Wave height distribution")
 
@@ -249,7 +252,9 @@ class Series(WaveHeights):
     def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
-    def get_crossing(self, typeCross: str = "down"):
+    def get_crossing(
+        self, typeCross: str = "down"
+    ) -> tuple[int, npt.NDArray[np.float64]]:
         """Get zero crossings
 
         Args:
@@ -263,7 +268,7 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, fres: float = 0.01):
+    def get_spectrum(self, fres: float = 0.01) -> spectrum.Spectrum:
         """create spectrum
 
         Args:
@@ -274,7 +279,7 @@ class Series(WaveHeights):
         """
 
         [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.x, fres)
-        return Spectrum(f, S)
+        return spectrum.Spectrum(f, S)
 
     def max(self) -> float:
         return np.max(self.x)
