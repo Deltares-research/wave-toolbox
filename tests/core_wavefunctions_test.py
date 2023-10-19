@@ -255,5 +255,3 @@ def test_create_spectrum_jonswap():
     sVarDens = core_wavefunctions.create_spectrum_jonswap(f, fp, hm0, gammaPeak)
 
     assert sVarDens == pytest.approx(sVarDensCorrect, abs=1e-4)
-
-
