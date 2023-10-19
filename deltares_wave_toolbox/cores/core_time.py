@@ -100,8 +100,8 @@ def sort_wave_params(
 def determine_zero_crossing(
     t: npt.NDArray[np.float64] = None,
     x: npt.NDArray[np.float64] = None,
-    typeCross="down",
-):
+    typeCross: str = "down",
+) -> tuple[int, npt.NDArray[np.float64]]:
     """
     DETERMINEZEROCROSSING  Determines zero-crossings (number and positions) of signal.
     This function determines the zero-crossings of a given time signal x =
@@ -178,7 +178,7 @@ def determine_zero_crossing(
 
     # Computational core
     nWave = -1
-    tCross = []
+    tCross = np.empty((0, 0))
     dt = t[1] - t[0]
     nTime = len(t)
 
@@ -193,7 +193,7 @@ def determine_zero_crossing(
                 # --- Determine time level of zero-crossing by means of linear
                 #     interpolation
                 tCrossing = t[iTime] + dt * x[iTime] / (x[iTime] - x[iTime + 1])
-                tCross.append(tCrossing)
+                tCross = np.append(tCross, tCrossing)
 
     elif typeCross.lower() == "down":
         # --- Downcrossings
@@ -205,7 +205,7 @@ def determine_zero_crossing(
                 # --- Determine time level of zero-crossing by means of linear
                 #     interpolation
                 tCrossing = t[iTime] + dt * x[iTime] / (x[iTime] - x[iTime + 1])
-                tCross.append(tCrossing)
+                tCross = np.append(tCross, tCrossing)
     else:
         raise ValueError(
             "sort_wave_params: Input error: Wrong input argument for typeCross "
@@ -412,7 +412,14 @@ def determine_params_individual_waves(
     tCross: npt.NDArray[np.float64] = None,
     t: npt.NDArray[np.float64] = None,
     x: npt.NDArray[np.float64] = None,
-):
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     DETERMINE_PARAMS_INDIVIDUALWAVES  Determines parameters per individual wave
 
@@ -483,12 +490,12 @@ def determine_params_individual_waves(
     # --- In the possible situation of no zero-crossings, the array tCross is
     #     empty. In this situation, make output variables empty arrays and
     #     return
-    tWave = []
-    hWave = []
-    aCrest = []
-    aTrough = []
-    tCrest = []
-    tTrough = []
+    tWave = np.empty((0, 0))
+    hWave = np.empty((0, 0))
+    aCrest = np.empty((0, 0))
+    aTrough = np.empty((0, 0))
+    tCrest = np.empty((0, 0))
+    tTrough = np.empty((0, 0))
     if core_engine.isempty(tCross):
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
