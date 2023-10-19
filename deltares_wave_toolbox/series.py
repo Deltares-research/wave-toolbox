@@ -14,6 +14,15 @@ import deltares_wave_toolbox.spectrum as spectrum
 
 class WaveHeights:
     def __init__(self, hwave: NDArray[float64], twave: NDArray[float64]) -> None:
+        """The WaveHeights class
+
+        Parameters
+        ----------
+        hwave : NDArray[float64]
+            Array of wave heights
+        twave : NDArray[float64]
+            Array of wave periods
+        """
         hwave, _ = core_engine.convert_to_vector(hwave)
         twave, _ = core_engine.convert_to_vector(twave)
 
@@ -28,7 +37,9 @@ class WaveHeights:
         return f"{type(self).__name__} (series  nt = {self.nwave})"
 
     def sort(self) -> None:
-        """Sorts the wave height and wave period.
+        """Sort wave heights and wave periods
+
+        Sorts the wave height and wave period.
         The sorting is done such that in hWaveSorted the wave heights of hWave
         are sorted in descending order. This same sorting is applied to
         tWave.
@@ -36,55 +47,85 @@ class WaveHeights:
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
 
     def get_Hrms(self) -> float:
+        """Compute root-mean-squared wave height
+
+        Returns
+        -------
+        float
+            Hrms
+        """
         return np.sqrt(np.mean(self.hwave**2))
 
     def get_Hmax(self) -> float64:
+        """Return maximum wave height
+
+        Returns
+        -------
+        float64
+            Hmax
+        """
         return np.max(self.hwave)
 
     def get_Hs(self) -> tuple[float, float]:
+        """Compute significant wave height & associated period
+
+        Hs (significant wave height) is the average of the highest 1/3 of the waves
+
+        Returns
+        -------
+        tuple[float, float]
+            Hs, Ts
+        """
         return self.highest_waves(1 / 3)
 
     def get_H2p_Rayleigh(self) -> float:
+        """Compute 2% exceedance wave height assuming theoretical Rayleigh distribution
+
+        Returns
+        -------
+        float
+            H2p
+        """
         return self.get_Hs()[0] * rayleigh.ppf(0.98, scale=1 / np.sqrt(2)) / np.sqrt(2)
 
     def get_exceedance_waveheight(self, excPerc: float) -> float:
-        """
-        EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
+        """Computes wave height with given exceedance probability
 
-        This function computes the wave height hExcPerc with given exceedance
-        probability percentage excPerc.
+        This function computes the wave height hExcPerc with given exceedance probability percentage excPerc.
 
-        Args:
-            excPerc (float): exceedance probability percentage. excPerc = 2 means an
-                exceedance percentage of 2%. The value of excPerc should
-                not exceed 100, or be smaller than 0
+        Parameters
+        ----------
+        excPerc : float
+            exceedance probability percentage. excPerc = 2 means an exceedance percentage of 2%. The value of excPerc
+            should not exceed 100, or be smaller than 0
 
-        Returns:
-            hExcPerc(float):  wave height with given exceedance probability
+        Returns
+        -------
+        float
+            hExcPerc, wave height with given exceedance probability
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
         return core_time.exceedance_wave_height(hWaveSorted=self.hwave, excPerc=excPerc)
 
     def highest_waves(self, fracP: float) -> tuple[float, float]:
-        """
-        HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
+        """Computes wave parameters of selection largest waves
 
-        This function computes the wave height hFracP and wave period tFracP by
-        taking the average of the fraction fracP of the highest waves. When
-        fracP = 1/3, then hFracP is equal to the significant wave height and
-        tFracP is equal to the significant wave period.
+        This function computes the wave height hFracP and wave period tFracP by taking the average of the fraction
+        fracP of the highest waves. When fracP = 1/3, then hFracP is equal to the significant wave height and tFracP
+        is equal to the significant wave period.
 
-        Subject: time domain analysis of waves
+        Parameters
+        ----------
+        fracP : float
+            fraction. Should be between 0 and 1
 
-        Args:
-            fracP       : double
-                fraction. Should be between 0 and 1
-
-        Returns:
-            hFracP     : double
-                    average of the wave heights of the highest fracP waves
-            tFracP     : double
-                    average of the wave periods of the highest fracP waves
+        Returns
+        -------
+        tuple[float, float]
+            hFracP: float
+                average of the wave heights of the highest fracP waves
+            tFracP: float
+                average of the wave periods of the highest fracP waves
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
         hFracP, tFracP = core_time.highest_waves_params(
@@ -95,9 +136,15 @@ class WaveHeights:
     def plot_exceedance_waveheight(self, savepath: str = "") -> figure.Figure:
         """Plot exceedances of wave heights
 
-        Args:
-            savepath (str, optional): path to save figure. Defaults to None.
-            fig (figure object, optional): figure object. Defaults to None.
+        Parameters
+        ----------
+        savepath : str, optional
+            path to save figure, by default ""
+
+        Returns
+        -------
+        figure.Figure
+            figure object
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
         fig = plt.figure()
@@ -126,11 +173,31 @@ class WaveHeights:
     ) -> figure.Figure:
         """Plot exceedances of wave heights compared to Rayleigh distribution
 
-        Args:
-            savepath (str, optional): path to save figure. Defaults to None.
-            fig (figure object, optional): figure object. Defaults to None.
-        """
+        Parameters
+        ----------
+        savepath : str, optional
+            path to save figure, by default ""
+        normalize : bool, optional
+            normalize wave heights with significant wave height (Hs), by default False
+        plot_BG : bool, optional
+            include theoretical Battjes & Groenendijk (2000) distribution in plot, by default False
+        water_depth : float, optional
+            water depth needed for Battjes & Groenendijk (2000), by default -1.0
+        cota_slope : float, optional
+            foreshore slope needed for Battjes & Groenendijk (2000), by default 250.0
+        Hm0 : float, optional
+            spectral wave height needed for Battjes & Groenendijk (2000), by default -1.0
 
+        Returns
+        -------
+        figure.Figure
+            figure object
+
+        Raises
+        ------
+        ValueError
+            Raised when plot_BG is True and Hm0 is not provided
+        """
         if normalize:
             # Normalize with significant wave height
             H_normalize = self.get_Hs()[0]
@@ -195,11 +262,16 @@ class WaveHeights:
     def plot_hist_waveheight(self, savepath: str = "") -> figure.Figure:
         """Plot Histogram of wave heights
 
-        Args:
-            savepath (str, optional): path to save figure. Defaults to None.
-            fig (figure object, optional): figure object. Defaults to None.
-        """
+        Parameters
+        ----------
+        savepath : str, optional
+            path to save figure, by default ""
 
+        Returns
+        -------
+        figure.Figure
+            figure object
+        """
         fig = plt.figure()
         plt.hist(self.hwave, label="Distribution")
 
@@ -214,7 +286,7 @@ class WaveHeights:
 
 
 class Series(WaveHeights):
-    """Series object
+    """
 
     Args:
         WaveHeights (_type_): _description_
@@ -224,6 +296,17 @@ class Series(WaveHeights):
     """
 
     def __init__(self, time: NDArray[float64], x: NDArray[float64]) -> None:
+        """The wave Series class
+
+        Contains a time series (typically) of water level elevations. Inherits from WaveHeights class.
+
+        Parameters
+        ----------
+        time : NDArray[float64]
+            time array
+        x : NDArray[float64]
+            varying quantity (typically water level elevation)
+        """
         time, tSize = core_engine.convert_to_vector(time)
         x, xSize = core_engine.convert_to_vector(x)
 
@@ -250,13 +333,22 @@ class Series(WaveHeights):
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
     def get_crossing(self, typeCross: str = "down") -> tuple[int, NDArray[float64]]:
-        """Get zero crossings
+        """Get zero crossings form time series
 
-        Args:
-            typeCross (str, optional): type of crossing ('up' or 'down'). Defaults to 'down'.
+        Determine either the zero up- or down-crossings of the time series.
 
-        Returns:
-            float and array: nWave with number of waves and tCross with the moments in time with a crossing
+        Parameters
+        ----------
+        typeCross : str, optional
+            Search for up- or down-crossings, by default "down"
+
+        Returns
+        -------
+        tuple[int, NDArray[float64]]
+            nWave: int
+                number of waves detected
+            tCross: NDArray[float64]
+                moments in time with a crossing
         """
         nWave, tCross = core_time.determine_zero_crossing(
             t=self.time, x=self.x, typeCross=typeCross
@@ -266,13 +358,16 @@ class Series(WaveHeights):
     def get_spectrum(self, fres: float = 0.01) -> spectrum.Spectrum:
         """create spectrum
 
-        Args:
-            fres (float, optional): frequency resolution. Defaults to 0.01.
+        Parameters
+        ----------
+        fres : float, optional
+            frequency resolution, by default 0.01
 
-        Returns:
-            Spectrum object: Spectrum
+        Returns
+        -------
+        spectrum.Spectrum
+            Spectrum in spectrum object
         """
-
         [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.x, fres)
         return spectrum.Spectrum(f, S)
 
@@ -293,10 +388,15 @@ class Series(WaveHeights):
     ) -> tuple[NDArray[float64], NDArray[complex128], bool]:
         """get Fourier components from series
 
-        Returns:
-            array: f, frequency array
-            array: xFreq, fourrier components
-            isOdd: logical
+        Returns
+        -------
+        tuple[NDArray[float64], NDArray[complex128], bool]
+            f: NDArray[float64]
+                frequency array
+            xFreq: NDArray[complex128]
+                fourrier components
+            isOdd: bool
+                indicates whether the number of time points in xTime is odd (True) or even (False)
         """
         f, xFreq, isOdd = core_spectral.time2freq_nyquist(self.time, self.x)
         return f, xFreq, isOdd
@@ -313,31 +413,31 @@ class Series(WaveHeights):
     ]:
         """determine individual waves in series
 
-        Args:
-            typeCross (str, optional): type of crossing (down or up). Defaults to 'down'.
+        Parameters
+        ----------
+        typeCross : str, optional
+            Search for up- or down-crossings, by default "down"
 
         Returns
-            tWave    : array double (1D)
-                    1D array containing the periods of the individual waves
-            hWave    : array double (1D)
-                    1D array containing the wave heights of the individual waves
-            aCrest   : array double (1D)
-                    1D array containing the maximum amplitudes of the crest of
-                    the individual waves
-            aTrough  : array double (1D)
-                    1D array containing the maximum amplitudes of the trough of
-                    the individual waves
-            tCrest   : array double (1D)
-                    1D array containing the time at which maximum crest
-                    amplitude of the individual waves occurs
-            tTrough  : array double (1D)
-                    1D array containing the time at which maximum trough
-                    amplitude of the individual waves occurs
-            Notes:
-                * All these arrays have a length equal to nWave, which is the number of
-                waves in the wave train
-                * The values of aTrough are always smaller than zero
-                * hWave = aCrest - aTrough
+        -------
+        tuple[ NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], ]
+            tWave: NDArray[float64]
+                1D array containing the periods of the individual waves
+            hWave: NDArray[float64]
+                1D array containing the wave heights of the individual waves
+            aCrest: NDArray[float64]
+                1D array containing the maximum amplitudes of the crest of the individual waves
+            aTrough: NDArray[float64]
+                1D array containing the maximum amplitudes of the trough of the individual waves
+            tCrest: NDArray[float64]
+                1D array containing the time at which maximum crest amplitude of the individual waves occurs
+            tTrough: NDArray[float64]
+                1D array containing the time at which maximum trough amplitude of the individual waves occurs
+
+        Notes:
+            * All these arrays have a length equal to nWave, which is the number of waves in the wave train
+            * The values of aTrough are always smaller than zero
+            * hWave = aCrest - aTrough
         """
         _, tCross = core_time.determine_zero_crossing(
             t=self.time, x=self.x, typeCross=typeCross
@@ -357,11 +457,18 @@ class Series(WaveHeights):
     def plot(self, savepath: str = "", plot_crossing: bool = False) -> figure.Figure:
         """Plot Series
 
-        Args:
-            savepath (str, optional): path to save figure. Defaults to None.
-            fig (figure object, optional): figure object. Defaults to None.
-        """
+        Parameters
+        ----------
+        savepath : str, optional
+            path to save figure, by default ""
+        plot_crossing : bool, optional
+            plot zero crossings in figure, by default False
 
+        Returns
+        -------
+        figure.Figure
+            figure object
+        """
         fig = plt.figure()
         plt.plot(self.time, self.x, label="series")
         if plot_crossing:

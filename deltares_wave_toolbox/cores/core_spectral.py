@@ -34,11 +34,10 @@ def frequency_averaging(
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-
-    fCoarse: NDArray[float64]
-        frequency axis of band averaged spectrum. The frequency spacing is (close to) dfDesired
-    sFreqCoarse: NDArray[float64]
-        band averaged variance density spectrum
+        fCoarse: NDArray[float64]
+            frequency axis of band averaged spectrum. The frequency spacing is (close to) dfDesired
+        sFreqCoarse: NDArray[float64]
+            band averaged variance density spectrum
 
     Raises
     ------
