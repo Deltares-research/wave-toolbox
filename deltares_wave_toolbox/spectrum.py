@@ -53,7 +53,7 @@ class Spectrum:
     def __repr__(self) -> str:
         return f"{type(self).__name__} (spec = {self.spec})"
 
-    def _set_flim(self, fmin: float, fmax: float) -> tuple[float, float]:
+    def _set_flim(self, fmin: float = None, fmax: float = None) -> tuple[float, float]:
         """Set frequency limits
 
         Args:

@@ -306,7 +306,16 @@ class Series(WaveHeights):
         f, xFreq, isOdd = core_spectral.time2freq_nyquist(self.time, self.x)
         return f, xFreq, isOdd
 
-    def _determine_individual_waves(self, typeCross: str = "down"):
+    def _determine_individual_waves(
+        self, typeCross: str = "down"
+    ) -> tuple[
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+    ]:
         """determine individual waves in series
 
         Args:

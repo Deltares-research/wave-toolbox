@@ -4,7 +4,7 @@ from .cores import *  # noqa
 
 __version__ = "3.6.5"
 
-## set stylesheet
+# set stylesheet
 import matplotlib.pyplot as plt
 import os
 
