@@ -2,7 +2,7 @@ from .series import Series, WaveHeights  # noqa
 from .spectrum import Spectrum  # noqa
 from .cores import *  # noqa
 
-__version__ = "3.6.5"
+__version__ = "1.0.0"
 
 # set stylesheet
 import matplotlib.pyplot as plt

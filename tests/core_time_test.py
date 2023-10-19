@@ -184,7 +184,7 @@ def test_highest_waves_params(
     ("hWaveSorted", "excPerc", "hExcPercCorrect"),
     (
         ([7.1, 6.0, 5.8, 4.4, 3.1, 2.2, 1.4], 33.0, 6.0),
-        ([7.1, 6.0, 5.8, 4.4, 3.1, 2.2, 1.4], 10.0, None),
+        ([7.1, 6.0, 5.8, 4.4, 3.1, 2.2, 1.4], 10.0, 0.0),
     ),
 )
 def test_exceedance_wave_height(hWaveSorted, excPerc, hExcPercCorrect):

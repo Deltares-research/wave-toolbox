@@ -318,8 +318,8 @@ def highest_waves_params(
     # --- Number of waves in the fraction that is to be considered
     nWaveP = int(np.floor(nWave * fracP))
     if nWaveP > 0:
-        hFracP = np.mean(hWaveSorted[0:nWaveP])
-        tFracP = np.mean(tWaveSorted[0:nWaveP])
+        hFracP = float(np.mean(hWaveSorted[0:nWaveP]))
+        tFracP = float(np.mean(tWaveSorted[0:nWaveP]))
 
     return hFracP, tFracP
 
@@ -384,7 +384,7 @@ def exceedance_wave_height(
         )
 
     # --- If there are no waves, return to calling function
-    hExcPerc = None
+    hExcPerc = 0.0
     # --- Number of waves
     nWave = len(hWaveSorted)
     if nWave < 1:
