@@ -1,5 +1,5 @@
 Welcome to deltares_wave_toolbox's documentation!
-======================================
+=================================================
 
 .. toctree::
    :maxdepth: 2
