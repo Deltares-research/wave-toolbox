@@ -15,43 +15,46 @@ def compute_spectrum_params(
     fmin: float = -1.0,
     fmax: float = -1.0,
 ) -> tuple[float, float, float, float, float, float]:
-    """
-    COMPUTE_SPECTRUM_PARAMS  Computes spectral parameters of given spectrum
+    """Computes spectral parameters of given spectrum
 
     This function computes several spectral wave parameters of a given 1D
     spectrum
 
-
     Parameters
     ----------
-    f    : array double (1D)
-         1D array representing frequency axis (unit: Hz)
-    S    : array double (1D)
-         1D array representing variance density spectrum (units: m2/Hz).
-    fmin : double
-         (optional argument) lower bound of the moment integral (unit: Hz)
-    fmax : double
-         (optional argument) upper bound of the moment integral (unit: Hz)
+    f : NDArray[float64]
+        1D array representing frequency axis [Hz]
+    S : NDArray[float64]
+        1D array representing variance density spectrum [m2/Hz].
+    fmin : float, optional
+        lower bound of the moment integral [Hz], by default -1.0
+    fmax : float, optional
+        upper bound of the moment integral [Hz], by default -1.0
 
     Returns
     -------
-    Hm0   : double
-          wave height (units: m)
-    Tp    : double
-          peak period (units: s)
-    Tps   : double
-          smoothed peak period (units: s)
-    Tmm10 : double
-          wave period based on (-1) and (0) moments (units: s)
-    Tm01  : double
-          wave period based on (0) and (1) moments (units: s)
-    Tm02  : double
-          wave period based on (0) and (2) moments (units: s)
+    tuple[float, float, float, float, float, float]
+        Hm0 : float
+            wave height [m]
+        Tp : float
+            peak period [s]
+        Tps : float
+            smoothed peak period [s]
+        Tmm10 : float
+            wave period based on (-1) and (0) moments [s]
+        Tm01 : float
+            wave period based on (0) and (1) moments [s]
+        Tm02 : float
+            wave period based on (0) and (2) moments [s]
 
-
-    Syntax:
-          [Hm0,Tp,Tps,Tmm10,Tm01,Tm02] = compute_spectrum_params(f,S,fmin,fmax)
-
+    Raises
+    ------
+    ValueError
+        Input error: input should be 1d arrays
+    ValueError
+        Input error: frequency input parameter must be monotonic with constant step size
+    ValueError
+        Input error: array sizes differ in dimension
 
     Example
     -------
@@ -64,10 +67,7 @@ def compute_spectrum_params(
     >>> sPM = create_spectrum_piersonmoskowitz(f,1/Tp,Hm0)
     >>> [Hm0,Tp,Tps,Tmm10,Tm01,Tm02] = compute_spectrum_params(f,sPM,fmin,fmax)
 
-    See also computemoment
-
     """
-
     # --- Ensure array input is of type ndarray.
     f, fSize = core_engine.convert_to_vector(f)
     S, SSize = core_engine.convert_to_vector(S)
@@ -150,44 +150,45 @@ def compute_moment(
     fmin: float = -1.0,
     fmax: float = -1.0,
 ) -> float:
-    """
-    COMPUTE_MOMENT  Computes the spectral moment
+    """Computes the spectral moment
 
-    This function computes the m'th order spectral moment
-    of variance density spectrum S=S(f), with f the frequency axis,
-    over frequency domain [fmin,fmax].
+    This function computes the m'th order spectral moment of variance density spectrum S=S(f), with f the frequency
+    axis, over frequency domain [fmin,fmax].
 
     It is required that fmin >= f_in(1).
 
-    It is not required to have fmax <= f_in(end). So it ok to have fmax =
-    Inf.
+    It is not required to have fmax <= f_in(end). So it ok to have fmax = Inf.
     If fmax>f(end), then the moment consists of the summation of two parts:
     (1) Integration of (f_in^m * S), with given S, over [fmin,f(end)]
-    (2) Exact integration of (f^m * S_lim) over [f(end),fmax], where S_lim
-        is a high-frequency f^(-5) tail.
+    (2) Exact integration of (f^m * S_lim) over [f(end),fmax], where S_lim is a high-frequency f^(-5) tail.
     Typically, in such cases one puts fmax = Inf.
-
 
     Parameters
     ----------
-    f     : array double (1D)
-          1D array representing frequency axis (unit: Hz)
-    S     : array double (1D)
-          1D array representing variance density spectrum (units: m2/Hz).
-    m     : integer
-          order of moment (integer value)
-    fmin  : double
-          (optional argument) lower bound of the moment integral (unit: Hz)
-    fmax  : double
-          (optional argument) upper bound of the moment integral (unit: Hz)
+    f : NDArray[float64]
+        1D array representing frequency axis [Hz]
+    S : NDArray[float64]
+        1D array representing variance density spectrum [m2/Hz].
+    m : int
+        order of moment (integer value)
+    fmin : float, optional
+        lower bound of the moment integral [Hz], by default -1.0
+    fmax : float, optional
+        upper bound of the moment integral [Hz], by default -1.0
 
     Returns
     -------
-    moment : double
-           the computed moment
+    float
+        the computed moment
 
-    Syntax:
-       moment = compute_moment(f,S,m,fmin,fmax)
+    Raises
+    ------
+    ValueError
+        Input error: input should be 1d arrays
+    ValueError
+        Input error: frequency input parameter must be monotonic with constant step size
+    ValueError
+        Input error: array sizes differ in dimension
 
     Example
     -------
@@ -203,9 +204,7 @@ def compute_moment(
     >>> m1  = compute_moment(f,sPM,1)
     >>> m2  = compute_moment(f,sPM,2)
 
-    See also function computemoment, integral1d
     """
-
     # --- Ensure array input is of type ndarray.
     f, fSize = core_engine.convert_to_vector(f)
     S, SSize = core_engine.convert_to_vector(S)
@@ -274,60 +273,44 @@ def create_spectrum_jonswap(
     gammaPeak: float = 3.3,
     l_fmax: float = 0,
 ) -> NDArray[float64]:
-    """
-    CREATE_SPECTRUM_JONSWAP  Creates a Jonswap spectrum
+    """Creates a Jonswap spectrum
 
-    This function creates the Jonswap variance density spectrum, based on a
-    given frequency axis, wave height, peak frequency and peak enhancement
-    factor.
+    This function creates the Jonswap variance density spectrum, based on a given frequency axis, wave height, peak
+    frequency and peak enhancement factor.
     Literature:
     Hasselman, K., e.a. (1973), Erga"nzungsheft zur Deutschen
     Hydrographischen Zeitschrift, Reihe A(8), No. 12
 
+    For l_fmax = 0, the sVarDens is such that integration from f(1) to f(end) leads exactly to the given Hm0. For
+    l_fmax = 1, integration from [f(end},inf] is computed using a (-5)-power law. This also means that integration
+    from f(1) to f(end) leads to a slightly smaller value for the wave height than the prescribed Hm0.
 
     Parameters
     ----------
-    f : TYPE
-        DESCRIPTION.
-    fp : TYPE
-        DESCRIPTION.
-    hm0 : TYPE
-        DESCRIPTION.
-    gammaPeak : TYPE
-        DESCRIPTION.
-    l_fmax : TYPE
-        DESCRIPTION.
-    f         : array double (1D)
-              1D real array containing frequency values. The numbers in
-              the array f must be increasing and uniformly spaced
-              (uniform frequency step). Units: Hz
-    fp        : double
-              peak frequency. Units: Hz
-    hm0       : double
-              wave height. Units: m
-    gammaPeak : double
-              (optional parameter) peak enhancement factor
-              Default value is 3.3. No units.
-    l_fmax    : double
-              optional argument. The imposed spectral wave height Hm0
-              holds for the frequency range [f(1),f(end)] (l_fmax = 0,
-              default) or for the frequency range [f(1),inf] (l_fmax =
-              1).
+    f : NDArray[float64]
+        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    fp : float
+        peak frequency. [Hz]
+    hm0 : float
+        wave height. [m]
+    gammaPeak : float, optional
+        peak enhancement factor, by default 3.3
+    l_fmax : float, optional
+        The imposed spectral wave height Hm0 holds for the frequency range [f(1),f(end)] (l_fmax = 0, default) or for
+        the frequency range [f(1),inf] (l_fmax = 1)., by default 0
 
     Returns
     -------
-    sVarDens = 1D array containing variance density (units m^2/Hz)
-    None.
+    NDArray[float64]
+        1D array containing variance density [m^2/Hz]
 
-    For l_fmax = 0, the sVarDens is such that integration from f(1) to f(end)
-    leads exactly to the given Hm0.
-    For l_fmax = 1, integration from [f(end},inf] is computed using a
-    (-5)-power law. This also means that integration from f(1) to f(end)
-    leads to a slightly smaller value for the wave height than the
-    prescribed Hm0.
-
-    Syntax:
-    sVarDens = createspectrumjonswap(f,fp,hm0,gammaPeak,l_fmax)
+    Raises
+    ------
+    ValueError
+        Input error: Input array f is not 1D
+    ValueError
+        Input error:Argument l_fmax must be either 0 or 1
 
     Example
     -------
@@ -337,12 +320,7 @@ def create_spectrum_jonswap(
     >>> hm0 =1.5
     >>> S = create_spectrum_jonswap(f,1/Tp,hm0,3.3)
 
-    See also create_spectrum_piersonmoskowitz, create_spectrum_tma,
-    spectrum2_timeseries
-
-
     """
-
     # --- Ensure array input is of type ndarray.
     f, fSize = core_engine.convert_to_vector(f)
 
@@ -426,6 +404,40 @@ def create_spectrum_object_jonswap(
     gammaPeak: float = 3.3,
     l_fmax: float = 0.0,
 ) -> spectrum.Spectrum:
+    """Creates a Jonswap spectrum object
+
+    This function creates the Jonswap variance density spectrum, based on a given frequency axis, wave height, peak
+    frequency and peak enhancement factor.
+
+    Literature:
+    Hasselman, K., e.a. (1973), Erga"nzungsheft zur Deutschen
+    Hydrographischen Zeitschrift, Reihe A(8), No. 12
+
+    For l_fmax = 0, the sVarDens is such that integration from f(1) to f(end) leads exactly to the given Hm0.
+    For l_fmax = 1, integration from [f(end},inf] is computed using a (-5)-power law. This also means that
+    integration from f(1) to f(end) leads to a slightly smaller value for the wave height than the prescribed Hm0.
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    fp : float
+        peak frequency. [Hz]
+    hm0 : float
+        wave height. [m]
+    gammaPeak : float, optional
+        peak enhancement factor, by default 3.3
+    l_fmax : float, optional
+        The imposed spectral wave height Hm0 holds for the frequency range [f(1),f(end)] (l_fmax = 0, default) or for
+        the frequency range [f(1),inf] (l_fmax = 1), by default 0
+
+    Returns
+    -------
+    spectrum.Spectrum
+        Spectrum object
+
+    """
     sVarDens = create_spectrum_jonswap(f, fp, hm0, gammaPeak, l_fmax)
     return spectrum.Spectrum(f, sVarDens)
 
@@ -437,67 +449,50 @@ def create_spectrum_piersonmoskowitz(
     gammaPeak: float = 1.0,
     l_fmax: float = 0,
 ) -> NDArray[float64]:
-    """
+    """Creates a Pierson-Moskowitz spectrum
 
-    CREATE_SPECTRUM_PIERSONMOSKOWITZ  Creates a Pierson-Moskowitz spectrum
+    This function creates the Pierson-Moskowitz variance density spectrum, based on agiven frequency axis, wave
+    height and peak frequency. The Pierson-Moskowitz spectrum is identical to the Jonswap spectrum with a peak
+    enhancement factor equal to 1. Furthermore, the Pierson-Moskowitz spectrum, the Bretschneider spectrum and the
+    ITTC spectrum are all three identical.
 
-    This function creates the Pierson-Moskowitz variance density spectrum,
-    based on agiven frequency axis, wave height and peak frequency. The
-    Pierson-Moskowitz spectrum is identical to the Jonswap spectrum with a
-    peak enhancement factor equal to 1. Furthermore, the Pierson-Moskowitz
-    spectrum, the Bretschneider spectrum and the ITTC spectrum are all
-    three identical.
     Literature:
-    Pierson, W.J. and L. Moskowitz (1964). A proposed spectral form for
-    fully developed wind seas based on the similarity theory of S.A.
-    Kitaigorodskii. Journal of Geophysical Research,Vol. 69, No. 24, pg.
-    5181 - 5190.
+    Pierson, W.J. and L. Moskowitz (1964). A proposed spectral form for fully developed wind seas based on the
+    similarity theory of S.A. Kitaigorodskii. Journal of Geophysical Research,Vol. 69, No. 24, pg. 5181 - 5190.
+
+    For l_fmax = 0, the sVarDens is such that integration from f(1) to f(end) leads exactly to the given Hm0.
+    For l_fmax = 1, integration from [f(end},inf] is computed using a (-5)-power law. This also means that
+    integration from f(1) to f(end) leads to a slightly smaller value for the wave height than the prescribed Hm0.
 
     Parameters
     ----------
-    f         : array double (1D)
-              1D real array containing frequency values. The numbers in
-              the array f must be increasing and uniformly spaced
-              (uniform frequency step). Units: Hz
-    fp        : double
-              peak frequency. Units: Hz
-    hm0       : double
-              wave height. Units: m
-    l_fmax    :
-              optional argument. The imposed spectral wave height Hm0
-              holds for the frequency range [f(1),f(end)] (l_fmax = 0,
-              default) or for the frequency range [f(1),inf] (l_fmax =
-              1).
-
+    f : NDArray[float64]
+        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    fp : float
+        peak frequency. [Hz]
+    hm0 : float
+        wave height. [m]
+    gammaPeak : float, optional
+        peak enhancement factor, by default 1.0
+    l_fmax : float, optional
+        The imposed spectral wave height Hm0 holds for the frequency range [f(1),f(end)] (l_fmax = 0, default) or for
+        the frequency range [f(1),inf] (l_fmax = 1), by default 0
 
     Returns
     -------
-    sVarDens : array double (1D)
-             1D array containing variance density (units m^2/Hz)
+    NDArray[float64]
+        1D array containing variance density [m^2/Hz]
 
-    For l_fmax = 0, the sVarDens is such that integration from f(1) to f(end)
-    leads exactly to the given Hm0.
-    For l_fmax = 1, integration from [f(end},inf] is computed using a
-    (-5)-power law. This also means that integration from f(1) to f(end)
-    leads to a slightly smaller value for the wave height than the
-    prescribed Hm0.
-
-
-    Syntax:
-    sVarDens = create_spectrum_piersonmoskowitz(f,fp,hm0,l_fmax)
-
-    Example:
+    Example
+    -------
     >>> import numpy as np
     >>> f=np.arange(0,2,0.01)
     >>> Tp = 5.0
     >>> hm0 =1.5
     >>> Spm = create_spectrum_piersonmoskowitz(f,1/Tp,hm0)
 
-    See also create_spectrum_jonswap, create_spectrum_tma,
-    spectrum2_timeseries
-
     """
-
     # --- Ensure array input is of type ndarray.
     f, _ = core_engine.convert_to_vector(f)
 
@@ -514,10 +509,62 @@ def create_spectrum_object_piersonmoskowitz(
     gammaPeak: float = 1.0,
     l_fmax: float = 0,
 ) -> spectrum.Spectrum:
+    """Creates a Pierson-Moskowitz spectrum object
+
+    This function creates the Pierson-Moskowitz variance density spectrum, based on agiven frequency axis, wave
+    height and peak frequency. The Pierson-Moskowitz spectrum is identical to the Jonswap spectrum with a peak
+    enhancement factor equal to 1. Furthermore, the Pierson-Moskowitz spectrum, the Bretschneider spectrum and the
+    ITTC spectrum are all three identical.
+
+    Literature:
+    Pierson, W.J. and L. Moskowitz (1964). A proposed spectral form for fully developed wind seas based on the
+    similarity theory of S.A. Kitaigorodskii. Journal of Geophysical Research,Vol. 69, No. 24, pg. 5181 - 5190.
+
+    For l_fmax = 0, the sVarDens is such that integration from f(1) to f(end) leads exactly to the given Hm0.
+    For l_fmax = 1, integration from [f(end},inf] is computed using a (-5)-power law. This also means that
+    integration from f(1) to f(end) leads to a slightly smaller value for the wave height than the prescribed Hm0.
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    fp : float
+        peak frequency. [Hz]
+    hm0 : float
+        wave height. [m]
+    gammaPeak : float, optional
+        peak enhancement factor, by default 1.0
+    l_fmax : float, optional
+        The imposed spectral wave height Hm0 holds for the frequency range [f(1),f(end)] (l_fmax = 0, default) or for
+        the frequency range [f(1),inf] (l_fmax = 1), by default 0
+
+    Returns
+    -------
+    spectrum.Spectrum
+        Spectrum object
+
+    """
     return create_spectrum_object_jonswap(f, fp, hm0, gammaPeak, l_fmax)
 
 
 def tpd(freqs: NDArray[float64], spectrum: NDArray[float64]) -> float:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    freqs : NDArray[float64]
+        _description_
+    spectrum : NDArray[float64]
+        _description_
+
+    Returns
+    -------
+    float
+        _description_
+    """
     """
     TpD : Function which calculates the spectral period (s)
 
@@ -548,6 +595,31 @@ def tpd(freqs: NDArray[float64], spectrum: NDArray[float64]) -> float:
 
 
 def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        _description_
+    S : NDArray[float64]
+        _description_
+
+    Returns
+    -------
+    float
+        _description_
+
+    Raises
+    ------
+    ValueError
+        _description_
+    ValueError
+        _description_
+    ValueError
+        _description_
+    """
     """
     COMPUTE_TPS  Computes smoothed peak period.
 
@@ -685,6 +757,28 @@ def compute_BattjesGroenendijk_wave_height_distribution(
     cota_slope: float = 250.0,
     tolerance: float = 1e-5,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
+    """_summary_
+
+    _extended_summary_
+
+    Parameters
+    ----------
+    Hm0 : float
+        _description_
+    nwave : int
+        _description_
+    water_depth : float
+        _description_
+    cota_slope : float, optional
+        _description_, by default 250.0
+    tolerance : float, optional
+        _description_, by default 1e-5
+
+    Returns
+    -------
+    tuple[NDArray[float64], NDArray[float64]]
+        _description_
+    """
     """
     COMPUTE_BATTJESGROENENDIJK_WAVE_HEIGHT_DISTRIBUTION  Computes wave height distribution following Battjes and
     Groenendijk (2000)
