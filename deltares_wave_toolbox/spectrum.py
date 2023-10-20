@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import figure
 from numpy import float64
 from numpy.typing import NDArray
-from matplotlib import figure
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral

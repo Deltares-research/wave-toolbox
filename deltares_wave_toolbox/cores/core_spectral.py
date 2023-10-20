@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import math
 
@@ -52,6 +54,7 @@ def frequency_averaging(
     >>> sFreq     = np.random.normal(loc=1, scale=2, size=len(f))
     >>> dfDesired =0.02
     >>> fCoarse,sFreq = frequency_averaging(f,sFreq,dfDesired)
+
     """
     # convert input to array type to be able to handle input like e.g. f = [0.2,0.4]
     f, fSize = core_engine.convert_to_vector(f)
@@ -140,6 +143,7 @@ def unfold_spectrum(
     >>> fTot,yFreqTot = unfold_spectrum(f,yFreq,isOdd)
     >>> # --- Return to time domain
     >>> yTime         = freq2time(yFreqTot)  # yTime must be identical to y
+
     """
     # convert input to array type to be able to handle input like e.g. f = [0.2,0.4]
     f, fSize = core_engine.convert_to_vector(f)
@@ -262,6 +266,7 @@ def freq2time(xFreq: NDArray[complex128]) -> NDArray[float64]:
     >>> f,yFreq = time2freq(t,y)
     >>> # --- Return to time domain
     >>> yTime = freq2time(yFreq)  # yTime must be identical to y
+
     """
     xFreq, xFreqSize = core_engine.convert_to_vector(xFreq)
 
@@ -280,77 +285,44 @@ def freq2time(xFreq: NDArray[complex128]) -> NDArray[float64]:
 def time2freq(
     t: NDArray[float64], xTime: NDArray[float64]
 ) -> tuple[NDArray[float64], NDArray[complex128]]:
-    """_summary_
+    """Computes the discrete Fourier transform coefficients (on unfolded frequency axis) of a given of time signal
 
-    _extended_summary_
+    This function computes the Fourier coefficients xFreq (in general complex quantities!) on frequency axis f
+    (hence, xFreq = xFreq(f)), from a given time signal Xtime on time axis t (hence, xTime = xTime(t)).
+
+    The Fourier transform is not folded. This means, that the number of elements in arrays f and xFreq is identical
+    to nT (nT: the number of elements in arrays t and xTime). Note that the Fourier coefficients in xFreq have a
+    complex conjugate symmetry around the Nyquist frequency. Transforming the signal xFreq = xFreq(f) back to time
+    domain can be done with the function freq2time
 
     Parameters
     ----------
     t : NDArray[float64]
-        _description_
+        1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step). The initial time t(1) can be any value (so it is not obligatory to have t(1) = 0)
     xTime : NDArray[float64]
-        _description_
+        1D real array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the
+        signal value at time t(i). The number of elements in t and xTime must be the same
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[complex128]]
-        _description_
+        f : NDArray[float64]
+            1D real array containing frequency values, for unfolded Fourier transform. The frequency axis runs from 0
+            to twice the Nyquist frequency. Array f contains as many elements as array xTime.
+        xFreq : NDArray[complex128]
+            1D array (complex!) containing the unfolded Fourier coefficients of xTime. The value xFreq(i) must be the
+            Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same. This number is
+            the same as the number of elements in t and xTime.
 
     Raises
     ------
     ValueError
-        _description_
+        Input error: input should be 1d arrays
     ValueError
-        _description_
+        Input error: time input parameter must be monotonic with constant step size
     ValueError
-        _description_
-    """
-    """
-    TIME2FREQ  Computes the discrete Fourier transform coefficients (on
-               unfolded frequency axis) of a given of time signal
-
-    This function computes the Fourier coefficients xFreq (in general
-    complex quantities!) on frequency axis f (hence, xFreq = xFreq(f)),
-    from a given time signal Xtime on time axis t (hence, xTime =
-    xTime(t)).
-
-    The Fourier transform is not folded. This means, that the number of
-    elements in arrays f and xFreq is identical to nT (nT: the number of
-    elements in arrays t and xTime). Note that the Fourier coefficients in
-    xFreq have a complex conjugate symmetry around the Nyquist frequency.
-    Transforming the signal xFreq = xFreq(f) back to time domain can be
-    done with the function freq2time
-
-    Parameters
-    ----------
-    t      :
-           1D real array containing time values. The numbers in the
-           array t must be increasing and uniformly spaced (uniform time
-           step). The initial time t(1) can be any value (so it is not
-           obligatory to have t(1) = 0)
-    xTime  :
-           1D real array containing signal values, i.e. the time
-           series of the signal. The value xTime(i) must be the signal
-           value at time t(i). The number of elements in t and xTime must
-           be the same
-
-    Returns
-    -------
-    f     :
-          1D real array containing frequency values, for unfolded Fourier
-          transform. The frequency axis runs from 0 to twice the Nyquist
-          frequency. Array f contains as many elements as array xTime.
-    xFreq :
-          1D array (complex!) containing the unfolded Fourier
-          coefficients of xTime. The value xFreq(i) must be the Fourier
-          coefficient at frequency f(i). The number of elements in f and
-          xFreq are the same. This number is the same as the number of
-          elements in t and xTime.
-
-    Syntax:
-         f,xFreq = time2freq(t,xTime)
-
-    See also time2freq, time2freq_nyquist, unfold_spectrum
+        Input error: array sizes differ in dimension
 
     Example
     -------
@@ -365,7 +337,6 @@ def time2freq(
     >>> f,yFreq = time2freq(t,y)
 
     """
-
     t, tSize = core_engine.convert_to_vector(t)
     xTime, xTimeSize = core_engine.convert_to_vector(xTime)
 
@@ -400,85 +371,48 @@ def time2freq(
 def time2freq_nyquist(
     t: NDArray[float64], xTime: NDArray[float64]
 ) -> tuple[NDArray[float64], NDArray[complex128], bool]:
-    """_summary_
+    """Computes the discrete Fourier transform coefficients (on folded frequency axis) of a given of time signal
 
-    _extended_summary_
+    This function computes the Fourier coefficients xFreq (in general complex quantities!) on frequency axis f
+    (hence, xFreq = xFreq(f)), from a given time signal Xtime on time axis t (hence, xTime = xTime(t)).
+
+    The Fourier transform is folded. This means, that the number of elements in arrays f and xFreq is identical to
+    floor(nT/2) + 1 (nT: the number of elements in arrays t and xTime). This means that the the Fourier coefficients
+    are computed up to the Nyquist frequency. Transforming the signal xFreq = xFreq(f) back to time domain can be
+    done using first the function unfoldspectrum and after that the function freq2time. Parameter isOdd=1 if nT is
+    odd, and isOdd=0 if nT is even.
 
     Parameters
     ----------
     t : NDArray[float64]
-        _description_
+        1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step)
     xTime : NDArray[float64]
-        _description_
+        1D real array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the
+        signal value at time t(i). The number of elements in t and xTime must be the same
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[complex128], bool]
-        _description_
+        f : NDArray[float64]
+            1D real array containing frequency values, for folded Fourier transform. The frequency axis runs from 0
+            to the Nyquist frequency. The number of elements in array f is close to half the number of elements in
+            array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the number of elements in array xTime
+        xFreq : NDArray[complex128]
+            1D array (complex!) containing the folded Fourier coefficients of xTime. The value xFreq(i) must be the
+            Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same.
+        isOdd : bool
+            logical indicating whether nT, the number of time points in xTime, is even (isOdd=False) or odd
+            (isOdd=True)
 
     Raises
     ------
     ValueError
-        _description_
+        Input error: input should be 1d arrays
     ValueError
-        _description_
+        Input error: time input parameter must be monotonic with constant step size
     ValueError
-        _description_
-    """
-    """
-    TIME2FREQNYQUIST  Computes the discrete Fourier transform coefficients (on
-                  folded frequency axis) of a given of time signal
-
-    This function computes the Fourier coefficients xFreq (in general complex
-    quantities!) on frequency axis f (hence, xFreq = xFreq(f)), from a given
-    time signal Xtime on time axis t (hence, xTime = xTime(t)).
-
-    The Fourier transform is folded. This means, that the number of elements
-    in arrays f and xFreq is identical to floor(nT/2) + 1 (nT: the
-    number of elements in arrays t and xTime). This means that the
-    the Fourier coefficients are computed up to the Nyquist frequency.
-    Transforming the signal xFreq = xFreq(f) back to time domain can be done
-    using first the function unfoldspectrum and after that the function
-    freq2time. Parameter isOdd=1 if nT is odd, and isOdd=0 if nT is even.
-
-
-    Parameters
-    ----------
-
-    Input:
-    t     :
-          1D real array containing time values. The numbers in the
-          array t must be increasing and uniformly spaced (uniform
-          time step)
-    xTime :
-          1D real array containing signal values, i.e. the time
-          series of the signal. The value xTime(i) must be the signal
-          value at time t(i).
-          The number of elements in t and xTime must be the same
-
-
-    Returns
-    -------
-    f     :
-          1D real array containing frequency values, for folded Fourier
-          transform. The frequency axis runs from 0 to the Nyquist
-          frequency. The number of elements in array f is close to half
-          the number of elements in array xTime. To be precise, length(f)
-          = floor(nT/2) + 1, with nT the number of elements in array
-          xTime
-    xFreq :
-          1D array (complex!) containing the folded Fourier coefficients
-          of xTime. The value xFreq(i) must be the Fourier coefficient
-          at frequency f(i). The number of elements in f and xFreq are
-          the same.
-    isOdd :
-          logical indicating whether nT, the number of time points in
-          xTime, is even (isOdd=0) or odd (isOdd=1)
-
-    Syntax:
-        f,xFreq,isOdd = time2freq_nyquist(t,xTime)
-
-    See also time2freq, unfold_spectrum, freq2time
+        Input error: array sizes differ in dimension
 
     Example
     -------
@@ -494,7 +428,6 @@ def time2freq_nyquist(
     >>> f,yFreq,isOdd = time2freq_nyquist(t,y);
 
     """
-
     t, tSize = core_engine.convert_to_vector(t)
     xTime, xTimeSize = core_engine.convert_to_vector(xTime)
 
@@ -536,62 +469,32 @@ def compute_spectrum_time_series(
     xTime: NDArray[float64],
     dfDesired: float = 0.0,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
-    """_summary_
+    """Computes variance density spectrum from given time series
 
-    _extended_summary_
+    This function computes a variance density spectrum sCoarse = sCoarse(fCoarse) on a frequency axis fCoarse from a
+    given surface elevation time series xTime = xTime(t), with time axis t. The frequency spacing of the output
+    spectrum is given by dfDesired.
 
     Parameters
     ----------
     t : NDArray[float64]
-        _description_
+        time array [s]
     xTime : NDArray[float64]
-        _description_
+        time series of surface elevation
     dfDesired : float, optional
-        _description_, by default 0.0
+        desired frequency spacing in Hertz on which sCoarse must be computed. If this input parameter is omitted,
+        then dfDesired is determined automatically, and is based on the length of the time series, by default 0.0
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-        _description_
-    """
-    """
-    @brief
-    COMPUTE_SPECTRUM_TIME_SERIES  Computes variance density spectrum from given time
-    series
-
-    @section description_xxx Description
-    This function computes a variance density spectrum sCoarse = sCoarse(fCoarse)
-    on a frequency axis fCoarse from a given surface elevation time series
-    xTime = xTime(t), with time axis t. The frequency spacing of the output
-    spectrum is given by dfDesired.
-
-
-    Parameters
-    ----------
-    @param t  : array double (1D)
-              time array [s]
-    @param xTime     : array double (1D)
-              time series of surface elevation
-    @param dfDesired : double
-              (optional parameter) desired frequency spacing in Hertz on
-              which sCoarse must be computed. If this input parameter is
-              omitted, then dfDesired is determined automatically, and is
-              based on the length of the time series
-
-
-    Returns
-    -------
-    fCoarse  : array double (1D)
-             frequency axis of computed spectrum. The frequency
-             spacing is (close to) dfDesired
-    sCoarse  : array double (1D)
-             variance density spectrum
-
-
-    Syntax:
-    [fCoarse,sCoarse] = compute_spectrum_time_series(t,xTime,dfDesired);
+        fCoarse : NDArray[float64]
+            frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired
+        sCoarse : NDArray[float64]
+            variance density spectrum
 
     Example
+    -------
     >>> import numpy as np
     >>> dt =0.1
     >>> t = np.arange(0,1000+dt,dt)  # Time axis
@@ -599,10 +502,7 @@ def compute_spectrum_time_series(
     >>> df = 0.01                    # Choose value for frequency axis
     >>> [freq,varDens] = compute_spectrum_time_series(t,z,df)
 
-    See also
-
     """
-
     # --- Transform to frequency domain ( input check is done in time2freq_nyquist)
     [f, xFreq, _] = time2freq_nyquist(t, xTime)
     df = f[1] - f[0]
@@ -622,84 +522,42 @@ def compute_spectrum_time_series(
 def compute_spectrum_freq_series(
     f: NDArray[float64],
     xFreq: NDArray[float64],
+    Ntime: int,
     dfDesired: float = 0.0,
-    Ntime: int = 0,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
-    """_summary_
+    """Computes variance density spectrum from given complex spectrum of Fourier components
 
-    _extended_summary_
-
-    Parameters
-    ----------
-    f : NDArray[float64]
-        _description_
-    xFreq : NDArray[float64]
-        _description_
-    dfDesired : float, optional
-        _description_, by default 0.0
-    Ntime : int, optional
-        _description_, by default 0
-
-    Returns
-    -------
-    tuple[NDArray[float64], NDArray[float64]]
-        _description_
-
-    Raises
-    ------
-    ValueError
-        _description_
-    ValueError
-        _description_
-    ValueError
-        _description_
-    ValueError
-        _description_
-    """
-    """
-    COMPUTE_SPECTRUM_FREQ_SERIES Computes variance density spectrum from given complex
-    spectrum of Fourier components
-
-    This function computes a variance density spectrum sCoarse = sCoarse(fCoarse)
-    on a frequency axis fCoarse from a given complex spectrum xFreq = xFreq(f)
-    of Fourier coefficients on a frequency axis f. The frequency spacing of
+    This function computes a variance density spectrum sCoarse = sCoarse(fCoarse) on a frequency axis fCoarse from a
+    given complex spectrum xFreq = xFreq(f) of Fourier coefficients on a frequency axis f. The frequency spacing of
     the output spectrum is given by dfDesired.
 
     Parameters
     ----------
-    f         : array double (1D)
-              frequency axis of input spectrum [Hz]
-    xFreq     : array double (1D)
-              wave spectrum of complex Fourier coefficients
-    dfDesired : double
-              desired frequency spacing in Hertz on which sCoarse must be
-              computed
-    Ntime     : integer
-              number of time elements in original time signal
-
+    f : NDArray[float64]
+        frequency axis of input spectrum [Hz]
+    xFreq : NDArray[float64]
+        wave spectrum of complex Fourier coefficients
+    dfDesired : float, optional
+        desired frequency spacing in Hertz on which sCoarse must be computed, by default 0.0
+    Ntime : int, optional
+        number of time elements in original time signal, by default 0
 
     Returns
     -------
-    fCoarse   :array double (1D)
-              frequency axis of computed spectrum. The frequency
-              spacing is (close to) dfDesired
-    sCoarse   : array double (1D)
-              variance density spectrum
+    tuple[NDArray[float64], NDArray[float64]]
+        fCoarse : NDArray[float64]
+            frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired
+        sCoarse : NDArray[float64]
+            variance density spectrum
 
-
-    Syntax:
-          [fCoarse,sCoarse] = compute_spectrum_freq_series(f,xFreq,dfDesired,Ntime)
-
-    Example:
-    >>> import numpy as np
-    >>> dt =0.1
-    >>> t = np.arange(0,1000+dt,dt)  # Time axis
-    >>> z = np.sin(t) + np.cos(2*t)  # Surface elevation data
-    >>> [f,xFreq,isOdd] = time2freq_nyquist(t,z)
-    >>> df = 0.01                    # Choose value for frequency axis
-    >>> [fS,S] = compute_spectrum_time_series(t,xFreq,df)
-
-    See also
+    Raises
+    ------
+    ValueError
+        Input error: input should be 1d arrays
+    ValueError
+        Input error: frequency input parameter must be monotonic with constant step size
+    ValueError
+        Input error: array sizes differ in dimension
 
     """
     f, fSize = core_engine.convert_to_vector(f)
@@ -721,11 +579,6 @@ def compute_spectrum_freq_series(
             "compute_spectrum_freq_series: Input error: array sizes differ in dimension"
         )
 
-    if Ntime == 0:
-        raise ValueError(
-            "compute_spectrum_freq_series: Input error: Number of time samples not specified"
-        )
-
     # --- Transform to frequency domain
     df = f[1] - f[0]
     sFine = 2 * xFreq * np.conj(xFreq) / (df * Ntime * Ntime)
@@ -744,73 +597,41 @@ def spectrum2timeseries(
     dt: float,
     seed: int = -1,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
-    """_summary_
+    """Generates a timeseries based on a given spectrum.
 
-    _extended_summary_
+    This function synthesises a time series xTime = xTime(t) satisfying a given 1D variance density spectrum sVarDens
+    = sVarDens(f). The time axis is specified by the user as well, starting at time tInit, ending at time tEnd, with
+    a uniform time step equal to dt. The random phase method is used to synthetise the time series.
 
     Parameters
     ----------
     f : NDArray[float64]
-        _description_
+        1D array containing the frequency axis. Frequencies must be uniformly spaced. [Hz]
     sVarDens : NDArray[float64]
-        _description_
+        1D array containing variance density spectrum. [m^2/Hz]
     tInit : float
-        _description_
+        initial time of time axis. [s]
     tEnd : float
-        _description_
+        end time of time axis. [s]
     dt : float
-        _description_
+        time step of time axis. [s]
     seed : int, optional
-        _description_, by default -1
+        Seed for random phases, by default -1
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-        _description_
+        t : NDArray[float64]
+            time axis of computed spectrum. The time spacing is (close to) dt [s]
+        xTime : NDArray[float64]
+            time series of water level elevation [m]
 
     Raises
     ------
     ValueError
-        _description_
+        Input error: input should be 1d arrays
     ValueError
-        _description_
-    """
-    """
-    SPECTRUM2TIMESERIES  Generates a timeseries based on a given spectrum.
-
-    This function synthesises a time series xTime = xTime(t) satisfying a
-    given 1D variance density spectrum sVarDens = sVarDens(f). The time
-    axis is specified by the user as well, starting at time tInit, ending
-    at time tEnd, with a uniform time step equal to dt. The random phase
-    method is used to synthetise the time series.
-
-    Parameters
-    ----------
-    f           : array double (1D)
-                    1D array containing the frequency axis. Frequencies must
-                    be uniformly spaced. Unit: Hz
-    sVarDens    : array double (1D)
-                    1D array containing variance density spectrum. Units: m^2/Hz
-    tInit       : FLOAT
-                    initial time of time axis. Units: s
-    tEnd        :FLOAT
-                    end time of time axis. Units: s
-    dt          :float
-                    time step of time axis. Units: s
-    seed        :int
-                    Seed for random phases.
-    output_object:Logical
-                    optional argument indicating whether the output is a time series of a
-                    Series object
-
-
-    Returns
-    -------
-    t   :array double (1D)
-              frequency axis of computed spectrum. The frequency
-              spacing is (close to) dfDesired
-    xTime   : array double (1D)
-              variance density spectrum
+        Input error: array sizes differ in dimension
 
     """
     f, fSize = core_engine.convert_to_vector(f)
@@ -880,7 +701,33 @@ def spectrum2timeseries_object(
     tEnd: float,
     dt: float,
     seed: int = -1,
-):
+) -> series.Series:
+    """Generates a timeseries based on a given spectrum.
+
+    This function synthesises a time series xTime = xTime(t) satisfying a given 1D variance density spectrum sVarDens
+    = sVarDens(f). The time axis is specified by the user as well, starting at time tInit, ending at time tEnd, with
+    a uniform time step equal to dt. The random phase method is used to synthetise the time series.
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        1D array containing the frequency axis. Frequencies must be uniformly spaced. [Hz]
+    sVarDens : NDArray[float64]
+        1D array containing variance density spectrum. [m^2/Hz]
+    tInit : float
+        initial time of time axis. [s]
+    tEnd : float
+        end time of time axis. [s]
+    dt : float
+        time step of time axis. [s]
+    seed : int, optional
+        Seed for random phases, by default -1
+
+    Returns
+    -------
+    series.Series
+        Series object containing the time series of water level elevation
+    """
     t, xTime = spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed)
     return series.Series(t, xTime)
 

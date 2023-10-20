@@ -297,7 +297,7 @@ def test_compute_spectrum_freq_series(fCorrect, SCorrect, df):
     t = np.arange(0, 5 + dt, dt)  # Time axis
     z = np.sin(t) + np.cos(2 * t)  # Surface elevation data
     [f, xFreq, isOdd] = core_spectral.time2freq_nyquist(t, z)
-    [fS, S] = core_spectral.compute_spectrum_freq_series(f, xFreq, df, len(t))
+    [fS, S] = core_spectral.compute_spectrum_freq_series(f, xFreq, len(t), df)
 
     assert fS == pytest.approx(fCorrect, abs=1e-4)
 
