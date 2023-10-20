@@ -548,103 +548,70 @@ def create_spectrum_object_piersonmoskowitz(
     return create_spectrum_object_jonswap(f, fp, hm0, gammaPeak, l_fmax)
 
 
-def tpd(freqs: NDArray[float64], spectrum: NDArray[float64]) -> float:
-    """_summary_
+def tpd(f: NDArray[float64], S: NDArray[float64]) -> float:
+    """Function which calculates the spectral period (s)
 
-    _extended_summary_
+    For definition of TpD: transition from peak wave period to spectral period for the design of placed block revetments
 
     Parameters
     ----------
-    freqs : NDArray[float64]
-        _description_
-    spectrum : NDArray[float64]
-        _description_
+    f : NDArray[float64]
+        array of frequencies [Hz]
+    S : NDArray[float64]
+        array of variance density values [m2/Hz]
 
     Returns
     -------
     float
-        _description_
-    """
-    """
-    TpD : Function which calculates the spectral period (s)
+        spectral period [s]
 
-    Input (key,value) :
-    'Spectrum',value   : numeric, array of variance density values (m2/Hz)
-    'Frequencies',value: numeric, array of frequencies (Hz)
-     Output :
-     out                : numeric, spectral period (s)
-
-    Note: For definition of TpD: Overstap van piekperiode naar spectrale periode bij ontwerp van steenzettingen
     """
-
-    freqs, _ = core_engine.convert_to_vector(freqs)
-    spectrum, _ = core_engine.convert_to_vector(spectrum)
+    f, _ = core_engine.convert_to_vector(f)
+    S, _ = core_engine.convert_to_vector(S)
 
     # --- calculate the spectral period (TPD) (s)
-    max_spectum = max(spectrum) * 0.8
-    itemp = np.where(spectrum / max_spectum >= 0.8)[0]
-    temp = freqs[itemp]
+    max_spectum = max(S) * 0.8
+    itemp = np.where(S / max_spectum >= 0.8)[0]
+    temp = f[itemp]
     fp_limits = [min(temp), max(temp)]
 
     #  --- compute zeroth and first moment for selected frequency interval.
-    m0 = compute_moment(freqs, spectrum, 0, fp_limits[0], fp_limits[1])
-    m1 = compute_moment(freqs, spectrum, 1, fp_limits[0], fp_limits[1])
+    m0 = compute_moment(f, S, 0, fp_limits[0], fp_limits[1])
+    m1 = compute_moment(f, S, 1, fp_limits[0], fp_limits[1])
 
     # --- calculate TpD based on spectral moments.
     return m0 / m1
 
 
 def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
-    """_summary_
+    """Computes smoothed peak period.
 
-    _extended_summary_
+    This function computes the smoothed peak period Tps, by means of quadratic interpolation, of a given variance
+    density spectrum S = S(f).
 
     Parameters
     ----------
     f : NDArray[float64]
-        _description_
+        1D array representing frequency axis [Hz]
     S : NDArray[float64]
-        _description_
+        1D array representing variance density spectrum [m2/Hz]
 
     Returns
     -------
     float
-        _description_
+        smoothed peak period [s]
 
     Raises
     ------
     ValueError
-        _description_
+        Input error: input should be 1d arrays
     ValueError
-        _description_
+        Input error: frequency input parameter must be monotonic with constant step size
     ValueError
-        _description_
-    """
-    """
-    COMPUTE_TPS  Computes smoothed peak period.
-
-    This function computes the smoothed peak period Tps, by means of
-    quadratic interpolation, of a given variance density spectrum S = S(f).
-
-
-    Parameters
-    ----------
-    f    : array double (1D)
-         1D array representing frequency axis (unit: Hz)
-    S    : array double (1D)
-         1D array representing variance density spectrum (units: m2/Hz).
-
-
-    Returns
-    -------
-    Tps  : double
-         smoothed peak period (units: s)
-
-    Syntax:
-    Tps = compute_tps(f,S)
-
+        Input error: array sizes differ in dimension
 
     Example
+    -------
     >>> import numpy as np
     >>> f=np.arange(0,2,0.01)
     >>> Tp = 5.0
@@ -652,11 +619,7 @@ def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
     >>> sPM = create_spectrum_piersonmoskowitz(f,1/Tp,hm0)
     >>> Tps = compute_tps(f,sPM)
 
-
-    See also compute_spectrum_params
-
     """
-
     # --- Ensure array input is of type ndarray.
     f, fSize = core_engine.convert_to_vector(f)
     S, SSize = core_engine.convert_to_vector(S)
@@ -757,69 +720,42 @@ def compute_BattjesGroenendijk_wave_height_distribution(
     cota_slope: float = 250.0,
     tolerance: float = 1e-5,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
-    """_summary_
+    """Computes wave height distribution following Battjes and
+    Groenendijk (2000)
 
-    _extended_summary_
+    Wave height distribution for sloping, shallow bottoms, as proposed by Battjes and Groenendijk (2000).
 
     Parameters
     ----------
     Hm0 : float
-        _description_
+        Spectral wave height [m]
     nwave : int
-        _description_
+        number of waves [-]
     water_depth : float
-        _description_
+        water depth [m]
     cota_slope : float, optional
-        _description_, by default 250.0
+        cotangent of the bottom slope [-], by default 250.0
     tolerance : float, optional
-        _description_, by default 1e-5
+        tolerance for convergence of transition wave height [-], by default 1e-5
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-        _description_
-    """
-    """
-    COMPUTE_BATTJESGROENENDIJK_WAVE_HEIGHT_DISTRIBUTION  Computes wave height distribution following Battjes and
-    Groenendijk (2000)
-
-
-    Parameters
-    ----------
-    Hm0   : double
-         Spectral wave height (unit: m)
-    nwave : array double (1D)
-         number of waves (units: -)
-    water_depth : double
-            water depth (units: m)
-    cota_slope : double
-            cotangent of the bottom slope (units: -)
-    tolerance : double
-            tolerance for convergence of transition wave height (units: -)
-
-
-    Returns
-    -------
-    hwave_BG        : array double (1D)
-         theoretical Battjes & Groenendijk (2000) wave height distribution (units: m)
-    Pexceedance_BG  : array double (1D)
-         theoretical Battjes & Groenendijk (2000) wave height exceedance probability (units: -)
-
-    Syntax:
-    compute_BattjesGroenendijk_wave_height_distribution(
-    Hm0, nwave, water_depth, cota_slope=cota_slope, tolerance=tolerance
-    )
-
+        hWave_BG : NDArray[float64]
+            theoretical Battjes & Groenendijk (2000) wave height distribution [m]
+        Pexceedance_BG : NDArray[float64]
+            theoretical Battjes & Groenendijk (2000) wave height exceedance probability [-]
 
     Example
+    -------
     >>> Hm0 = 2.0
     >>> nwave = 700
     >>> water_depth = 4.5
     >>> cota_slope = 50
     >>> tolerance = 1e-5
-    >>> hwave_BG, Pexceedance_BG = compute_BattjesGroenendijk_wave_height_distribution(
-        Hm0, nwave, water_depth, cota_slope=cota_slope, tolerance=tolerance
-        )
+    >>> hwave_BG, Pexceedance_BG = compute_BattjesGroenendijk_wave_height_distribution(Hm0, nwave, water_depth,
+        cota_slope=cota_slope, tolerance=tolerance)
+
     """
     # TODO include check on validity ranges input parameters
 
