@@ -727,6 +727,7 @@ def spectrum2timeseries_object(
     -------
     series.Series
         Series object containing the time series of water level elevation
+
     """
     t, xTime = spectrum2timeseries(f, sVarDens, tInit, tEnd, dt, seed)
     return series.Series(t, xTime)
@@ -764,6 +765,7 @@ def compute_spectrum_welch_wrapper(
             frequency axis
         Pxx : NDArray[float64]
             spectral density
+
     """
     f, Pxx = welch(
         signal,

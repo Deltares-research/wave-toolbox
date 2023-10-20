@@ -8,42 +8,39 @@ import deltares_wave_toolbox.cores.core_engine as core_engine
 def sort_wave_params(
     hWave: NDArray[float64], tWave: NDArray[float64]
 ) -> tuple[NDArray[float64], NDArray[float64]]:
-    """
-    SORT_WAVE_PARAMS  Sorts the wave height and wave period
+    """Sorts the wave height and wave period
 
-    This functions sorts the wave heights and wave periods in arrays
-    hWave and tWave, and stores them in arrays hWaveSorted and tWaveSorted.
-    The sorting is done such that in hWaveSorted the wave heights of hWave
-    are sorted in descending order. This same sorting is applied to
-    tWave, with the result in tWaveSorted. This means that hWaveSorted(i) and
-    hWaveSorted(i) correspond to the wave height and wave period of the
-    same wave.
-
-    Subject: time domain analysis of waves
-
+    This functions sorts the wave heights and wave periods in arrays hWave and tWave, and stores them in arrays
+    hWaveSorted and tWaveSorted. The sorting is done such that in hWaveSorted the wave heights of hWave are sorted in
+    descending order. This same sorting is applied to tWave, with the result in tWaveSorted. This means that
+    hWaveSorted(i) and hWaveSorted(i) correspond to the wave height and wave period of the same wave.
 
     Parameters
     ----------
-    hWave    : array double (1D)
-             1D array containing the wave heights of the individual waves
-    tWave    : array double (1D)
-             1D array containing the periods of the individual waves
+    hWave : NDArray[float64]
+        1D array containing the wave heights of the individual waves
+    tWave : NDArray[float64]
+        1D array containing the periods of the individual waves
 
     Returns
     -------
-    hWaveSorted : array double (1D)
-                1D array containing wave heights, sorted in descending
-                order
-    tWaveSorted : array double (1D)
-                1D array containing wave periods, using the same sorting
-                (re-arranging) as applied to hWave
-    Note:
-         * all input and output arrays have the same size
-    Syntax:
-          [hWaveSorted,tWaveSorted] = sort_wave_params(hWave,tWave)
+    tuple[NDArray[float64], NDArray[float64]]
+        hWaveSorted : NDArray[float64]
+            1D array containing wave heights, sorted in descending order
+        tWaveSorted : NDArray[float64]
+            1D array containing wave periods, using the same sorting (re-arranging) as applied to hWave
 
+    Raises
+    ------
+    ValueError
+        Input error, Input arrays hWave is not 1D
+    ValueError
+        Input error, Input array tWave is not 1D
+    ValueError
+        Input arrays hWave and tWave have different length
 
-    Example:
+    Example
+    -------
     >>> import numpy as np
     >>> hWave = np.asrange([2,4,3])
     >>> tWave = np.asrange([6,7,8])
@@ -52,10 +49,7 @@ def sort_wave_params(
     >>> #hWaveSorted = np.asrange([4,3,2])
     >>> #tWaveSorted = np.asrange([7,8,6])  (and not: tWaveSorted = [8 7 6])
 
-    See also determineparamsindividualwaves, highestwavesparams
-
     """
-
     # --- ensure input is of type ndarray
     hWave = core_engine.convert_to_array_type(hWave)
     tWave = core_engine.convert_to_array_type(tWave)
@@ -103,60 +97,47 @@ def determine_zero_crossing(
     x: NDArray[float64],
     typeCross: str = "down",
 ) -> tuple[int, NDArray[float64]]:
-    """
-    DETERMINEZEROCROSSING  Determines zero-crossings (number and positions) of signal.
+    """Determines zero-crossings (number and positions) of signal.
+
     This function determines the zero-crossings of a given time signal x =
     x(t). Here, t stands for time, and x for a given signal (for example,
     time series of measured surface elevation). The type of zero-crossing
     can be either up-crossing or down-crossing.
 
-    Subject: time domain analysis of waves
-
-
     Parameters
     ----------
-    t         : array double (1D)
-              1D real array containing time values. The numbers in the
-              array t must be increasing and uniformly spaced (uniform
-              time step)
-    x         : array double (1D)
-              1D real array containing signal values, i.e. the time
-              series of the signal. The value x(i) must be the signal
-              value at time t(i)
-    typeCross : string
-              character indicating which type of zero-crossings is
-              requested.
-              There are two options:
-                * typeCross = 'up', for up-crossings
-                * typeCross = 'down', for down-crossings
-
+    t : NDArray[float64]
+        1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step)
+    x : NDArray[float64]
+        1D real array containing signal values, i.e. the time series of the signal. The value x(i) must be the signal
+        value at time t(i)
+    typeCross : str, optional
+        Search for up- or down-crossings, by default "down"
 
     Returns
     -------
-    nWave     : array double (1D)
-              integer indicating the number of waves in the signal, where
-              one wave corresponds to two successive zero-crossings. Wave
-              i start at time tCross(i), and end at time tCross(i+1).
-    tCross    : array double (1D)
-              1D array of length (nWave+1), containing the time of all
-              zero-crossings. The time of the zero-crossings is
-              determined by linear interpolation.
-              Note that in case of no zero-crossing, the array tCross is
-              empty.
-              Note that in case of one zero-crossing, the number of waves
-              is zero
+    tuple[int, NDArray[float64]]
+        nWave : int
+            integer indicating the number of waves in the signal, where one wave corresponds to two successive
+            zero-crossings. Wave i start at time tCross(i), and end at time tCross(i+1).
+        tCross : NDArray[float64]
+            1D array of length (nWave+1), containing the time of all zero-crossings. The time of the zero-crossings is
+            determined by linear interpolation. Note that in case of no zero-crossing, the array tCross is empty. Note
+            that in case of one zero-crossing, the number of waves is zero
 
-    Syntax:
-         [nWave,tCross] = determine_zero_crossing(t,x,typeCross)
+    Raises
+    ------
+    ValueError
+        Input error: Input arrays t is not 1D
+    ValueError
+        Input error: Input arrays x is not 1D
+    ValueError
+        Input error: Input arrays t and x have different length
+    ValueError
+        Input error: Wrong input argument for typeCross
 
-
-    Example:
-    >>>
-    >>>   [numberOfWaves,timeUpCrossings] = determinezerocrossing(time,surfelev,'up')
-
-    See also determineParamsIndividualWaves
     """
-
     # --- ensure input is of type ndarray
     t = core_engine.convert_to_array_type(t)
     x = core_engine.convert_to_array_type(x)
@@ -225,50 +206,50 @@ def highest_waves_params(
     tWaveSorted: NDArray[float64],
     fracP: float,
 ) -> tuple[float, float]:
-    """
-    HIGHEST_WAVES_PARAMS  Computes wave parameters of selection largest waves
+    """Computes wave parameters of selection largest waves
 
-    This function computes the wave height hFracP and wave period tFracP by
-    taking the average of the fraction fracP of the highest waves. When
-    fracP = 1/3, then hFracP is equal to the significant wave height and
-    tFracP is equal to the significant wave period.
-
-    Subject: time domain analysis of waves
-
-
+    This function computes the wave height hFracP and wave period tFracP by taking the average of the fraction fracP
+    of the highest waves. When fracP = 1/3, then hFracP is equal to the significant wave height and tFracP is equal
+    to the significant wave period.
 
     Parameters
     ----------
-    hWaveSorted : array double (1D)
-                1D array containing wave heights, sorted in descending
-                order
-    tWaveSorted : array double (1D)
-                1D array containing wave periods, using the same sorting
-                (re-arranging) as applied to hWave
-    fracP       : double
-                fraction. Should be between 0 and 1
+    hWaveSorted : NDArray[float64]
+        1D array containing wave heights, sorted in descending order
+    tWaveSorted : NDArray[float64]
+        1D array containing wave periods, using the same sorting (re-arranging) as applied to hWave
+    fracP : float
+        fraction. Should be between 0 and 1
 
     Returns
     -------
-    hFracP     : double
-               average of the wave heights of the highest fracP waves
-    tFracP     : double
-               average of the wave periods of the highest fracP waves
+    tuple[float, float]
+        hFracP : float
+            average of the wave heights of the highest fracP waves
+        tFracP : float
+            average of the wave periods of the highest fracP waves
 
-    Syntax:
-         [hFracP,tFracP] = highest_waves_params(hWaveSorted,tWaveSorted,fracP)
+    Raises
+    ------
+    ValueError
+        Input error: Input arrays hWaveSorted is not 1D
+    ValueError
+        Input error: Input arrays tWaveSorted is not 1D
+    ValueError
+        Input arrays tWaveSorted and hWaveSorted have different length
+    ValueError
+        Input error: Input parameter fracP should be between 0 and 1
+    ValueError
+        Input error:Input array hWaveSorted is not correctly sorted
 
-    Example:
+    Example
+    -------
     >>> import numpy as np
     >>> hWaveSorted = [7.1, 6.0, 5.8, 4.4, 3.1, 2.2, 1.4]
     >>> tWaveSorted = [5.1, 3.2, 3.7, 0.0, 2.0, 3.0, 1.1]
     >>> [Hsig,Tsig] = highest_waves_params(hWaveSorted,tWaveSorted,1/3)
 
-    See also determine_params_individual_waves, sort_wave_params,
-             exceedance_wave_height
-
     """
-
     # --- ensure input is of type ndarray
     hWaveSorted = core_engine.convert_to_array_type(hWaveSorted)
     tWaveSorted = core_engine.convert_to_array_type(tWaveSorted)
@@ -326,45 +307,40 @@ def highest_waves_params(
 
 
 def exceedance_wave_height(hWaveSorted: NDArray[float64], excPerc: float) -> float:
-    """
-    EXCEEDANCEWAVEHEIGHT  Computes wave height with given exceedance probability
+    """Computes wave height with given exceedance probability
 
-    This function computes the wave height hExcPerc with given exceedance
-    probability percentage excPerc.
-
-    Subject: time domain analysis of waves
-
+    This function computes the wave height hExcPerc with given exceedance probability percentage excPerc.
 
     Parameters
     ----------
-    hWaveSorted : array double (1D)
-                1D array containing wave heights, sorted in descending
-                order
-    excPerc     :
-                exceedance probability percentage. excPerc = 2 means an
-                exceedance percentage of 2%. The value of excPerc should
-                not exceed 100, or be smaller than 0
+    hWaveSorted : NDArray[float64]
+        1D array containing wave heights, sorted in descending order
+    excPerc : float
+        exceedance probability percentage. excPerc = 2 means an exceedance percentage of 2%. The value of excPerc
+        should not exceed 100, or be smaller than 0
 
     Returns
     -------
-    hExcPerc  : double
-               wave height with given exceedance probability
+    float
+        hExcPerc : float
+            wave height with given exceedance probability
 
+    Raises
+    ------
+    ValueError
+        Input error: Input arrays hWaveSorted is not 1D
+    ValueError
+        Input error: Input parameter excPerc should be between 0 and 100
+    ValueError
+        Input error:Input array hWaveSorted is not correctly sorted
 
-    Syntax:
-          [hExcPerc] = exceedance_wave_height(hWaveSorted,excPerc)
-
-
-    Example:
+    Example
+    -------
     >>> import numpy as np
     >>> hWaveSorted = [7.1, 6.0, 5.8, 4.4, 3.1, 2.2, 1.4]
     >>> [hExcPerc_33perc] = exceedance_wave_height(hWaveSorted,33)
 
-    See also determine_params_individual_waves, sort_wave_params,
-    highest_waves_params
-
     """
-
     hWaveSorted = core_engine.convert_to_array_type(hWaveSorted)
 
     # Perform checks on the input arguments
@@ -419,67 +395,59 @@ def determine_params_individual_waves(
     NDArray[float64],
     NDArray[float64],
 ]:
-    """
-    DETERMINE_PARAMS_INDIVIDUALWAVES  Determines parameters per individual wave
+    """Determines parameters per individual wave
 
-    This function determines several wave properties (wave period, wave
-    height, crest amplitude, trough amplitude, and the time at which the
-    maximum crest and trough amplitudes occur) of all individual waves in a
-    wave train. The wave train is given by time series x = x(t), and the
-    zero-crossings occur at time levels given in tCross
-
-    Subject: time domain analysis of waves
+    This function determines several wave properties (wave period, wave height, crest amplitude, trough amplitude, and
+    the time at which the maximum crest and trough amplitudes occur) of all individual waves in a wave train. The wave
+    train is given by time series x = x(t), and the zero-crossings occur at time levels given in tCross
 
     Parameters
     ----------
-    tCross    : array double (1D)
-              1D array of length (nWave+1), containing the time of all
-              zero-crossings. nWave is an integer representing the
-              number of waves.
-    t         : array double (1D)
-              1D real array containing time values. The numbers in the
-              array t must be increasing and uniformly spaced (uniform
-              time step)
-    x         : array double (1D)
-              1D real array containing signal values, i.e. the time
-              series of the signal. The value x(i) must be the signal
-              value at time t(i)
+    tCross : NDArray[float64]
+        1D array of length (nWave+1), containing the time of all zero-crossings. nWave is an integer representing the
+        number of waves.
+    t : NDArray[float64]
+        1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step)
+    x : NDArray[float64]
+        1D real array containing signal values, i.e. the time series of the signal. The value x(i) must be the signal
+        value at time t(i)
 
     Returns
     -------
-    tWave    : array double (1D)
-             1D array containing the periods of the individual waves
-    hWave    : array double (1D)
-             1D array containing the wave heights of the individual waves
-    aCrest   : array double (1D)
-             1D array containing the maximum amplitudes of the crest of
-             the individual waves
-    aTrough  : array double (1D)
-             1D array containing the maximum amplitudes of the trough of
-             the individual waves
-    tCrest   : array double (1D)
-             1D array containing the time at which maximum crest
-             amplitude of the individual waves occurs
-    tTrough  : array double (1D)
-             1D array containing the time at which maximum trough
-             amplitude of the individual waves occurs
-    Notes:
-         * All these arrays have a length equal to nWave, which is the number of
-           waves in the wave train
-         * The values of aTrough are always smaller than zero
-         * hWave = aCrest - aTrough
-    Syntax:
-          [hWave,tWave,aCrest,aTrough,tCrest,tTrough] =
-                  determine_params_individual_waves(tCross,t,x)
+    tuple[ NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], ]
+        tWave : NDArray[float64]
+            1D array containing the periods of the individual waves
+        hWave : NDArray[float64]
+            1D array containing the wave heights of the individual waves
+        aCrest : NDArray[float64]
+            1D array containing the maximum amplitudes of the crest of the individual waves
+        aTrough : NDArray[float64]
+            1D array containing the maximum amplitudes of the trough of the individual waves
+        tCrest : NDArray[float64]
+            1D array containing the time at which maximum crest amplitude of the individual waves occurs
+        tTrough : NDArray[float64]
+            1D array containing the time at which maximum trough amplitude of the individual waves occurs
 
-    Example:
-    >>> import numpy as np
-    >>>
+    Notes
+    -----
+    * All these arrays have a length equal to nWave, which is the number of
+    waves in the wave train
+    * The values of aTrough are always smaller than zero
+    * hWave = aCrest - aTrough
 
-    See also determinezerocrossing
+    Raises
+    ------
+    ValueError
+        Input error: Input arrays tCross is not 1D
+    ValueError
+        Input error: Input arrays t is not 1D
+    ValueError
+        Input error: Input arrays x is not 1D
+    ValueError
+        Length of input arrays t and x not identical
 
     """
-
     # --- ensure input is of type ndarray
     tCross = core_engine.convert_to_array_type(tCross)
     t = core_engine.convert_to_array_type(t)
