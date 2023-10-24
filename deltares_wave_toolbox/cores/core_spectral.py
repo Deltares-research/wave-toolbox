@@ -26,12 +26,14 @@ def frequency_averaging(
     Parameters
     ----------
     f : NDArray[float64]
-        frequency axis [Hz]
+        1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+        close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the
+        number of elements in array xTime [Hz]
     sFreq : NDArray[float64]
-        variance density spectrum as function of frequency f
+        1D array containing variance density spectrum of the signal [m^2/Hz]
     dfDesired : float, optional
-        desired frequency spacing in Hertz on which sFreq must be computed. If this parameter is omitted, then
-        dfDesired = f(1) - f(0), by default 0.0
+        desired frequency spacing in Hertz on which the wave spectrum must be computed. If this parameter is omitted,
+        then dfDesired = f(1) - f(0), by default 0.0 [Hz]
 
     Returns
     -------
@@ -104,11 +106,12 @@ def unfold_spectrum(
     Parameters
     ----------
     f : NDArray[float64]
-        1D real array containing frequency values, for folded Fouriertransform. The frequency axis runs from 0 to the
-        Nyquist frequency
+        1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+        close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the
+        number of elements in array xTime [Hz]
     xFreq : NDArray[complex128]
-        1D array (complex!) containing the folded Fourier coefficients of original time series. The value xFreq(i)
-        must be the Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same
+        1D array (complex!) containing the folded Fourier coefficients of xTime. The value xFreq(i) must be the
+        Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same.
     isOdd : bool
         logical indicating whether nT, the number of time points in original time series, is even (isOdd=False) or
         odd (isOdd=True)
@@ -185,22 +188,26 @@ def coherence(
     Parameters
     ----------
     f : NDArray[float64]
-        1d array frequency axis
+        1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+        close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the
+        number of elements in array xTime [Hz]
     xFreq1 : NDArray[complex128]
-        wave spectrum 1 of complex Fourier coefficients
+        1D array (complex!) containing the folded Fourier coefficients of signal 1. The value xFreq(i) must be the
+        Fourier coefficient at frequency f(i). The number of elements in f and xFreq1 are the same.
     xFreq2 : NDArray[complex128]
-        wave spectrum 2 of complex Fourier coefficients
+        1D array (complex!) containing the folded Fourier coefficients of signal 2. The value xFreq(i) must be the
+        Fourier coefficient at frequency f(i). The number of elements in f and xFreq2 are the same.
     dfDesired : float, optional
-        desired frequency spacing in Hertz on which sFreq must be computed. If this parameter is omitted, then
-        dfDesired = f(2) - f(1), by default 0.0
+        desired frequency spacing in Hertz on which the wave spectrum must be computed. If this parameter is omitted,
+        then dfDesired = f(1) - f(0), by default 0.0 [Hz]
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
         f_coh2 : NDArray[float64]
-            frequency axis of coherence. The frequency spacing is (close to) dfDesired
+            frequency axis of coherence. The frequency spacing is (close to) dfDesired [Hz]
         coh2 : NDArray[float64]
-            coherence (magnitude-squared coherence).
+            coherence (magnitude-squared coherence)
     """
     # --- Compute auto-spectral and cross-spectral (absolute value) densities
     #     on original frequency axis
@@ -241,7 +248,8 @@ def freq2time(xFreq: NDArray[complex128]) -> NDArray[float64]:
     Parameters
     ----------
     xFreq : NDArray[complex128]
-        1D array (complex!) containing unfolded Fourier coefficients.
+        1D array (complex!) containing the folded Fourier coefficients of xTime. The value xFreq(i) must be the
+        Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same.
 
     Returns
     -------
@@ -301,15 +309,16 @@ def time2freq(
         1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
         (uniform time step). The initial time t(1) can be any value (so it is not obligatory to have t(1) = 0)
     xTime : NDArray[float64]
-        1D real array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the
-        signal value at time t(i). The number of elements in t and xTime must be the same
+        1D array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[complex128]]
         f : NDArray[float64]
-            1D real array containing frequency values, for unfolded Fourier transform. The frequency axis runs from 0
-            to twice the Nyquist frequency. Array f contains as many elements as array xTime.
+            1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+            close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT
+            the number of elements in array xTime [Hz]
         xFreq : NDArray[complex128]
             1D array (complex!) containing the unfolded Fourier coefficients of xTime. The value xFreq(i) must be the
             Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same. This number is
@@ -478,12 +487,14 @@ def compute_spectrum_time_series(
     Parameters
     ----------
     t : NDArray[float64]
-        time array [s]
+        1D array containing time axis. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step) [s]
     xTime : NDArray[float64]
-        time series of surface elevation
+        1D array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
     dfDesired : float, optional
-        desired frequency spacing in Hertz on which sCoarse must be computed. If this input parameter is omitted,
-        then dfDesired is determined automatically, and is based on the length of the time series, by default 0.0
+        desired frequency spacing in Hertz on which the wave spectrum must be computed. If this parameter is omitted,
+        then dfDesired = f(1) - f(0), by default 0.0 [Hz]
 
     Returns
     -------
@@ -491,7 +502,7 @@ def compute_spectrum_time_series(
         fCoarse : NDArray[float64]
             frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired
         sCoarse : NDArray[float64]
-            variance density spectrum
+            1D array containing variance density spectrum of the signal [m^2/Hz]
 
     Example
     -------
@@ -534,11 +545,14 @@ def compute_spectrum_freq_series(
     Parameters
     ----------
     f : NDArray[float64]
-        frequency axis of input spectrum [Hz]
+        1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+        close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the
+        number of elements in array xTime [Hz]
     xFreq : NDArray[float64]
         wave spectrum of complex Fourier coefficients
     dfDesired : float, optional
-        desired frequency spacing in Hertz on which sCoarse must be computed, by default 0.0
+        desired frequency spacing in Hertz on which the wave spectrum must be computed. If this parameter is omitted,
+        then dfDesired = f(1) - f(0), by default 0.0 [Hz]
     Ntime : int, optional
         number of time elements in original time signal, by default 0
 
@@ -548,7 +562,7 @@ def compute_spectrum_freq_series(
         fCoarse : NDArray[float64]
             frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired
         sCoarse : NDArray[float64]
-            variance density spectrum
+            1D array containing variance density spectrum of the signal [m^2/Hz]
 
     Raises
     ------
@@ -606,9 +620,11 @@ def spectrum2timeseries(
     Parameters
     ----------
     f : NDArray[float64]
-        1D array containing the frequency axis. Frequencies must be uniformly spaced. [Hz]
+        1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+        close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the
+        number of elements in array xTime [Hz]
     sVarDens : NDArray[float64]
-        1D array containing variance density spectrum. [m^2/Hz]
+        1D array containing variance density spectrum of the signal [m^2/Hz]
     tInit : float
         initial time of time axis. [s]
     tEnd : float
@@ -711,9 +727,11 @@ def spectrum2timeseries_object(
     Parameters
     ----------
     f : NDArray[float64]
-        1D array containing the frequency axis. Frequencies must be uniformly spaced. [Hz]
+        1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+        close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the
+        number of elements in array xTime [Hz]
     sVarDens : NDArray[float64]
-        1D array containing variance density spectrum. [m^2/Hz]
+        1D array containing variance density spectrum of the signal [m^2/Hz]
     tInit : float
         initial time of time axis. [s]
     tEnd : float

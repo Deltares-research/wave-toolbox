@@ -366,13 +366,14 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, fres: float = 0.01) -> spectrum.Spectrum:
+    def get_spectrum(self, dfDesired: float = 0.01) -> spectrum.Spectrum:
         """create spectrum
 
         Parameters
         ----------
-        fres : float, optional
-            frequency resolution, by default 0.01
+        dfDesired : float, optional
+            desired frequency spacing in Hertz on which the wave spectrum must be computed. If this parameter is omitted,
+        then dfDesired = f(1) - f(0), by default 0.01 [Hz]
 
         Returns
         -------
@@ -380,7 +381,9 @@ class Series(WaveHeights):
             Spectrum in spectrum object
 
         """
-        [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.xTime, fres)
+        [f, S] = core_spectral.compute_spectrum_time_series(
+            self.time, self.xTime, dfDesired
+        )
         return spectrum.Spectrum(f, S)
 
     def max(self) -> float:
