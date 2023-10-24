@@ -18,9 +18,10 @@ class WaveHeights:
     Parameters
     ----------
     hwave : NDArray[float64]
-        Array of wave heights
+        1D array containing the wave heights of the individual waves [m]
     twave : NDArray[float64]
-        Array of wave periods
+        1D array containing the periods of the individual waves [s]
+
     """
 
     def __init__(self, hwave: NDArray[float64], twave: NDArray[float64]) -> None:
@@ -44,6 +45,7 @@ class WaveHeights:
         The sorting is done such that in hWaveSorted the wave heights of hWave
         are sorted in descending order. This same sorting is applied to
         tWave.
+
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
 
@@ -54,6 +56,7 @@ class WaveHeights:
         -------
         float
             Hrms
+
         """
         return np.sqrt(np.mean(self.hwave**2))
 
@@ -64,6 +67,7 @@ class WaveHeights:
         -------
         float64
             Hmax
+
         """
         return np.max(self.hwave)
 
@@ -76,6 +80,7 @@ class WaveHeights:
         -------
         tuple[float, float]
             Hs, Ts
+
         """
         return self.highest_waves(1 / 3)
 
@@ -86,6 +91,7 @@ class WaveHeights:
         -------
         float
             H2p
+
         """
         return self.get_Hs()[0] * rayleigh.ppf(0.98, scale=1 / np.sqrt(2)) / np.sqrt(2)
 
@@ -98,12 +104,13 @@ class WaveHeights:
         ----------
         excPerc : float
             exceedance probability percentage. excPerc = 2 means an exceedance percentage of 2%. The value of excPerc
-            should not exceed 100, or be smaller than 0
+            should not exceed 100, or be smaller than 0 [%]
 
         Returns
         -------
         float
-            hExcPerc, wave height with given exceedance probability
+            wave height with given exceedance probability [m]
+
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
         return core_time.exceedance_wave_height(hWaveSorted=self.hwave, excPerc=excPerc)
@@ -118,15 +125,16 @@ class WaveHeights:
         Parameters
         ----------
         fracP : float
-            fraction. Should be between 0 and 1
+            fraction. Should be between 0 and 1 [-]
 
         Returns
         -------
         tuple[float, float]
             hFracP : float
-                average of the wave heights of the highest fracP waves
+                average of the wave heights of the highest fracP waves [m]
             tFracP : float
-                average of the wave periods of the highest fracP waves
+                average of the wave periods of the highest fracP waves [s]
+
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
         hFracP, tFracP = core_time.highest_waves_params(
@@ -146,6 +154,7 @@ class WaveHeights:
         -------
         figure.Figure
             figure object
+
         """
         self.hwave, self.twave = core_time.sort_wave_params(self.hwave, self.twave)
         fig = plt.figure()
@@ -183,11 +192,11 @@ class WaveHeights:
         plot_BG : bool, optional
             include theoretical Battjes & Groenendijk (2000) distribution in plot, by default False
         water_depth : float, optional
-            water depth needed for Battjes & Groenendijk (2000), by default -1.0
+            water depth needed for Battjes & Groenendijk (2000), by default -1.0 [m]
         cota_slope : float, optional
-            foreshore slope needed for Battjes & Groenendijk (2000), by default 250.0
+            foreshore slope needed for Battjes & Groenendijk (2000), by default 250.0 [-]
         Hm0 : float, optional
-            spectral wave height needed for Battjes & Groenendijk (2000), by default -1.0
+            spectral wave height needed for Battjes & Groenendijk (2000), by default -1.0 [m]
 
         Returns
         -------
@@ -198,6 +207,7 @@ class WaveHeights:
         ------
         ValueError
             Raised when plot_BG is True and Hm0 is not provided
+
         """
         if normalize:
             # Normalize with significant wave height
@@ -272,6 +282,7 @@ class WaveHeights:
         -------
         figure.Figure
             figure object
+
         """
         fig = plt.figure()
         plt.hist(self.hwave, label="Distribution")
@@ -294,19 +305,22 @@ class Series(WaveHeights):
     Parameters
     ----------
     time : NDArray[float64]
-        time array
-    x : NDArray[float64]
-        varying quantity (typically water level elevation)
+        1D array containing time axis. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step) [s]
+    xTime : NDArray[float64]
+        1D array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
+
     """
 
-    def __init__(self, time: NDArray[float64], x: NDArray[float64]) -> None:
+    def __init__(self, time: NDArray[float64], xTime: NDArray[float64]) -> None:
         time, tSize = core_engine.convert_to_vector(time)
-        x, xSize = core_engine.convert_to_vector(x)
+        xTime, xSize = core_engine.convert_to_vector(xTime)
 
         assert tSize[0] == xSize[0], "Input error: array sizes differ in dimension"
 
         self.time = time
-        self.x = x
+        self.xTime = xTime
         self.nt = len(time)
 
         [
@@ -339,12 +353,16 @@ class Series(WaveHeights):
         -------
         tuple[int, NDArray[float64]]
             nWave : int
-                number of waves detected
+                Number of waves in the signal, where one wave corresponds to two successive zero-crossings. Wave i
+                starts at time tCross(i), and end at time tCross(i+1) [-]
             tCross : NDArray[float64]
-                moments in time with a crossing
+                1D array of length (nWave+1), containing the time of all zero-crossings. The time of the
+                zero-crossings is determined by linear interpolation. Note that in case of no zero-crossing, the
+                array tCross is empty. Note that in case of one zero-crossing, the number of waves is zero. [s]
+
         """
         nWave, tCross = core_time.determine_zero_crossing(
-            t=self.time, x=self.x, typeCross=typeCross
+            t=self.time, xTime=self.xTime, typeCross=typeCross
         )
         return nWave, tCross
 
@@ -360,21 +378,22 @@ class Series(WaveHeights):
         -------
         spectrum.Spectrum
             Spectrum in spectrum object
+
         """
-        [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.x, fres)
+        [f, S] = core_spectral.compute_spectrum_time_series(self.time, self.xTime, fres)
         return spectrum.Spectrum(f, S)
 
     def max(self) -> float:
-        return np.max(self.x)
+        return np.max(self.xTime)
 
     def min(self) -> float:
-        return np.min(self.x)
+        return np.min(self.xTime)
 
     def mean(self) -> float:
-        return np.mean(self.x)
+        return np.mean(self.xTime)
 
     def var(self) -> float:
-        return np.var(self.x)
+        return np.var(self.xTime)
 
     def get_fourier_comp(
         self,
@@ -385,13 +404,19 @@ class Series(WaveHeights):
         -------
         tuple[NDArray[float64], NDArray[complex128], bool]
             f : NDArray[float64]
-                frequency array
+                1D array containing frequency values, for folded Fourier transform. The frequency axis runs from 0 to
+                the Nyquist frequency. The number of elements in array f is close to half the number of elements in
+                array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the number of elements in array
+                xTime [Hz]
             xFreq : NDArray[complex128]
-                fourrier components
+                1D array (complex!) containing the folded Fourier coefficients of xTime. The value xFreq(i) must be the
+                Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same.
             isOdd : bool
-                indicates whether the number of time points in xTime is odd (True) or even (False)
+                logical indicating whether nT, the number of time points in xTime, is even (isOdd=False) or odd
+                (isOdd=True)
+
         """
-        f, xFreq, isOdd = core_spectral.time2freq_nyquist(self.time, self.x)
+        f, xFreq, isOdd = core_spectral.time2freq_nyquist(self.time, self.xTime)
         return f, xFreq, isOdd
 
     def _determine_individual_waves(
@@ -416,25 +441,27 @@ class Series(WaveHeights):
         tuple[ NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64],
         NDArray[float64], ]
             tWave : NDArray[float64]
-                1D array containing the periods of the individual waves
+                1D array containing the periods of the individual waves [s]
             hWave : NDArray[float64]
-                1D array containing the wave heights of the individual waves
+                1D array containing the wave heights of the individual waves [m]
             aCrest : NDArray[float64]
-                1D array containing the maximum amplitudes of the crest of the individual waves
+                1D array containing the maximum amplitude of the crests of the individual waves [m]
             aTrough : NDArray[float64]
-                1D array containing the maximum amplitudes of the trough of the individual waves
+                1D array containing the maximum amplitude of the troughs of the individual waves [m]
             tCrest : NDArray[float64]
-                1D array containing the time at which maximum crest amplitude of the individual waves occurs
+                1D array containing the time at which maximum crest amplitude of the individual waves occurs [s]
             tTrough : NDArray[float64]
-                1D array containing the time at which maximum trough amplitude of the individual waves occurs
+                1D array containing the time at which maximum trough amplitude of the individual waves occurs [s]
 
-        Notes:
-            * All these arrays have a length equal to nWave, which is the number of waves in the wave train
-            * The values of aTrough are always smaller than zero
-            * hWave = aCrest - aTrough
+        Notes
+        -----
+        * All these arrays have a length equal to nWave, which is the number of waves in the wave train
+        * The values of aTrough are always smaller than zero
+        * hWave = aCrest - aTrough
+
         """
         _, tCross = core_time.determine_zero_crossing(
-            t=self.time, x=self.x, typeCross=typeCross
+            t=self.time, xTime=self.xTime, typeCross=typeCross
         )
         (
             hWave,
@@ -444,7 +471,7 @@ class Series(WaveHeights):
             tCrest,
             tTrough,
         ) = core_time.determine_params_individual_waves(
-            tCross=tCross, t=self.time, x=self.x
+            tCross=tCross, t=self.time, xTime=self.xTime
         )
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
@@ -462,9 +489,10 @@ class Series(WaveHeights):
         -------
         figure.Figure
             figure object
+
         """
         fig = plt.figure()
-        plt.plot(self.time, self.x, label="series")
+        plt.plot(self.time, self.xTime, label="series")
         if plot_crossing:
             _, tCross = self.get_crossing()
             plt.plot(tCross, np.asarray(tCross) * 0, "ro", label="crossing")

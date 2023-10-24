@@ -27,7 +27,7 @@ plt.figure()
 plt.plot(timeseries.time, timeseries.x)
 
 f, Pxx = welch(
-    timeseries.x,
+    timeseries.xTime,
     fs=1 / dt,
     window="hann",
     nperseg=256,

@@ -18,17 +18,18 @@ def sort_wave_params(
     Parameters
     ----------
     hWave : NDArray[float64]
-        1D array containing the wave heights of the individual waves
+        1D array containing the wave heights of the individual waves [m]
     tWave : NDArray[float64]
-        1D array containing the periods of the individual waves
+        1D array containing the periods of the individual waves [s]
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
         hWaveSorted : NDArray[float64]
-            1D array containing wave heights, sorted in descending order
+            1D array containing wave heights of the individual waves, sorted in descending order [m]
         tWaveSorted : NDArray[float64]
-            1D array containing wave periods, using the same sorting (re-arranging) as applied to hWave
+            1D array containing wave periods of the individual waves, using the same sorting (re-arranging) as
+            applied to hWave [s]
 
     Raises
     ------
@@ -94,24 +95,23 @@ def sort_wave_params(
 
 def determine_zero_crossing(
     t: NDArray[float64],
-    x: NDArray[float64],
+    xTime: NDArray[float64],
     typeCross: str = "down",
 ) -> tuple[int, NDArray[float64]]:
     """Determines zero-crossings (number and positions) of signal.
 
-    This function determines the zero-crossings of a given time signal x =
-    x(t). Here, t stands for time, and x for a given signal (for example,
-    time series of measured surface elevation). The type of zero-crossing
-    can be either up-crossing or down-crossing.
+    This function determines the zero-crossings of a given time signal xTime = xTime(t). Here, t stands for time, and
+    xTime for a given signal (for example, time series of measured surface elevation). The type of zero-crossing can
+    be either up-crossing or down-crossing.
 
     Parameters
     ----------
     t : NDArray[float64]
-        1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
-        (uniform time step)
-    x : NDArray[float64]
-        1D real array containing signal values, i.e. the time series of the signal. The value x(i) must be the signal
-        value at time t(i)
+        1D array containing time axis. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step) [s]
+    xTime : NDArray[float64]
+        1D array containing signal values, i.e. the time series of the signal. The value xxTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
     typeCross : str, optional
         Search for up- or down-crossings, by default "down"
 
@@ -119,12 +119,12 @@ def determine_zero_crossing(
     -------
     tuple[int, NDArray[float64]]
         nWave : int
-            integer indicating the number of waves in the signal, where one wave corresponds to two successive
-            zero-crossings. Wave i start at time tCross(i), and end at time tCross(i+1).
+            Number of waves in the signal, where one wave corresponds to two successive zero-crossings. Wave i starts
+            at time tCross(i), and end at time tCross(i+1) [-]
         tCross : NDArray[float64]
             1D array of length (nWave+1), containing the time of all zero-crossings. The time of the zero-crossings is
             determined by linear interpolation. Note that in case of no zero-crossing, the array tCross is empty. Note
-            that in case of one zero-crossing, the number of waves is zero
+            that in case of one zero-crossing, the number of waves is zero. [s]
 
     Raises
     ------
@@ -140,19 +140,19 @@ def determine_zero_crossing(
     """
     # --- ensure input is of type ndarray
     t = core_engine.convert_to_array_type(t)
-    x = core_engine.convert_to_array_type(x)
+    xTime = core_engine.convert_to_array_type(xTime)
 
     # Perform checks on the input arguments
     is1d_array = core_engine.is1darray(t)
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error: Input arrays t is not 1D")
 
-    is1d_array = core_engine.is1darray(x)
+    is1d_array = core_engine.is1darray(xTime)
     if not is1d_array:
         raise ValueError("sort_wave_params: Input error: Input arrays x is not 1D")
 
     # --- Check whether the length of arrays t and x the same
-    isequal_length = len(t) == len(x)
+    isequal_length = len(t) == len(xTime)
     if not isequal_length:
         raise ValueError(
             "sort_wave_params: Input error: Input arrays t and x have different length"
@@ -168,25 +168,29 @@ def determine_zero_crossing(
     if typeCross.lower() == "up":
         # --- Upcrossings
         for iTime in np.arange(0, nTime - 1):
-            if x[iTime] <= 0 and x[iTime + 1] > 0:
+            if xTime[iTime] <= 0 and xTime[iTime + 1] > 0:
                 # --- Add 1 to counter number of zero-crossings
                 nWave = nWave + 1
 
                 # --- Determine time level of zero-crossing by means of linear
                 #     interpolation
-                tCrossing = t[iTime] + dt * x[iTime] / (x[iTime] - x[iTime + 1])
+                tCrossing = t[iTime] + dt * xTime[iTime] / (
+                    xTime[iTime] - xTime[iTime + 1]
+                )
                 tCross = np.append(tCross, tCrossing)
 
     elif typeCross.lower() == "down":
         # --- Downcrossings
         for iTime in np.arange(0, nTime - 1):
-            if x[iTime] >= 0 and x[iTime + 1] < 0:
+            if xTime[iTime] >= 0 and xTime[iTime + 1] < 0:
                 # --- Add 1 to counter number of zero-crossings
                 nWave = nWave + 1
 
                 # --- Determine time level of zero-crossing by means of linear
                 #     interpolation
-                tCrossing = t[iTime] + dt * x[iTime] / (x[iTime] - x[iTime + 1])
+                tCrossing = t[iTime] + dt * xTime[iTime] / (
+                    xTime[iTime] - xTime[iTime + 1]
+                )
                 tCross = np.append(tCross, tCrossing)
     else:
         raise ValueError(
@@ -215,19 +219,20 @@ def highest_waves_params(
     Parameters
     ----------
     hWaveSorted : NDArray[float64]
-        1D array containing wave heights, sorted in descending order
+        1D array containing wave heights of the individual waves, sorted in descending order [m]
     tWaveSorted : NDArray[float64]
-        1D array containing wave periods, using the same sorting (re-arranging) as applied to hWave
+        1D array containing wave periods of the individual waves, using the same sorting (re-arranging) as
+            applied to hWave [s]
     fracP : float
-        fraction. Should be between 0 and 1
+        fraction. Should be between 0 and 1 [-]
 
     Returns
     -------
     tuple[float, float]
         hFracP : float
-            average of the wave heights of the highest fracP waves
+            average of the wave heights of the highest fracP waves [m]
         tFracP : float
-            average of the wave periods of the highest fracP waves
+            average of the wave periods of the highest fracP waves [s]
 
     Raises
     ------
@@ -314,16 +319,16 @@ def exceedance_wave_height(hWaveSorted: NDArray[float64], excPerc: float) -> flo
     Parameters
     ----------
     hWaveSorted : NDArray[float64]
-        1D array containing wave heights, sorted in descending order
+        1D array containing wave heights of the individual waves, sorted in descending order [m]
     excPerc : float
         exceedance probability percentage. excPerc = 2 means an exceedance percentage of 2%. The value of excPerc
-        should not exceed 100, or be smaller than 0
+        should not exceed 100, or be smaller than 0 [%]
 
     Returns
     -------
     float
         hExcPerc : float
-            wave height with given exceedance probability
+            wave height with given exceedance probability [m]
 
     Raises
     ------
@@ -386,7 +391,7 @@ def exceedance_wave_height(hWaveSorted: NDArray[float64], excPerc: float) -> flo
 def determine_params_individual_waves(
     tCross: NDArray[float64],
     t: NDArray[float64],
-    x: NDArray[float64],
+    xTime: NDArray[float64],
 ) -> tuple[
     NDArray[float64],
     NDArray[float64],
@@ -399,35 +404,36 @@ def determine_params_individual_waves(
 
     This function determines several wave properties (wave period, wave height, crest amplitude, trough amplitude, and
     the time at which the maximum crest and trough amplitudes occur) of all individual waves in a wave train. The wave
-    train is given by time series x = x(t), and the zero-crossings occur at time levels given in tCross
+    train is given by time series xTime = xTime(t), and the zero-crossings occur at time levels given in tCross
 
     Parameters
     ----------
     tCross : NDArray[float64]
-        1D array of length (nWave+1), containing the time of all zero-crossings. nWave is an integer representing the
-        number of waves.
+        1D array of length (nWave+1), containing the time of all zero-crossings. The time of the zero-crossings is
+        determined by linear interpolation. Note that in case of no zero-crossing, the array tCross is empty. Note
+        that in case of one zero-crossing, the number of waves is zero. [s]
     t : NDArray[float64]
-        1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
-        (uniform time step)
-    x : NDArray[float64]
-        1D real array containing signal values, i.e. the time series of the signal. The value x(i) must be the signal
-        value at time t(i)
+        1D array containing time axis. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step) [s]
+    xTime : NDArray[float64]
+        1D array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
 
     Returns
     -------
     tuple[ NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64], ]
         tWave : NDArray[float64]
-            1D array containing the periods of the individual waves
+            1D array containing the periods of the individual waves [s]
         hWave : NDArray[float64]
-            1D array containing the wave heights of the individual waves
+            1D array containing the wave heights of the individual waves [m]
         aCrest : NDArray[float64]
-            1D array containing the maximum amplitudes of the crest of the individual waves
+            1D array containing the maximum amplitude of the crests of the individual waves [m]
         aTrough : NDArray[float64]
-            1D array containing the maximum amplitudes of the trough of the individual waves
+            1D array containing the maximum amplitude of the troughs of the individual waves [m]
         tCrest : NDArray[float64]
-            1D array containing the time at which maximum crest amplitude of the individual waves occurs
+            1D array containing the time at which maximum crest amplitude of the individual waves occurs [s]
         tTrough : NDArray[float64]
-            1D array containing the time at which maximum trough amplitude of the individual waves occurs
+            1D array containing the time at which maximum trough amplitude of the individual waves occurs [s]
 
     Notes
     -----
@@ -451,7 +457,7 @@ def determine_params_individual_waves(
     # --- ensure input is of type ndarray
     tCross = core_engine.convert_to_array_type(tCross)
     t = core_engine.convert_to_array_type(t)
-    x = core_engine.convert_to_array_type(x)
+    xTime = core_engine.convert_to_array_type(xTime)
 
     # Perform checks on input arguments
     # --- In the possible situation of no zero-crossings, the array tCross is
@@ -479,14 +485,14 @@ def determine_params_individual_waves(
             "determine_params_individual_waves: Input error: Input arrays t is not 1D"
         )
 
-    is1d_array = core_engine.is1darray(x)
+    is1d_array = core_engine.is1darray(xTime)
     if not is1d_array:
         raise ValueError(
             "determine_params_individual_waves: Input error: Input arrays x is not 1D"
         )
 
     # --- Check whether the length of arrays t and x the same
-    isequal_length = len(t) == len(x)
+    isequal_length = len(t) == len(xTime)
     if not isequal_length:
         raise ValueError(
             "determine_params_individual_waves: Length of input arrays t and x not identical "
@@ -519,7 +525,7 @@ def determine_params_individual_waves(
         #     situation of two extrema with the same function
         #     value in the given wave
         tIwave = t[iIni : iEnd + 1]
-        xIwave = x[iIni : iEnd + 1]
+        xIwave = xTime[iIni : iEnd + 1]
         iMax = np.where(xIwave == max(xIwave))[0][0]
         iMin = np.where(xIwave == min(xIwave))[0][0]
 

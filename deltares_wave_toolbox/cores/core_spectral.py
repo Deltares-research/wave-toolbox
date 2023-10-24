@@ -385,19 +385,19 @@ def time2freq_nyquist(
     Parameters
     ----------
     t : NDArray[float64]
-        1D real array containing time values. The numbers in the array t must be increasing and uniformly spaced
-        (uniform time step)
+        1D array containing time axis. The numbers in the array t must be increasing and uniformly spaced
+        (uniform time step) [s]
     xTime : NDArray[float64]
-        1D real array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the
-        signal value at time t(i). The number of elements in t and xTime must be the same
+        1D array containing signal values, i.e. the time series of the signal. The value x(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
 
     Returns
     -------
     tuple[NDArray[float64], NDArray[complex128], bool]
         f : NDArray[float64]
-            1D real array containing frequency values, for folded Fourier transform. The frequency axis runs from 0
-            to the Nyquist frequency. The number of elements in array f is close to half the number of elements in
-            array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the number of elements in array xTime
+            1D array containing frequency values, for folded Fourier transform. The frequency axis runs from 0 to the
+            Nyquist frequency. The number of elements in array f is close to half the number of elements in array
+            xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the number of elements in array xTime [Hz]
         xFreq : NDArray[complex128]
             1D array (complex!) containing the folded Fourier coefficients of xTime. The value xFreq(i) must be the
             Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same.
