@@ -755,9 +755,9 @@ def spectrum2timeseries_object(
 def compute_spectrum_welch_wrapper(
     xTime: NDArray[float64],
     dt: float,
-    nperseg: int = None,
-    noverlap: int = None,
-    nfft: int = None,
+    nperseg: int = 0,
+    noverlap: int = 0,
+    nfft: int = 0,
     window_type: str = "hann",
 ) -> tuple[NDArray[float64], NDArray[float64]]:
     """Wrapper arround the Scipy Welch method
@@ -789,6 +789,12 @@ def compute_spectrum_welch_wrapper(
             1D array containing variance density spectrum of the signal [m^2/Hz]
 
     """
+    if nperseg == 0:
+        nperseg = None
+    if noverlap == 0:
+        noverlap = None
+    if nfft == 0:
+        nfft = None
     f, sVarDens = welch(
         xTime,
         fs=1 / dt,
