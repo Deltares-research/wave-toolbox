@@ -437,8 +437,7 @@ def determine_params_individual_waves(
 
     Notes
     -----
-    * All these arrays have a length equal to nWave, which is the number of
-    waves in the wave train
+    * All these arrays have a length equal to nWave, which is the number of waves in the wave train
     * The values of aTrough are always smaller than zero
     * hWave = aCrest - aTrough
 

@@ -1,17 +1,16 @@
-Welcome to deltares_wave_toolbox's documentation!
-=================================================
+Welcome to the Deltares Wave Toolbox documentation!
+===================================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   readme
    installation
    usage
-   modules
-   contributing
+   wave_analysis
    authors
-   history
+   modules
+   
 
 Indices and tables
 ==================
