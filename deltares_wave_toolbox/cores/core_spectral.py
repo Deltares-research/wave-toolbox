@@ -39,9 +39,9 @@ def frequency_averaging(
     -------
     tuple[NDArray[float64], NDArray[float64]]
         fCoarse : NDArray[float64]
-            frequency axis of band averaged spectrum. The frequency spacing is (close to) dfDesired
-        sFreqCoarse : NDArray[float64]
-            band averaged variance density spectrum
+            frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired [Hz]
+        sCoarse : NDArray[float64]
+            band averaged variance density spectrum of the signal on new frequency axis fCoarse [m^2/Hz]
 
     Raises
     ------
@@ -78,7 +78,7 @@ def frequency_averaging(
 
     # --- Initialize arrays
     fCoarse = np.zeros(len(f[0:nCoarse]))
-    sFreqCoarse = np.zeros(len(fCoarse), dtype=type(sFreq[0]))
+    sCoarse = np.zeros(len(fCoarse), dtype=type(sFreq[0]))
 
     # --- Perform the averaging
     for iFreq in np.arange(0, nCoarse):  # before np.arange(0,nCoarse)
@@ -86,9 +86,9 @@ def frequency_averaging(
         ihigh = int((iFreq + 1) * nFactor)
 
         fCoarse[iFreq] = np.mean(f[ilow:ihigh])
-        sFreqCoarse[iFreq] = np.mean(sFreq[ilow:ihigh])
+        sCoarse[iFreq] = np.mean(sFreq[ilow:ihigh])
 
-    return fCoarse, sFreqCoarse
+    return fCoarse, sCoarse
 
 
 def unfold_spectrum(
@@ -120,8 +120,8 @@ def unfold_spectrum(
     -------
     tuple[NDArray[float64], NDArray[complex128]]
         fTot : NDArray[float64]
-            1D real array containing frequency values, for unfolded Fourier transform. The frequency axis runs
-            from 0 to twice the Nyquist frequency. Array f contains as many elements as the original time series.
+            1D array containing frequency values, for unfolded Fourier transform. The frequency axis runs from 0 to
+            twice the Nyquist frequency. Array fTot contains as many elements as the original time series. [Hz]
         xFreqTot : NDArray[complex128]
             1D array (complex!) containing the unfolded Fourier coefficients of original time series. The value
             xFreqTot(i) must be the Fourier coefficient at frequency fTot(i). The number of elements in fTot and
@@ -254,7 +254,8 @@ def freq2time(xFreq: NDArray[complex128]) -> NDArray[float64]:
     Returns
     -------
     NDArray[float64]
-        1D real array containing time series of the signal.
+        1D array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
 
     Raises
     ------
@@ -500,9 +501,9 @@ def compute_spectrum_time_series(
     -------
     tuple[NDArray[float64], NDArray[float64]]
         fCoarse : NDArray[float64]
-            frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired
+            frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired [Hz]
         sCoarse : NDArray[float64]
-            1D array containing variance density spectrum of the signal [m^2/Hz]
+            band averaged variance density spectrum of the signal on new frequency axis fCoarse [m^2/Hz]
 
     Example
     -------
@@ -560,9 +561,9 @@ def compute_spectrum_freq_series(
     -------
     tuple[NDArray[float64], NDArray[float64]]
         fCoarse : NDArray[float64]
-            frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired
+            frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired [Hz]
         sCoarse : NDArray[float64]
-            1D array containing variance density spectrum of the signal [m^2/Hz]
+            band averaged variance density spectrum of the signal on new frequency axis fCoarse [m^2/Hz]
 
     Raises
     ------
