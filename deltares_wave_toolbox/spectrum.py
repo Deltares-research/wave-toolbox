@@ -19,7 +19,7 @@ class Spectrum:
     ----------
     f : NDArray[float64]
         array with frequencies
-    S : NDArray[float64]
+    sVarDens : NDArray[float64]
         array with energy density
     D : NDArray[float64], optional
         array with directions for 2D spectrum, by default np.empty((0, 0))
@@ -28,11 +28,11 @@ class Spectrum:
     def __init__(
         self,
         f: NDArray[float64],
-        S: NDArray[float64],
+        sVarDens: NDArray[float64],
         D: NDArray[float64] = np.empty((0, 0)),
     ) -> None:
         f, fSize = core_engine.convert_to_vector(f)
-        S, SSize = core_engine.convert_to_vector(S)
+        sVarDens, SSize = core_engine.convert_to_vector(sVarDens)
 
         assert core_engine.monotonic_increasing_constant_step(
             f
@@ -42,7 +42,7 @@ class Spectrum:
         ), "compute_spectrum_params: Input error: array sizes differ in dimension"
 
         self.f = f
-        self.S = S
+        self.sVarDens = sVarDens
         self.D = D
         self.nf = len(f)
 
@@ -91,7 +91,7 @@ class Spectrum:
             Hm0
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
         self.Hm0 = 4 * np.sqrt(m0)
         return self.Hm0
 
@@ -114,7 +114,7 @@ class Spectrum:
         iFmin = np.where(self.f >= fmin)[0][0]
         iFmax = np.where(self.f <= fmax)[0][-1]
         fMiMa = self.f[iFmin : iFmax + 1]
-        SMiMa = self.S[iFmin : iFmax + 1]
+        SMiMa = self.sVarDens[iFmin : iFmax + 1]
         self.Tps = core_wavefunctions.compute_tps(fMiMa, SMiMa)
         return self.Tps
 
@@ -139,7 +139,7 @@ class Spectrum:
         iFmin = np.where(self.f >= fmin)[0][0]
         iFmax = np.where(self.f <= fmax)[0][-1]
         fMiMa = self.f[iFmin : iFmax + 1]
-        SMiMa = self.S[iFmin : iFmax + 1]
+        SMiMa = self.sVarDens[iFmin : iFmax + 1]
         # --- Compute peak period -----------------------------------------------
         Smax = max(SMiMa)
         imax = np.where(SMiMa == Smax)[0]
@@ -169,8 +169,8 @@ class Spectrum:
             Tmm10
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m_1 = core_wavefunctions.compute_moment(self.f, self.S, -1, fmin, fmax)
-        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
+        m_1 = core_wavefunctions.compute_moment(self.f, self.sVarDens, -1, fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
         self.Tmm10 = m_1 / m0
         return self.Tmm10
 
@@ -190,8 +190,8 @@ class Spectrum:
             Tm01
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
-        m1 = core_wavefunctions.compute_moment(self.f, self.S, 1, fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
+        m1 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 1, fmin, fmax)
         self.Tm01 = m0 / m1
         return self.Tm01
 
@@ -211,8 +211,8 @@ class Spectrum:
             Tm02
         """
         fmin, fmax = self._set_flim(fmin, fmax)
-        m0 = core_wavefunctions.compute_moment(self.f, self.S, 0, fmin, fmax)
-        m2 = core_wavefunctions.compute_moment(self.f, self.S, 2, fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
+        m2 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 2, fmin, fmax)
         self.Tm02 = np.sqrt(m0 / m2)
         return self.Tm02
 
@@ -234,7 +234,7 @@ class Spectrum:
             Series class with time series
         """
         series = core_spectral.spectrum2timeseries_object(
-            self.f, self.S, tstart, tend, dt
+            self.f, self.sVarDens, tstart, tend, dt
         )
         return series
 
@@ -261,18 +261,26 @@ class Spectrum:
             figure object
         """
         fig = plt.figure()
-        plt.plot(self.f, self.S, label="Spectrum")
+        plt.plot(self.f, self.sVarDens, label="Spectrum")
 
         if plot_periods:
             if hasattr(self, "Tps"):
-                plt.plot([1 / self.Tps, 1 / self.Tps], [0, np.max(self.S)], label="Tps")
+                plt.plot(
+                    [1 / self.Tps, 1 / self.Tps],
+                    [0, np.max(self.sVarDens)],
+                    label="Tps",
+                )
             if hasattr(self, "Tmm10"):
                 plt.plot(
-                    [1 / self.Tmm10, 1 / self.Tmm10], [0, np.max(self.S)], label="Tmm10"
+                    [1 / self.Tmm10, 1 / self.Tmm10],
+                    [0, np.max(self.sVarDens)],
+                    label="Tmm10",
                 )
             if hasattr(self, "Tm02"):
                 plt.plot(
-                    [1 / self.Tm02, 1 / self.Tm02], [0, np.max(self.S)], label="Tm02"
+                    [1 / self.Tm02, 1 / self.Tm02],
+                    [0, np.max(self.sVarDens)],
+                    label="Tm02",
                 )
         plt.grid("on")
         plt.xlabel("f [$Hz$]")

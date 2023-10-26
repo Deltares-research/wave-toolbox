@@ -11,7 +11,7 @@ import deltares_wave_toolbox.spectrum as spectrum
 
 def compute_spectrum_params(
     f: NDArray[float64],
-    S: NDArray[float64],
+    sVarDens: NDArray[float64],
     fmin: float = -1.0,
     fmax: float = -1.0,
 ) -> tuple[float, float, float, float, float, float]:
@@ -23,9 +23,10 @@ def compute_spectrum_params(
     Parameters
     ----------
     f : NDArray[float64]
-        1D array representing frequency axis [Hz]
-    S : NDArray[float64]
-        1D array representing variance density spectrum [m2/Hz].
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    sVarDens : NDArray[float64]
+        1D array containing variance density spectrum of the signal [m^2/Hz]
     fmin : float, optional
         lower bound of the moment integral [Hz], by default -1.0
     fmax : float, optional
@@ -35,7 +36,7 @@ def compute_spectrum_params(
     -------
     tuple[float, float, float, float, float, float]
         Hm0 : float
-            wave height [m]
+            spectral wave height [m]
         Tp : float
             peak period [s]
         Tps : float
@@ -70,7 +71,7 @@ def compute_spectrum_params(
     """
     # --- Ensure array input is of type ndarray.
     f, fSize = core_engine.convert_to_vector(f)
-    S, SSize = core_engine.convert_to_vector(S)
+    sVarDens, SSize = core_engine.convert_to_vector(sVarDens)
 
     if fSize[1] > 1 or SSize[1] > 1:
         raise ValueError(
@@ -95,10 +96,10 @@ def compute_spectrum_params(
         fmax = f[fSize[0] - 1]
 
     # --- Compute moments
-    m_1 = compute_moment(f, S, -1, fmin, fmax)
-    m0 = compute_moment(f, S, 0, fmin, fmax)
-    m1 = compute_moment(f, S, 1, fmin, fmax)
-    m2 = compute_moment(f, S, 2, fmin, fmax)
+    m_1 = compute_moment(f, sVarDens, -1, fmin, fmax)
+    m0 = compute_moment(f, sVarDens, 0, fmin, fmax)
+    m1 = compute_moment(f, sVarDens, 1, fmin, fmax)
+    m2 = compute_moment(f, sVarDens, 2, fmin, fmax)
 
     # --- Compute wave height -----------------------------------------------
     Hm0 = float(4 * np.sqrt(m0))
@@ -124,7 +125,7 @@ def compute_spectrum_params(
     iFmin = np.where(f >= fmin)[0][0]
     iFmax = np.where(f <= fmax)[0][-1]
     fMiMa = f[iFmin : iFmax + 1]
-    SMiMa = S[iFmin : iFmax + 1]
+    SMiMa = sVarDens[iFmin : iFmax + 1]
 
     # --- Compute peak period -----------------------------------------------
     Smax = max(SMiMa)
@@ -145,7 +146,7 @@ def compute_spectrum_params(
 
 def compute_moment(
     f: NDArray[float64],
-    S: NDArray[float64],
+    sVarDens: NDArray[float64],
     m: int,
     fmin: float = -1.0,
     fmax: float = -1.0,
@@ -166,11 +167,12 @@ def compute_moment(
     Parameters
     ----------
     f : NDArray[float64]
-        1D array representing frequency axis [Hz]
-    S : NDArray[float64]
-        1D array representing variance density spectrum [m2/Hz].
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    sVarDens : NDArray[float64]
+        1D array containing variance density spectrum of the signal [m^2/Hz]
     m : int
-        order of moment (integer value)
+        order of moment
     fmin : float, optional
         lower bound of the moment integral [Hz], by default -1.0
     fmax : float, optional
@@ -207,7 +209,7 @@ def compute_moment(
     """
     # --- Ensure array input is of type ndarray.
     f, fSize = core_engine.convert_to_vector(f)
-    S, SSize = core_engine.convert_to_vector(S)
+    sVarDens, SSize = core_engine.convert_to_vector(sVarDens)
 
     if fSize[1] > 1 or SSize[1] > 1:
         raise ValueError("compute_moment: Input error: input should be 1d arrays")
@@ -224,10 +226,10 @@ def compute_moment(
     #     would lead to division by zero
     if m < 0 and f[0] == 0:
         freq = f[1:]
-        spec = S[1:]
+        spec = sVarDens[1:]
     else:
         freq = f
-        spec = S
+        spec = sVarDens
 
     # --- Compute the integrand, that is the product of f^m * S
     integrand = freq ** (m) * spec
@@ -288,12 +290,12 @@ def create_spectrum_jonswap(
     Parameters
     ----------
     f : NDArray[float64]
-        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
         (uniform frequency step). [Hz]
     fp : float
         peak frequency. [Hz]
     hm0 : float
-        wave height. [m]
+        spectral wave height [m]
     gammaPeak : float, optional
         peak enhancement factor, by default 3.3
     l_fmax : float, optional
@@ -420,12 +422,12 @@ def create_spectrum_object_jonswap(
     Parameters
     ----------
     f : NDArray[float64]
-        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
         (uniform frequency step). [Hz]
     fp : float
         peak frequency. [Hz]
     hm0 : float
-        wave height. [m]
+        spectral wave height [m]
     gammaPeak : float, optional
         peak enhancement factor, by default 3.3
     l_fmax : float, optional
@@ -467,12 +469,12 @@ def create_spectrum_piersonmoskowitz(
     Parameters
     ----------
     f : NDArray[float64]
-        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
         (uniform frequency step). [Hz]
     fp : float
         peak frequency. [Hz]
     hm0 : float
-        wave height. [m]
+        spectral wave height [m]
     gammaPeak : float, optional
         peak enhancement factor, by default 1.0
     l_fmax : float, optional
@@ -527,12 +529,12 @@ def create_spectrum_object_piersonmoskowitz(
     Parameters
     ----------
     f : NDArray[float64]
-        1D real array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
         (uniform frequency step). [Hz]
     fp : float
         peak frequency. [Hz]
     hm0 : float
-        wave height. [m]
+        spectral wave height [m]
     gammaPeak : float, optional
         peak enhancement factor, by default 1.0
     l_fmax : float, optional
@@ -548,7 +550,7 @@ def create_spectrum_object_piersonmoskowitz(
     return create_spectrum_object_jonswap(f, fp, hm0, gammaPeak, l_fmax)
 
 
-def tpd(f: NDArray[float64], S: NDArray[float64]) -> float:
+def tpd(f: NDArray[float64], sVarDens: NDArray[float64]) -> float:
     """Function which calculates the spectral period (s)
 
     For definition of TpD: transition from peak wave period to spectral period for the design of placed block revetments
@@ -556,9 +558,10 @@ def tpd(f: NDArray[float64], S: NDArray[float64]) -> float:
     Parameters
     ----------
     f : NDArray[float64]
-        array of frequencies [Hz]
-    S : NDArray[float64]
-        array of variance density values [m2/Hz]
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    sVarDens : NDArray[float64]
+        1D array containing variance density spectrum of the signal [m^2/Hz]
 
     Returns
     -------
@@ -567,23 +570,23 @@ def tpd(f: NDArray[float64], S: NDArray[float64]) -> float:
 
     """
     f, _ = core_engine.convert_to_vector(f)
-    S, _ = core_engine.convert_to_vector(S)
+    sVarDens, _ = core_engine.convert_to_vector(sVarDens)
 
     # --- calculate the spectral period (TPD) (s)
-    max_spectum = max(S) * 0.8
-    itemp = np.where(S / max_spectum >= 0.8)[0]
+    max_spectum = max(sVarDens) * 0.8
+    itemp = np.where(sVarDens / max_spectum >= 0.8)[0]
     temp = f[itemp]
     fp_limits = [min(temp), max(temp)]
 
     #  --- compute zeroth and first moment for selected frequency interval.
-    m0 = compute_moment(f, S, 0, fp_limits[0], fp_limits[1])
-    m1 = compute_moment(f, S, 1, fp_limits[0], fp_limits[1])
+    m0 = compute_moment(f, sVarDens, 0, fp_limits[0], fp_limits[1])
+    m1 = compute_moment(f, sVarDens, 1, fp_limits[0], fp_limits[1])
 
     # --- calculate TpD based on spectral moments.
     return m0 / m1
 
 
-def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
+def compute_tps(f: NDArray[float64], sVarDens: NDArray[float64]) -> float:
     """Computes smoothed peak period.
 
     This function computes the smoothed peak period Tps, by means of quadratic interpolation, of a given variance
@@ -592,9 +595,10 @@ def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
     Parameters
     ----------
     f : NDArray[float64]
-        1D array representing frequency axis [Hz]
-    S : NDArray[float64]
-        1D array representing variance density spectrum [m2/Hz]
+        1D array containing frequency values. The numbers in the array f must be increasing and uniformly spaced
+        (uniform frequency step). [Hz]
+    sVarDens : NDArray[float64]
+        1D array containing variance density spectrum of the signal [m^2/Hz]
 
     Returns
     -------
@@ -622,7 +626,7 @@ def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
     """
     # --- Ensure array input is of type ndarray.
     f, fSize = core_engine.convert_to_vector(f)
-    S, SSize = core_engine.convert_to_vector(S)
+    sVarDens, SSize = core_engine.convert_to_vector(sVarDens)
 
     if fSize[1] > 1 or SSize[1] > 1:
         raise ValueError("compute_moment: Input error: input should be 1d arrays")
@@ -635,12 +639,12 @@ def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
     if not (fSize[0] == SSize[0]):
         raise ValueError("compute_moment: Input error: array sizes differ in dimension")
 
-    Smax = max(S)
+    Smax = max(sVarDens)
     if Smax < 1e-10:
         Tps = -999
         return Tps
     nF = fSize[0]
-    imax = np.where(S == Smax)[0]
+    imax = np.where(sVarDens == Smax)[0]
     imax = imax.astype(int)
     nmax = len(imax)
 
@@ -657,7 +661,9 @@ def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
 
             # --- Find polynomial coefficients
             ff = np.asarray([f[jmax - 1], f[jmax], f[jmax + 1]]).reshape(1, 3)[0]
-            ee = np.asarray([S[jmax - 1], S[jmax], S[jmax + 1]]).reshape(1, 3)[0]
+            ee = np.asarray(
+                [sVarDens[jmax - 1], sVarDens[jmax], sVarDens[jmax + 1]]
+            ).reshape(1, 3)[0]
             p = np.polyfit(ff, ee, 2)
             a = p[0]
             b = p[1]
@@ -686,7 +692,9 @@ def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
 
             # --- Find polynomial coefficients
             ff = np.asarray([f[kmax - 1], f[kmax], f[kmax + 1]]).reshape(1, 3)[0]
-            ee = np.asarray([S[kmax - 1], S[kmax], S[kmax + 1]]).reshape(1, 3)[0]
+            ee = np.asarray(
+                [sVarDens[kmax - 1], sVarDens[kmax], sVarDens[kmax + 1]]
+            ).reshape(1, 3)[0]
             p = np.polyfit(ff, ee, 2)
             a = p[0]
             b = p[1]
@@ -714,7 +722,7 @@ def compute_tps(f: NDArray[float64], S: NDArray[float64]) -> float:
 
 
 def compute_BattjesGroenendijk_wave_height_distribution(
-    Hm0: float,
+    hm0: float,
     nwave: int,
     water_depth: float,
     cota_slope: float = 250.0,
@@ -727,8 +735,8 @@ def compute_BattjesGroenendijk_wave_height_distribution(
 
     Parameters
     ----------
-    Hm0 : float
-        Spectral wave height [m]
+    hm0 : float
+        spectral wave height [m]
     nwave : int
         number of waves [-]
     water_depth : float
@@ -761,7 +769,7 @@ def compute_BattjesGroenendijk_wave_height_distribution(
 
     gamma_transition = 0.35 + 5.8 * (1 / cota_slope)
     H_transition = gamma_transition * water_depth
-    m0 = np.power(Hm0 / 4, 2)
+    m0 = np.power(hm0 / 4, 2)
     H_rms = np.sqrt(m0) * (2.69 + 3.24 * np.sqrt(m0) / water_depth)
 
     H_transition_norm = H_transition / H_rms
@@ -807,13 +815,13 @@ def compute_BattjesGroenendijk_wave_height_distribution(
             x = x_2
 
         x = x * H_rms
-        x = min(x, exponweib.ppf(1 - 1 / nwave, 1, 2, scale=np.sqrt(8)) / 4 * Hm0)
+        x = min(x, exponweib.ppf(1 - 1 / nwave, 1, 2, scale=np.sqrt(8)) / 4 * hm0)
 
         # dist = "B&G"
         H_1 = H_1_norm * H_rms
         H_2 = H_2_norm * H_rms
 
-        if Hm0 < H_transition:
+        if hm0 < H_transition:
             P_H_tr = np.exp(-np.power(H_transition / H_1, k1))
         else:
             P_H_tr = np.exp(-np.power(H_transition / H_2, k2))

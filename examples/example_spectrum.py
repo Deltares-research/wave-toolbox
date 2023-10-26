@@ -52,7 +52,7 @@ print("Hs :", Hs)
 timeseries.plot_hist_waveheight()
 timeseries.plot_exceedance_waveheight()
 timeseries.plot_exceedance_waveheight_Rayleigh(
-    normalize=True, plot_BG=True, water_depth=8, cota_slope=250, Hm0=Hm0
+    normalize=True, plot_BG=True, water_depth=8, cota_slope=250, hm0=Hm0
 )
 
 print("--- wave exceedance ---")
