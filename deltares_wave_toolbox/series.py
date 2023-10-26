@@ -318,10 +318,14 @@ class Series(WaveHeights):
         xTime, xSize = core_engine.convert_to_vector(xTime)
 
         assert tSize[0] == xSize[0], "Input error: array sizes differ in dimension"
+        assert np.var(np.diff(time)) < np.mean(
+            np.diff(time) / 100
+        ), "Input error: time step is not equidistant"
 
         self.time = time
         self.xTime = xTime
         self.nt = len(time)
+        self.dt = np.mean(np.diff(self.time))
 
         [
             hWave,
@@ -366,8 +370,44 @@ class Series(WaveHeights):
         )
         return nWave, tCross
 
-    def get_spectrum(self, dfDesired: float = 0.01) -> spectrum.Spectrum:
+    def get_spectrum(
+        self,
+        nperseg: int = 256,
+        noverlap: int = 0,
+        nfft: int = 0,
+        windows_type: str = "hann",
+    ) -> spectrum.Spectrum:
         """create spectrum
+
+        Parameters
+        ----------
+        nperseg : int, optional
+            Length of each segment, by default None
+        noverlap : int, optional
+            number of points in overlap, by default None
+        nfft : int, optional
+            length of fft, by default None
+        window_type : str, optional
+            window type, by default "hann"
+
+        Returns
+        -------
+        spectrum.Spectrum
+            Spectrum in spectrum object
+
+        """
+        [f, S] = core_spectral.compute_spectrum_welch_wrapper(
+            self.xTime,
+            dt=self.dt,
+            nperseg=nperseg,
+            noverlap=noverlap,
+            nfft=nfft,
+            window_type=windows_type,
+        )
+        return spectrum.Spectrum(f, S)
+
+    def get_spectrum_raw(self, dfDesired: float = 0.01) -> spectrum.Spectrum:
+        """create spectrum with a desired frequency, but without applying segments
 
         Parameters
         ----------
