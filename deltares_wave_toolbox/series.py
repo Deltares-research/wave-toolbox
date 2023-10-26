@@ -412,8 +412,8 @@ class Series(WaveHeights):
         Parameters
         ----------
         dfDesired : float, optional
-            desired frequency spacing in Hertz on which the wave spectrum must be computed. If this parameter is omitted,
-            then dfDesired = f(1) - f(0), by default 0.01 [Hz]
+            desired frequency spacing in Hertz on which the wave spectrum must be computed.
+            If this parameter is omitted, then dfDesired = f(1) - f(0), by default 0.01 [Hz]
 
         Returns
         -------
