@@ -5,6 +5,7 @@ Welcome to the Deltares Wave Toolbox documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   purpose
    installation
    usage
    wave_analysis
