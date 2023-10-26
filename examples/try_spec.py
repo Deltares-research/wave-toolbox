@@ -48,7 +48,7 @@ f2, Pxx2 = dwt.cores.core_spectral.compute_spectrum_welch_wrapper(
 )
 
 plt.figure()
-plt.plot(spec.f, spec.S)
+plt.plot(spec.f, spec.sVarDens)
 plt.plot(f, Pxx)
 plt.plot(f2, Pxx2, "--")
 
