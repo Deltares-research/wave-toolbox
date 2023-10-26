@@ -539,9 +539,9 @@ def compute_spectrum_freq_series(
 ) -> tuple[NDArray[float64], NDArray[float64]]:
     """Computes variance density spectrum from given complex spectrum of Fourier components
 
-    This function computes a variance density spectrum sVarDens_coarse = sVarDens_coarse(fCoarse) on a frequency axis fCoarse from a
-    given complex spectrum xFreq = xFreq(f) of Fourier coefficients on a frequency axis f. The frequency spacing of
-    the output spectrum is given by dfDesired.
+    This function computes a variance density spectrum sVarDens_coarse = sVarDens_coarse(f_coarse) on a frequency axis
+    f_coarse from a given complex spectrum xFreq = xFreq(f) of Fourier coefficients on a frequency axis f. The
+    frequency spacing of the output spectrum is given by dfDesired.
 
     Parameters
     ----------
