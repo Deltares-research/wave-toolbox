@@ -14,13 +14,13 @@ import deltares_wave_toolbox.series as series
 
 def frequency_averaging(
     f: NDArray[float64],
-    sFreq: NDArray[float64],
+    sVarDens: NDArray[float64],
     dfDesired: float = 0.0,
 ) -> tuple[NDArray[float64], NDArray[float64]]:
     """Band averaging of given variance density spectrum
 
     This function performs a band averaging on a given variance density
-    spectrum sFreq = sFreq(f) on a frequency axis f onto a coarser
+    spectrum sVarDens = sVarDens(f) on a frequency axis f onto a coarser
     frequency axis with frequency spacing dfDesired.
 
     Parameters
@@ -29,7 +29,7 @@ def frequency_averaging(
         1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
         close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT the
         number of elements in array xTime [Hz]
-    sFreq : NDArray[float64]
+    sVarDens : NDArray[float64]
         1D array containing variance density spectrum of the signal [m^2/Hz]
     dfDesired : float, optional
         desired frequency spacing in Hertz on which the wave spectrum must be computed. If this parameter is omitted,
@@ -38,10 +38,10 @@ def frequency_averaging(
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-        fCoarse : NDArray[float64]
+        f_coarse : NDArray[float64]
             frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired [Hz]
-        sCoarse : NDArray[float64]
-            band averaged variance density spectrum of the signal on new frequency axis fCoarse [m^2/Hz]
+        sVarDens_coarse : NDArray[float64]
+            band averaged variance density spectrum of the signal on frequency axis f_coarse [m^2/Hz]
 
     Raises
     ------
@@ -53,14 +53,14 @@ def frequency_averaging(
     >>> import numpy as np
     >>> df        = 0.01 #Hz
     >>> f         = np.arange(0,100)*df
-    >>> sFreq     = np.random.normal(loc=1, scale=2, size=len(f))
-    >>> dfDesired =0.02
-    >>> fCoarse,sFreq = frequency_averaging(f,sFreq,dfDesired)
+    >>> sVarDens  = np.random.normal(loc=1, scale=2, size=len(f))
+    >>> dfDesired = 0.02
+    >>> f_coarse,sVarDens_coarse = frequency_averaging(f,sVarDens,dfDesired)
 
     """
     # convert input to array type to be able to handle input like e.g. f = [0.2,0.4]
     f, fSize = core_engine.convert_to_vector(f)
-    sFreq, sFreqSize = core_engine.convert_to_vector(sFreq)
+    sVarDens, sFreqSize = core_engine.convert_to_vector(sVarDens)
 
     if fSize[1] > 1 or sFreqSize[1] > 1:
         raise ValueError("frequency_averaging: Input error: input should be 1d arrays")
@@ -77,18 +77,18 @@ def frequency_averaging(
     nCoarse = math.floor(nFine / nFactor)
 
     # --- Initialize arrays
-    fCoarse = np.zeros(len(f[0:nCoarse]))
-    sCoarse = np.zeros(len(fCoarse), dtype=type(sFreq[0]))
+    f_coarse = np.zeros(len(f[0:nCoarse]))
+    sVarDens_coarse = np.zeros(len(f_coarse), dtype=type(sVarDens[0]))
 
     # --- Perform the averaging
     for iFreq in np.arange(0, nCoarse):  # before np.arange(0,nCoarse)
         ilow = int((iFreq) * nFactor)
         ihigh = int((iFreq + 1) * nFactor)
 
-        fCoarse[iFreq] = np.mean(f[ilow:ihigh])
-        sCoarse[iFreq] = np.mean(sFreq[ilow:ihigh])
+        f_coarse[iFreq] = np.mean(f[ilow:ihigh])
+        sVarDens_coarse[iFreq] = np.mean(sVarDens[ilow:ihigh])
 
-    return fCoarse, sCoarse
+    return f_coarse, sVarDens_coarse
 
 
 def unfold_spectrum(
@@ -481,9 +481,9 @@ def compute_spectrum_time_series(
 ) -> tuple[NDArray[float64], NDArray[float64]]:
     """Computes variance density spectrum from given time series
 
-    This function computes a variance density spectrum sCoarse = sCoarse(fCoarse) on a frequency axis fCoarse from a
-    given surface elevation time series xTime = xTime(t), with time axis t. The frequency spacing of the output
-    spectrum is given by dfDesired.
+    This function computes a variance density spectrum sVarDens_coarse = sVarDens_coarse(f_coarse) on a frequency axis
+    f_coarse from a given surface elevation time series xTime = xTime(t), with time axis t. The frequency spacing of
+    the output spectrum is given by dfDesired.
 
     Parameters
     ----------
@@ -500,9 +500,9 @@ def compute_spectrum_time_series(
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-        fCoarse : NDArray[float64]
+        f_coarse : NDArray[float64]
             frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired [Hz]
-        sCoarse : NDArray[float64]
+        sVarDens_coarse : NDArray[float64]
             band averaged variance density spectrum of the signal on new frequency axis fCoarse [m^2/Hz]
 
     Example
@@ -524,11 +524,11 @@ def compute_spectrum_time_series(
 
     # --- Perform averaging
     if dfDesired == 0.0:
-        [fCoarse, sCoarse] = frequency_averaging(f, sFine)
+        [f_coarse, sVarDens_coarse] = frequency_averaging(f, sFine)
     else:
-        [fCoarse, sCoarse] = frequency_averaging(f, sFine, dfDesired)
+        [f_coarse, sVarDens_coarse] = frequency_averaging(f, sFine, dfDesired)
 
-    return fCoarse, sCoarse
+    return f_coarse, sVarDens_coarse
 
 
 def compute_spectrum_freq_series(
@@ -539,9 +539,9 @@ def compute_spectrum_freq_series(
 ) -> tuple[NDArray[float64], NDArray[float64]]:
     """Computes variance density spectrum from given complex spectrum of Fourier components
 
-    This function computes a variance density spectrum sCoarse = sCoarse(fCoarse) on a frequency axis fCoarse from a
-    given complex spectrum xFreq = xFreq(f) of Fourier coefficients on a frequency axis f. The frequency spacing of
-    the output spectrum is given by dfDesired.
+    This function computes a variance density spectrum sVarDens_coarse = sVarDens_coarse(f_coarse) on a frequency axis
+    f_coarse from a given complex spectrum xFreq = xFreq(f) of Fourier coefficients on a frequency axis f. The
+    frequency spacing of the output spectrum is given by dfDesired.
 
     Parameters
     ----------
@@ -560,9 +560,9 @@ def compute_spectrum_freq_series(
     Returns
     -------
     tuple[NDArray[float64], NDArray[float64]]
-        fCoarse : NDArray[float64]
+        f_coarse : NDArray[float64]
             frequency axis of computed spectrum. The frequency spacing is (close to) dfDesired [Hz]
-        sCoarse : NDArray[float64]
+        sVarDens_coarse : NDArray[float64]
             band averaged variance density spectrum of the signal on new frequency axis fCoarse [m^2/Hz]
 
     Raises
@@ -599,9 +599,9 @@ def compute_spectrum_freq_series(
     sFine = 2 * xFreq * np.conj(xFreq) / (df * Ntime * Ntime)
 
     # --- Perform averaging
-    [fCoarse, sCoarse] = frequency_averaging(f, sFine, dfDesired)
+    [f_coarse, sVarDens_coarse] = frequency_averaging(f, sFine, dfDesired)
 
-    return fCoarse, sCoarse
+    return f_coarse, sVarDens_coarse
 
 
 def spectrum2timeseries(
@@ -753,7 +753,7 @@ def spectrum2timeseries_object(
 
 
 def compute_spectrum_welch_wrapper(
-    signal: NDArray[float64],
+    xTime: NDArray[float64],
     dt: float,
     nperseg: int = None,
     noverlap: int = None,
@@ -764,8 +764,9 @@ def compute_spectrum_welch_wrapper(
 
     Parameters
     ----------
-    signal : NDArray[float64]
-        signal
+    xTime : NDArray[float64]
+        1D array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
     dt : float
         time step of signal
     nperseg : int, optional
@@ -781,13 +782,15 @@ def compute_spectrum_welch_wrapper(
     -------
     tuple[NDArray[float64], NDArray[float64]]
         f : NDArray[float64]
-            frequency axis
-        Pxx : NDArray[float64]
-            spectral density
+            1D array containing frequency values, for folded Fourier transform. The number of elements in array f is
+            close to half the number of elements in array xTime. To be precise, length(f) = floor(nT/2) + 1, with nT
+            the number of elements in array xTime [Hz]
+        sVarDens : NDArray[float64]
+            1D array containing variance density spectrum of the signal [m^2/Hz]
 
     """
-    f, Pxx = welch(
-        signal,
+    f, sVarDens = welch(
+        xTime,
         fs=1 / dt,
         window=window_type,
         nperseg=nperseg,
@@ -799,4 +802,4 @@ def compute_spectrum_welch_wrapper(
         axis=-1,
         average="mean",
     )
-    return f, Pxx
+    return f, sVarDens

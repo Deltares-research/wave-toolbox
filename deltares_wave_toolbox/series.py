@@ -179,7 +179,7 @@ class WaveHeights:
         plot_BG: bool = False,
         water_depth: float = -1.0,
         cota_slope: float = 250.0,
-        Hm0: float = -1.0,
+        hm0: float = -1.0,
     ) -> figure.Figure:
         """Plot exceedances of wave heights compared to Rayleigh distribution
 
@@ -195,7 +195,7 @@ class WaveHeights:
             water depth needed for Battjes & Groenendijk (2000), by default -1.0 [m]
         cota_slope : float, optional
             foreshore slope needed for Battjes & Groenendijk (2000), by default 250.0 [-]
-        Hm0 : float, optional
+        hm0 : float, optional
             spectral wave height needed for Battjes & Groenendijk (2000), by default -1.0 [m]
 
         Returns
@@ -234,7 +234,7 @@ class WaveHeights:
         )
 
         if plot_BG:
-            if Hm0 == -1.0:
+            if hm0 == -1.0:
                 raise ValueError(
                     "Please provide Hm0 when using Battjes & Groenendijk distribution"
                 )
@@ -243,7 +243,7 @@ class WaveHeights:
                     hwave_BG,
                     Pexceedance_BG,
                 ) = core_wavefunctions.compute_BattjesGroenendijk_wave_height_distribution(
-                    Hm0, self.nwave, water_depth, cota_slope=cota_slope
+                    hm0, self.nwave, water_depth, cota_slope=cota_slope
                 )
 
                 plt.plot(
