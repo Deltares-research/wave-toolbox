@@ -243,6 +243,8 @@ class Spectrum:
         savepath: str = "",
         plot_periods: bool = True,
         xlim: float = -999.0,
+        xlabel: str = "f [$Hz$]",
+        ylabel: str = "S [$m^2/Hz$]",
     ) -> figure.Figure:
         """Plot spectrum
 
@@ -254,6 +256,10 @@ class Spectrum:
             show different periods in the plot, by default True
         xlim : float, optional
             limit the extent of the x-axis (frequency), by default -999.0
+        xlabel : str, optional
+            xlabel for the plot, by default "f [$Hz$]"
+        ylabel : str, optional
+            ylabel for the plot, by default "f [$Hz$]"
 
         Returns
         -------
@@ -283,8 +289,8 @@ class Spectrum:
                     label="Tm02",
                 )
         plt.grid("on")
-        plt.xlabel("f [$Hz$]")
-        plt.ylabel("S [$m^2/Hz$]")
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         plt.legend()
         if xlim != -999.0:
             plt.xlim(xlim)
