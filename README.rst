@@ -23,6 +23,11 @@ Features
 Credits
 -------
 
+* Jan Kramer <jan.kramer@deltares.nl>
+* Menno de Ridder <menno.deridder@deltares.nl>
+* Ivo van der Werf <ivo.vanderwerf@deltares.nl>
+* Joost den Bieman <joost.denbieman@deltares.nl>
+
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
