@@ -11,9 +11,9 @@ with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
 requirements = [
-    "numpy",
-    "scipy",
-    "matplotlib",
+    "numpy>=1.24.3",
+    "matplotlib>=3.7.1",
+    "scipy>=1.11.1",
 ]
 
 test_requirements = [
