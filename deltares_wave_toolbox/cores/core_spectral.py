@@ -523,10 +523,7 @@ def compute_spectrum_time_series(
     sFine = sFine.real
 
     # --- Perform averaging
-    if dfDesired == 0.0:
-        [f_coarse, sVarDens_coarse] = frequency_averaging(f, sFine)
-    else:
-        [f_coarse, sVarDens_coarse] = frequency_averaging(f, sFine, dfDesired)
+    [f_coarse, sVarDens_coarse] = frequency_averaging(f, sFine, dfDesired)
 
     return f_coarse, sVarDens_coarse
 
