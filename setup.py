@@ -11,8 +11,8 @@ with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
 requirements = [
-    "numpy>=1.24.3",
-    "matplotlib>=3.7.1",
+    "numpy>=1.19.3",
+    "matplotlib>=3.6",
     "scipy>=1.11.1",
 ]
 
@@ -46,6 +46,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/Deltares/wave-toolbox",
-    version="1.0.1",
+    version="1.0.3",
     zip_safe=False,
 )
