@@ -3,11 +3,11 @@ bump2version
 wheel
 flake8
 Sphinx
+sphinx-rtd-theme
+nbsphinx
 twine
 pytest
 black
 numpy
 matplotlib
-pandas
-pyyaml
 scipy
