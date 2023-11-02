@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import scipy.integrate as integrate
 import scipy.special as special
@@ -765,7 +767,14 @@ def compute_BattjesGroenendijk_wave_height_distribution(
         cota_slope=cota_slope, tolerance=tolerance)
 
     """
-    # TODO include check on validity ranges input parameters
+    if cota_slope < 20 or cota_slope > 250:
+        warnings.warn(
+            UserWarning(
+                "The foreshore slope used as input is not within the validity range (between 1:250 and 1:20) reported "
+                "by Battjes & Groenendijk (2000)"
+            ),
+            stacklevel=2,
+        )
 
     gamma_transition = 0.35 + 5.8 * (1 / cota_slope)
     H_transition = gamma_transition * water_depth
@@ -774,18 +783,17 @@ def compute_BattjesGroenendijk_wave_height_distribution(
 
     H_transition_norm = H_transition / H_rms
 
-    if (
-        H_transition_norm > 2.75
-    ):  # To assure convergence uses the Rayleigh dist when this values exceeds 2.27
-        # x = exponweib.ppf(1 - 1 / nwave, 1, 2, scale=np.sqrt(8)) / 4 * Hm0
-        # h3m = Hm0
-        # h1m = 1.27 * Hm0
-        # dist = "Rayleigh"
-        # th1 = 1
-        # th2 = 1
+    if H_transition_norm > 2.75:
+        warnings.warn(
+            UserWarning(
+                "The normalized transition wave height is larger than 2.75, which means the wave heights are Rayleigh "
+                "distributed instead of the distribution reported by Battjes & Groenendijk (2000)"
+            ),
+            stacklevel=2,
+        )
 
-        print("!!! Rayleigh distributed waves, not Battjes & Groenendijk (2000) !!!")
-        # TODO implement nice error handling when not BG but Rayleigh
+        hwave_BG = np.empty((0, 0))
+        Pexceedance_BG = np.empty((0, 0))
     else:
         delta_H = 0.01
         H_1_norm = 100
