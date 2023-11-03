@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/Deltares/wave-toolbox
+    $ git clone git://github.com/Deltares-research/wave-toolbox
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/Deltares/wave-toolbox/tarball/master
+    $ curl -OJL https://github.com/Deltares-research/wave-toolbox/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/Deltares/wave-toolbox
-.. _tarball: https://github.com/Deltares/wave-toolbox/tarball/master
+.. _Github repo: https://github.com/Deltares-research/wave-toolbox
+.. _tarball: https://github.com/Deltares-research/wave-toolbox/tarball/master

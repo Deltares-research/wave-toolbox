@@ -45,7 +45,7 @@ setup(
     ),
     test_suite="tests",
     tests_require=test_requirements,
-    url="https://github.com/Deltares/wave-toolbox",
+    url="https://github.com/Deltares-research/wave-toolbox",
     version="1.0.0",
     zip_safe=False,
 )
