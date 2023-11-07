@@ -1,6 +1,6 @@
 #Style sheet
 
-figure.figsize   : 10, 10
+figure.figsize   : 5, 5
 figure.dpi       : 80
 savefig.dpi      : 80
 figure.subplot.hspace  : 0.3 
