@@ -166,7 +166,6 @@ class WaveHeights:
         plt.grid("on")
         plt.xlabel("Wave height [$m$]")
         plt.ylabel("P exceedance ")
-        plt.legend()
 
         if savepath != "":
             plt.savefig(savepath)
