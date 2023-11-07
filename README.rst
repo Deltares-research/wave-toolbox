@@ -1,4 +1,4 @@
-=====================
+conda =====================
 Deltares Wave Toolbox
 =====================
 
@@ -20,6 +20,19 @@ From a time series of water level elevations, the toolbox can calculate:
 * spectral wave parameters such as wave heigth and different wave periods
 * wave height exceedance curves
 * theoretical wave spectra and wave height distributions
+
+How to install the toolbox?
+-----------------------------
+
+The package is available at pip. To install the package run:
+
+`pip install deltares-wave-toolbox`
+
+Where to find information about the Deltares Wave Toolbox?
+----------------------------------------------------------
+
+See the online manual for information about the toolbox. In addition, the examples folder contains scripts with applications of the toolbox and a Jupyter notebook is available in the documentation folder.
+
 
 Credits
 -------
