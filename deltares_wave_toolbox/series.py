@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import figure
