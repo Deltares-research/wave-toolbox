@@ -276,7 +276,7 @@ def create_spectrum_jonswap(
     fp: float,
     hm0: float,
     gammaPeak: float = 3.3,
-    l_fmax: float = 0,
+    l_fmax: float = 0.0,
 ) -> NDArray[float64]:
     """Creates a Jonswap spectrum
 
@@ -452,7 +452,7 @@ def create_spectrum_piersonmoskowitz(
     fp: float,
     hm0: float,
     gammaPeak: float = 1.0,
-    l_fmax: float = 0,
+    l_fmax: float = 0.0,
 ) -> NDArray[float64]:
     """Creates a Pierson-Moskowitz spectrum
 
