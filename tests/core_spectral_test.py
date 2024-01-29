@@ -302,3 +302,17 @@ def test_compute_spectrum_freq_series(fCorrect, SCorrect, df):
     assert fS == pytest.approx(fCorrect, abs=1e-4)
 
     assert S == pytest.approx(SCorrect, abs=1e-4)
+
+
+def test_bandpassfilter():
+    dt = 0.1
+    t = np.arange(0, 500 + dt, dt)  # Time axis
+    z = 0.5 * np.sin(t * 2 * np.pi * 0.1) + np.cos(
+        t * 2 * np.pi * 0.2
+    )  # Surface elevation data
+    z_filter1 = core_spectral.bandpassfilter(t, z, 0, 0.15)
+    z_filter2 = core_spectral.bandpassfilter(t, z, 0.15, 0.5)
+
+    assert np.max(z_filter1) == pytest.approx(0.5, abs=0.02)
+
+    assert np.max(z_filter2) == pytest.approx(1.0, abs=0.02)

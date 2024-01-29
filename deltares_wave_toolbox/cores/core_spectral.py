@@ -807,3 +807,89 @@ def compute_spectrum_welch_wrapper(
         average="mean",
     )
     return f, sVarDens
+
+
+def applybandfilter(
+    f: NDArray[float64], xFreq: NDArray[float64], flow: float, fhigh: float
+):
+    """applybandfilter
+
+    Parameters
+    ----------
+    f : NDArray[float64]
+        1D array containing the frequencies
+    xFreq : NDArray[float64]
+        1D array (complex!) containing the folded Fourier coefficients of xTime. The value xFreq(i) must be the
+        Fourier coefficient at frequency f(i). The number of elements in f and xFreq are the same.
+    flow : float
+        Lower frequeny of the bandpassfilter
+    fhigh : float
+        Higher frequency of the bandpassfilter
+
+
+    Returns
+    -------
+    tuple NDArray[float64]]
+        zFreq : NDArray[float64]
+            1D array containing the folded Fourier coefficients.
+
+    """
+    # --- Length of array f = length of array xFreq
+    Nf = len(f)
+
+    # --- Find index in frequency array corresponding to flow
+    if flow <= f[0]:
+        ilow = 1
+    elif flow >= f[-1]:
+        ilow = Nf
+    else:
+        ilow = np.where(f < flow)[0][-1] + 1
+
+    # --- Find index in frequency array corresponding to fhigh
+    if fhigh <= f[0]:
+        ihigh = 1
+    elif fhigh >= f[-1]:
+        ihigh = Nf
+    else:
+        ihigh = np.where(f < fhigh)[0][-1]
+
+    # --- Initialize
+    zFreq = np.zeros(len(xFreq)).astype(complex)
+
+    # --- Apply band filter
+    zFreq[ilow:ihigh] = xFreq[ilow:ihigh]
+    return zFreq
+
+
+def bandpassfilter(
+    t: NDArray[float64], xTime: NDArray[float64], flow: float, fhigh: float
+):
+    """Bandpassfilter
+    Filters a signal based on a lower and higher frequency limit.
+
+    Parameters
+    ----------
+    t : NDArray[float64]
+        1D array containing the time
+    xTime : NDArray[float64]
+        1D array containing signal values, i.e. the time series of the signal. The value xTime(i) must be the signal
+        value at time t(i). Usually water surface elevation [m]
+    flow : float
+        Lower frequeny of the bandpassfilter
+    fhigh : float
+        Higher frequency of the bandpassfilter
+
+
+    Returns
+    -------
+    tuple NDArray[float64]]
+        zTime : NDArray[float64]
+            1D array containing the filtered signal.
+
+    """
+    [f, xFreq, isOdd] = time2freq_nyquist(t, xTime)
+
+    zFreq = applybandfilter(f, xFreq, flow, fhigh)
+    [fUnfold, zFreqUnfold] = unfold_spectrum(f, zFreq, isOdd)
+    zTime = freq2time(zFreqUnfold)
+    return zTime
