@@ -462,7 +462,9 @@ class Series(WaveHeights):
         f, xFreq, isOdd = core_spectral.time2freq_nyquist(self.time, self.xTime)
         return f, xFreq, isOdd
 
-    def _determine_individual_waves(self, typeCross: str = "down") -> tuple[
+    def _determine_individual_waves(
+        self, typeCross: str = "down", fcutoff=0, minimum_wave=0
+    ) -> tuple[
         NDArray[float64],
         NDArray[float64],
         NDArray[float64],
@@ -501,8 +503,14 @@ class Series(WaveHeights):
         * hWave = aCrest - aTrough
 
         """
+        if fcutoff != 0:
+            xtime_low = core_spectral.bandpassfilter(
+                t=self.time, xTime=self.xTime, flow=0, fhigh=fcutoff
+            )
+        else:
+            xtime_low = 0
         _, tCross = core_time.determine_zero_crossing(
-            t=self.time, xTime=self.xTime, typeCross=typeCross
+            t=self.time, xTime=self.xTime - xtime_low, typeCross=typeCross
         )
         (
             hWave,
@@ -514,6 +522,15 @@ class Series(WaveHeights):
         ) = core_time.determine_params_individual_waves(
             tCross=tCross, t=self.time, xTime=self.xTime
         )
+        ## remove waves lower than minimum_wave
+        remove_index = np.where(hWave < minimum_wave)[0]
+        hWave = np.delete(hWave, remove_index)
+        tWave = np.delete(tWave, remove_index)
+        aCrest = np.delete(aCrest, remove_index)
+        aTrough = np.delete(aTrough, remove_index)
+        tCrest = np.delete(tCrest, remove_index)
+        tTrough = np.delete(tTrough, remove_index)
+
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
     def plot(self, savepath: str = "", plot_crossing: bool = False) -> figure.Figure:
