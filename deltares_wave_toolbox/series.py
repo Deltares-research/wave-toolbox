@@ -522,7 +522,7 @@ class Series(WaveHeights):
         ) = core_time.determine_params_individual_waves(
             tCross=tCross, t=self.time, xTime=self.xTime
         )
-        ## remove waves lower than minimum_wave
+        # remove waves lower than minimum_wave
         remove_index = np.where(hWave < minimum_wave)[0]
         tCross = np.delete(tCross, remove_index)
         hWave = np.delete(hWave, remove_index)
@@ -532,7 +532,7 @@ class Series(WaveHeights):
         tCrest = np.delete(tCrest, remove_index)
         tTrough = np.delete(tTrough, remove_index)
 
-        super().__init__(hWave, tWave)  ## set values here instead of init
+        super().__init__(hWave, tWave)  # set values here instead of init
         return hWave, tWave, aCrest, aTrough, tCrest, tTrough
 
     def plot(self, savepath: str = "", plot_crossing: bool = False) -> figure.Figure:
