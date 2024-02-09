@@ -5,6 +5,7 @@ from matplotlib import figure
 from numpy import complex128, float64
 from numpy.typing import NDArray
 from scipy.stats import rayleigh
+from scipy.signal import hilbert
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
@@ -84,6 +85,37 @@ class WaveHeights:
 
         """
         return self.highest_waves(1 / 3)
+
+    def get_skewness(self) -> tuple[float, float]:
+        """Compute skewness
+
+        Sk is skewness of the signal
+
+        Returns
+        -------
+        float
+            Sk
+
+        """
+        Sk = np.mean((self.xTime - np.mean(self.xTime)) ** 3) / np.mean(
+            (self.xTime - np.mean(self.xTime)) ** 2
+        ) ** (1.5)
+        return Sk
+
+    def get_asymmetry(self) -> tuple[float, float]:
+        """Compute asymmetry
+
+        As is asymmetry of the signal
+
+        Returns
+        -------
+        float
+            As
+
+        """
+        H = np.imag(hilbert(self.xTime))
+        As = np.mean(H**3) / np.mean((self.xTime - np.mean(self.xTime)) ** 2) ** (1.5)
+        return As
 
     def get_H2p_Rayleigh(self) -> float:
         """Compute 2% exceedance wave height assuming theoretical Rayleigh distribution
