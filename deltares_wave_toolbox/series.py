@@ -556,7 +556,7 @@ class Series(WaveHeights):
         )
         # remove waves lower than minimum_wave
         remove_index = np.where(hWave < minimum_wave)[0]
-        tCross = np.delete(tCross, remove_index)
+        self.tCross = np.delete(tCross, remove_index)
         hWave = np.delete(hWave, remove_index)
         tWave = np.delete(tWave, remove_index)
         aCrest = np.delete(aCrest, remove_index)
@@ -585,9 +585,9 @@ class Series(WaveHeights):
         """
         fig = plt.figure()
         plt.plot(self.time, self.xTime, label="series")
-        if plot_crossing:
-            _, tCross = self.get_crossing()
-            plt.plot(tCross, np.asarray(tCross) * 0, "ro", label="crossing")
+        if plot_crossing and hasattr(self, "tCross"):
+
+            plt.plot(self.tCross, np.asarray(self.tCross) * 0, "ro", label="crossing")
         plt.grid("on")
         plt.xlabel("time [$s$]")
         plt.ylabel("z [$m$]")
