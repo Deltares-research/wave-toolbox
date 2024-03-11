@@ -470,6 +470,23 @@ class Series(WaveHeights):
     def var(self) -> float:
         return np.var(self.xTime)
 
+    def get_bandpassfilter(self, fmin: float, fmax: float):
+        """get bandpassfiltered signal
+
+        Parameters
+        ----------
+        fmin : lower frequency for bandpassfilter
+        fmax : higher frequency for bandpassfilter
+        Returns
+        -------
+        series.Series
+            Series in series object
+
+        """
+        xTimeFiltered = core_spectral.bandpassfilter(self.time, self.xTime, fmin, fmax)
+        xTimeFiltered = Series(self.time, xTimeFiltered)
+        return xTimeFiltered
+
     def get_fourier_comp(
         self,
     ) -> tuple[NDArray[float64], NDArray[complex128], bool]:
