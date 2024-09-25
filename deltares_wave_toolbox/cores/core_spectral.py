@@ -697,7 +697,7 @@ def spectrum2timeseries(
 
     # --- Construct the Fourier components
 
-    xFreq = np.zeros(nTimeEven, dtype=np.complex_)
+    xFreq = np.zeros(nTimeEven, dtype=complex128)
     xFreq[1 : nF + 1] = amplitude / 2.0 * np.exp(1j * phase)
     xFreq[nF:nTimeEven] = np.flip(np.conj(xFreq[1 : nF + 1]))
 
