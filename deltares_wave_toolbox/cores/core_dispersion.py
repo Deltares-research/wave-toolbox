@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 import numpy as np
 from numpy import float64
 from numpy.typing import NDArray
@@ -5,10 +6,9 @@ from numpy.typing import NDArray
 import deltares_wave_toolbox.cores.core_engine as core_engine
 
 
-# --- code
 def disper(w: NDArray[float64], h: float, g: float = 9.81):
-    """
-    DISPER  Solves the wave number from the linear dispersion relation
+    """DISPER  Solves the wave number from the linear dispersion relation
+
     The linear dispersion relation reads:
 
     w^2 = g * k * tanh( k * h )
@@ -30,14 +30,20 @@ def disper(w: NDArray[float64], h: float, g: float = 9.81):
     Dec 1994. It is stated that the relative error in k*h < 2.5e-16 for
     all k*h
 
-    Args:
-        w (NDArray[float64]): radial frequency ( = 2 * pi / wave period), units rad/s.
-        h (float): water depth, units meter.
-        g (float, optional): representing gravitational constant. Defaults to 9.81.
+    Parameters
+    ----------
+    w : NDArray[float64]
+        radial frequency ( = 2 * pi / wave period), unit: rad/s.
+    h : float
+        water depth, unit: meters
+    g : float, optional
+        representing gravitational constant, by default 9.81
 
-    Returns:
-        NDArray[float64]: wavenumber
-    """
+    Returns
+    -------
+    k : NDArray[float64]
+        wave number
+    """    
 
     # check if radial frequency is single value or of type array, if of type single value
     # convert to array to ensure this function can handle single values as well as arrays.
