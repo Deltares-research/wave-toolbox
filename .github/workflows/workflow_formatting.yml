@@ -29,6 +29,6 @@ jobs:
         pip install -r requirements_dev.txt
     - name: Run black format checker
       run:
-        black --check .
+        black --diff .
     - name: Run flake8 format checker
       run: flake8
