@@ -239,7 +239,7 @@ def compute_moment(
 
     # --- Depending on number of input arguments, compute the moment integral
     if fmin == -1.0 or fmax == -1.0:  # integrate over all values in freq interval.
-        moment = integrate.simps(integrand, freq)
+        moment = integrate.simpson(integrand, freq)
     else:  # integrate over all values in sub interval.
         # fmin and fmax are given
         fminn = fmin
@@ -251,13 +251,13 @@ def compute_moment(
         if fmax <= freq[len(freq) - 1]:
             ifminn = core_engine.approx_array_index(freq, fminn)
             ifmax = core_engine.approx_array_index(freq, fmax) + 1
-            moment = integrate.simps(integrand[ifminn:ifmax], freq[ifminn:ifmax])
+            moment = integrate.simpson(integrand[ifminn:ifmax], freq[ifminn:ifmax])
 
         else:
             # 1: Integral over [fminn,freq(end)]
             ifminn = core_engine.approx_array_index(freq, fminn)
             ifmax = core_engine.approx_array_index(freq, freq[len(freq) - 1]) + 1
-            moment1 = integrate.simps(integrand[ifminn:ifmax], freq[ifminn:ifmax])
+            moment1 = integrate.simpson(integrand[ifminn:ifmax], freq[ifminn:ifmax])
             # 2: Integral over [freq(end),fmax]
             #    Variance density spectrum in this range: C * f^power, with
             #    C determined by power and spec(end)
