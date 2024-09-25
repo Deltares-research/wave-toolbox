@@ -43,7 +43,7 @@ def disper(w: NDArray[float64], h: float, g: float = 9.81):
     -------
     k : NDArray[float64]
         wave number
-    """    
+    """
 
     # check if radial frequency is single value or of type array, if of type single value
     # convert to array to ensure this function can handle single values as well as arrays.
