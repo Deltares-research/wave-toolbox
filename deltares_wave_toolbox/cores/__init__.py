@@ -4,5 +4,5 @@ __all__ = [
     "core_wavefunctions",
     "core_engine",
     "core_dispersion",
-    "core_wave_decomposition_linear",
+    "core_wave_decomposition",
 ]
