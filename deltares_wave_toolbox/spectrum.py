@@ -96,6 +96,68 @@ class Spectrum:
         self.Hm0 = 4 * np.sqrt(m0)
         return self.Hm0
 
+    def get_Hm0_HF(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
+        """Compute Hm0 of the high frequency part of the spectrum
+
+        By default, the high frequency part is defined as frequencies above
+        f_cutoff = 0.45 / Tm-1,0 following De Ridder et al. (2024). For
+        JONSWAP spectra, this equals a cutoff frequency of fp/2, but is a
+        more stable measure for spectra without a clear peak frequency.
+
+
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+
+        Returns
+        -------
+        float
+            Hm0
+        """
+        if fmin == -1.0:
+            if not hasattr(self, "Tmm10"):
+                self.get_Tmm10()
+            fmin = 0.45 / self.Tmm10
+
+        fmin, fmax = self._set_flim(fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
+        self.Hm0_HF = 4 * np.sqrt(m0)
+        return self.Hm0_HF
+
+    def get_Hm0_LF(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
+        """Compute Hm0 of the low frequency part of the spectrum
+
+        By default, the low frequency part is defined as frequencies below
+        f_cutoff = 0.45 / Tm-1,0 following De Ridder et al. (2024). For
+        JONSWAP spectra, this equals a cutoff frequency of fp/2, but is a
+        more stable measure for spectra without a clear peak frequency.
+
+
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+
+        Returns
+        -------
+        float
+            Hm0
+        """
+        if fmax == -1.0:
+            if not hasattr(self, "Tmm10"):
+                self.get_Tmm10()
+            fmax = 0.45 / self.Tmm10
+
+        fmin, fmax = self._set_flim(fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
+        self.Hm0_LF = 4 * np.sqrt(m0)
+        return self.Hm0_LF
+
     def get_Tps(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tps (smoothed peak period) of spectrum
 
@@ -155,7 +217,7 @@ class Spectrum:
         return self.Tp
 
     def get_Tmm10(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
-        """Compute Tmm10 spectral period) of spectrum
+        """Compute Tm-1,0 spectral period of spectrum
 
         Parameters
         ----------
@@ -174,6 +236,66 @@ class Spectrum:
         m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
         self.Tmm10 = m_1 / m0
         return self.Tmm10
+
+    def get_Tmm10_HF(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
+        """Compute Tm-1,0 spectral period for the high frequency part of the spectrum
+
+        By default, the high frequency part is defined as frequencies above
+        f_cutoff = 0.45 / Tm-1,0 following De Ridder et al. (2024). For
+        JONSWAP spectra, this equals a cutoff frequency of fp/2, but is a
+        more stable measure for spectra without a clear peak frequency.
+
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+
+        Returns
+        -------
+        float
+            Tmm10
+        """
+        if fmin == -1.0:
+            if not hasattr(self, "Tmm10"):
+                self.get_Tmm10()
+            fmin = 0.45 / self.Tmm10
+        fmin, fmax = self._set_flim(fmin, fmax)
+        m_1 = core_wavefunctions.compute_moment(self.f, self.sVarDens, -1, fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
+        self.Tmm10_HF = m_1 / m0
+        return self.Tmm10_HF
+
+    def get_Tmm10_LF(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
+        """Compute Tm-1,0 spectral period for the low frequency part of the spectrum
+
+        By default, the low frequency part is defined as frequencies below
+        f_cutoff = 0.45 / Tm-1,0 following De Ridder et al. (2024). For
+        JONSWAP spectra, this equals a cutoff frequency of fp/2, but is a
+        more stable measure for spectra without a clear peak frequency.
+
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+
+        Returns
+        -------
+        float
+            Tmm10
+        """
+        if fmax == -1.0:
+            if not hasattr(self, "Tmm10"):
+                self.get_Tmm10()
+            fmax = 0.45 / self.Tmm10
+        fmin, fmax = self._set_flim(fmin, fmax)
+        m_1 = core_wavefunctions.compute_moment(self.f, self.sVarDens, -1, fmin, fmax)
+        m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
+        self.Tmm10_LF = m_1 / m0
+        return self.Tmm10_LF
 
     def get_Tm01(self, fmin: float = -1.0, fmax: float = -1.0) -> float:
         """Compute Tm01 of spectrum
