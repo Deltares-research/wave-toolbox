@@ -339,6 +339,98 @@ class Spectrum:
         self.Tm02 = np.sqrt(m0 / m2)
         return self.Tm02
 
+    def get_s0p(self, fmin: float = -1.0, fmax: float = -1.0, g: float = 9.81) -> float:
+        """Compute s0p of the spectrum
+
+        Compute the wave steepness of the spectrum based on the deep water wave length
+        using the peak wave period Tps.
+
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+        g : float, optional
+            gravitational acceleration constant, by default 9.81
+
+        Returns
+        -------
+        float
+            s0p
+        """
+        if not hasattr(self, "Hm0"):
+            self.get_Hm0(fmin=fmin, fmax=fmax)
+
+        if not hasattr(self, "Tps"):
+            self.get_Tps(fmin=fmin, fmax=fmax)
+
+        self.s0p = 2 * np.pi * self.Hm0 / (g * self.Tps**2)
+        return self.s0p
+
+    def get_smm10(
+        self, fmin: float = -1.0, fmax: float = -1.0, g: float = 9.81
+    ) -> float:
+        """Compute sm-1,0 of the spectrum
+
+        Compute the wave steepness of the spectrum based on the deep water wave length
+        using the spectral wave period Tm-1,0.
+
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+        g : float, optional
+            gravitational acceleration constant, by default 9.81
+
+        Returns
+        -------
+        float
+            smm10
+        """
+        if not hasattr(self, "Hm0"):
+            self.get_Hm0(fmin=fmin, fmax=fmax)
+
+        if not hasattr(self, "Tmm10"):
+            self.get_Tmm10(fmin=fmin, fmax=fmax)
+
+        self.smm10 = 2 * np.pi * self.Hm0 / (g * self.Tmm10**2)
+        return self.smm10
+
+    def get_smm10_HF(
+        self, fmin: float = -1.0, fmax: float = -1.0, g: float = 9.81
+    ) -> float:
+        """Compute sm-1,0_HF of the spectrum
+
+        Compute the wave steepness of the high frequency part of the
+        spectrum based on the deep water wave length using the spectral
+        wave period Tm-1,0_HF and the Hm0_HF.
+
+        Parameters
+        ----------
+        fmin : float, optional
+            Minimum frequency, by default -1.0
+        fmax : float, optional
+            Maximum frequency, by default -1.0
+        g : float, optional
+            gravitational acceleration constant, by default 9.81
+
+        Returns
+        -------
+        float
+            smm10_HF
+        """
+        if not hasattr(self, "Hm0_HF"):
+            self.get_Hm0_HF(fmin=fmin, fmax=fmax)
+
+        if not hasattr(self, "Tmm10_HF"):
+            self.get_Tmm10_HF(fmin=fmin, fmax=fmax)
+
+        self.smm10_HF = 2 * np.pi * self.Hm0_HF / (g * self.Tmm10_HF**2)
+        return self.smm10_HF
+
     def create_series(self, tstart: float, tend: float, dt: float) -> series.Series:
         """Construct series from Spectrum with random phase
 
