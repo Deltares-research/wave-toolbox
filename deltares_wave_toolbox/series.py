@@ -86,37 +86,6 @@ class WaveHeights:
         """
         return self.highest_waves(1 / 3)
 
-    def get_skewness(self) -> tuple[float, float]:
-        """Compute skewness
-
-        Sk is skewness of the signal
-
-        Returns
-        -------
-        float
-            Sk
-
-        """
-        Sk = np.mean((self.xTime - np.mean(self.xTime)) ** 3) / np.mean(
-            (self.xTime - np.mean(self.xTime)) ** 2
-        ) ** (1.5)
-        return Sk
-
-    def get_asymmetry(self) -> tuple[float, float]:
-        """Compute asymmetry
-
-        As is asymmetry of the signal
-
-        Returns
-        -------
-        float
-            As
-
-        """
-        H = np.imag(hilbert(self.xTime))
-        As = np.mean(H**3) / np.mean((self.xTime - np.mean(self.xTime)) ** 2) ** (1.5)
-        return As
-
     def get_H2p_Rayleigh(self) -> float:
         """Compute 2% exceedance wave height assuming theoretical Rayleigh distribution
 
@@ -366,6 +335,7 @@ class Series(WaveHeights):
             _,
             _,
             _,
+            _,
         ] = self._determine_individual_waves()
         super().__init__(hWave, tWave)
 
@@ -401,6 +371,37 @@ class Series(WaveHeights):
             t=self.time, xTime=self.xTime, typeCross=typeCross
         )
         return nWave, tCross
+
+    def get_skewness(self) -> tuple[float, float]:
+        """Compute skewness
+
+        Sk is skewness of the signal
+
+        Returns
+        -------
+        float
+            Sk
+
+        """
+        Sk = np.mean((self.xTime - np.mean(self.xTime)) ** 3) / np.mean(
+            (self.xTime - np.mean(self.xTime)) ** 2
+        ) ** (1.5)
+        return Sk
+
+    def get_asymmetry(self) -> tuple[float, float]:
+        """Compute asymmetry
+
+        As is asymmetry of the signal
+
+        Returns
+        -------
+        float
+            As
+
+        """
+        H = np.imag(hilbert(self.xTime))
+        As = np.mean(H**3) / np.mean((self.xTime - np.mean(self.xTime)) ** 2) ** (1.5)
+        return As
 
     def get_spectrum(
         self,
@@ -582,7 +583,7 @@ class Series(WaveHeights):
         tTrough = np.delete(tTrough, remove_index)
 
         super().__init__(hWave, tWave)  # set values here instead of init
-        return hWave, tWave, aCrest, aTrough, tCrest, tTrough
+        return hWave, tWave, aCrest, aTrough, tCrest, tTrough, tCross
 
     def plot(self, savepath: str = "", plot_crossing: bool = False) -> figure.Figure:
         """Plot Series
