@@ -86,7 +86,6 @@ class WaveHeights:
         """
         return self.highest_waves(1 / 3)
 
-
     def get_H2p_Rayleigh(self) -> float:
         """Compute 2% exceedance wave height assuming theoretical Rayleigh distribution
 
