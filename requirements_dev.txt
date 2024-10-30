@@ -11,3 +11,4 @@ black==24.1.1
 numpy
 matplotlib
 scipy>=1.14.0
+build
