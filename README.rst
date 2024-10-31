@@ -20,6 +20,7 @@ From a time series of water level elevations, the toolbox can calculate:
 * spectral wave parameters such as wave heigth and different wave periods
 * wave height exceedance curves
 * theoretical wave spectra and wave height distributions
+* linear decomposition into incoming and reflected waves (using multiple wave gauges)
 
 How to install the toolbox?
 -----------------------------
