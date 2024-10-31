@@ -54,7 +54,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "deltares_wave_toolbox"
-copyright = "2023, Deltares"
+copyright = "2024, Deltares"
 author = "Deltares"
 
 # The version info for the project you're documenting, acts as replacement

@@ -21,4 +21,4 @@ The main structure in the package are three classes:
 
 Most users will use the :class:`Spectrum` and :class:`Series` classes. The :class:`WaveHeights` class is used internally by the :class:`Series` class. To allow for maximum flexibility however, the underlying functionality for time series and spectral analysis is included in the cores subpackage. This means that these functions can also be called independently from the aforementioned classes.
 
-The package also enables wave decomposition into incoming and reflected waves through the :func:`decompose_linear_ZS_serie` function, which is available in the :mod:`core_wave_decomposition` subpackage.
+The package also enables wave decomposition into incoming and reflected waves through the :func:`decompose_linear_ZS_series` function, which is available in the :mod:`core_wave_decomposition` subpackage.
