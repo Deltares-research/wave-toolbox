@@ -23,16 +23,16 @@ test_requirements = [
 setup(
     author="Deltares",
     author_email="joost.denbieman@deltares.nl",
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
     description="A Python toolbox for wave analysis",
     install_requires=requirements,
@@ -46,6 +46,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/Deltares-research/wave-toolbox",
-    version="1.0.0",
+    version="1.1.0",
     zip_safe=False,
 )

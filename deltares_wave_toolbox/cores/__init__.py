@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 __all__ = [
     "core_spectral",
     "core_time",

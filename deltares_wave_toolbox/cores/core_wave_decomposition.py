@@ -133,10 +133,6 @@ def decompose_linear_ZS(
     for iloc in np.arange(1, Nloc):
         diff_x_loc[iloc] = x_loc[iloc] - x_loc[0]
 
-    # ensure that time data is organized as Nx1 and time signals as NxNloc.
-    # t = t.reshape(Ntime,1)
-    # xTime = xTime.reshape(Ntime,Nloc)
-
     # --- Compute Fourier transform of the time signals
     f, xFreq1, isOdd = core_spectral.time2freq_nyquist(t, xTime[:, 0])
     Nf = len(f)
@@ -144,7 +140,6 @@ def decompose_linear_ZS(
     # to solve waring: ComplexWarning: Casting complex values to real discards the imaginary part.
     # note 2d dimension is specified as one argument (Nf,Nloc) for function zeros()
     xFreq = np.zeros((Nf, Nloc), dtype=complex)
-    # xFreq1           = xFreq1.reshape(Nf,1)
     xFreq[:, 0] = copy.deepcopy(xFreq1)
     # note iloc runs from 1 to Nloc-1 when using range(1,Nloc)
     for iloc in np.arange(1, Nloc):
@@ -194,7 +189,6 @@ def decompose_linear_ZS(
         detA = a11 * a22 - a12 * a21
 
         # --- The scaled determinant sDetA is equal to:
-        #     sDetA = sin^2(k*x12) + sin^2(k*x13) + sin^2(k*x23)
         sDetA = abs(-0.25 * detA)
 
         # --- Consider only frequency components for which sDetA > detLim. For

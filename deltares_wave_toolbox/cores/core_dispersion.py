@@ -54,21 +54,16 @@ def disper(w: NDArray[float64], h: float, g: float = 9.81):
 
     if np.isinf(h):
         # --- Deep water dispersion relation
-        # k = w.^2 / g
         k = w**2 / g  # element wise multiplication.
     elif h < 0:
         # --- Shallow water dispersion relation, with depth equal to |h|
-        # k = w ./ sqrt( g * abs(h) );
         k = w / np.sqrt(g * abs(h))
     else:
         # --- Standard (nonlinear) dispersion relation for depths 0 < h < inf
-        # w2 = (w.^2) .* h ./ g
         w2 = (w**2) * h / g
 
-        # ielem = find( w2 < 1E-8 )
         ielem = np.nonzero(w2 < 1.0e-8)
         w2[ielem] = 1e-8
-        # q  = w2 ./ (1 - exp (-(w2.^(5/4)))) .^ (2/5);
         q = w2 / (1 - np.exp(-(w2 ** (5 / 4)))) ** (2 / 5)
 
         idxs = [1, 2]
@@ -79,7 +74,6 @@ def disper(w: NDArray[float64], h: float, g: float = 9.81):
             b = thq + q * thq2
             c = q * thq - w2
             arg = np.zeros(np.size(q))
-            # iq      = find (a ~= 0)
             iq = np.where(a != 0)[0]
             arg[iq] = (b[iq] ** 2) - 4 * a[iq] * c[iq]
             arg[iq] = (-b[iq] + np.sqrt(arg[iq])) / (2 * a[iq])
