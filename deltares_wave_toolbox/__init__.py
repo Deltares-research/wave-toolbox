@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from .cores import *  # noqa
 from .series import Series, WaveHeights  # noqa
 from .spectrum import Spectrum  # noqa
