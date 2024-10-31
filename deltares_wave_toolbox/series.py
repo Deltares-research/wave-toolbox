@@ -4,8 +4,8 @@ import numpy as np
 from matplotlib import figure
 from numpy import complex128, float64
 from numpy.typing import NDArray
-from scipy.stats import rayleigh
 from scipy.signal import hilbert
+from scipy.stats import rayleigh
 
 import deltares_wave_toolbox.cores.core_engine as core_engine
 import deltares_wave_toolbox.cores.core_spectral as core_spectral
