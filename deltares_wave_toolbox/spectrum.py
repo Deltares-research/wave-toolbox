@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from __future__ import annotations
 
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import figure
@@ -122,6 +124,11 @@ class Spectrum:
                 self.get_Tmm10()
             fmin = 0.45 / self.Tmm10
 
+            warnings.warn(
+                "Cutoff frequency fmin not set, using default value of 0.45 / Tmm10",
+                UserWarning,
+            )
+
         fmin, fmax = self._set_flim(fmin, fmax)
         m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
         self.Hm0_HF = 4 * np.sqrt(m0)
@@ -152,6 +159,11 @@ class Spectrum:
             if not hasattr(self, "Tmm10"):
                 self.get_Tmm10()
             fmax = 0.45 / self.Tmm10
+
+            warnings.warn(
+                "Cutoff frequency fmax not set, using default value of 0.45 / Tmm10",
+                UserWarning,
+            )
 
         fmin, fmax = self._set_flim(fmin, fmax)
         m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
@@ -261,6 +273,12 @@ class Spectrum:
             if not hasattr(self, "Tmm10"):
                 self.get_Tmm10()
             fmin = 0.45 / self.Tmm10
+
+            warnings.warn(
+                "Cutoff frequency fmin not set, using default value of 0.45 / Tmm10",
+                UserWarning,
+            )
+
         fmin, fmax = self._set_flim(fmin, fmax)
         m_1 = core_wavefunctions.compute_moment(self.f, self.sVarDens, -1, fmin, fmax)
         m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
@@ -291,6 +309,12 @@ class Spectrum:
             if not hasattr(self, "Tmm10"):
                 self.get_Tmm10()
             fmax = 0.45 / self.Tmm10
+
+            warnings.warn(
+                "Cutoff frequency fmax not set, using default value of 0.45 / Tmm10",
+                UserWarning,
+            )
+
         fmin, fmax = self._set_flim(fmin, fmax)
         m_1 = core_wavefunctions.compute_moment(self.f, self.sVarDens, -1, fmin, fmax)
         m0 = core_wavefunctions.compute_moment(self.f, self.sVarDens, 0, fmin, fmax)
