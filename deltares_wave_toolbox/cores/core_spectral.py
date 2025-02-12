@@ -594,7 +594,7 @@ def compute_spectrum_freq_series(
 
     # --- Transform to frequency domain
     df = f[1] - f[0]
-    sFine = 2 * xFreq * np.conj(xFreq) / (df * Ntime * Ntime)
+    sFine = np.real(2 * xFreq * np.conj(xFreq) / (df * Ntime * Ntime))
 
     # --- Perform averaging
     [f_coarse, sVarDens_coarse] = frequency_averaging(f, sFine, dfDesired)
