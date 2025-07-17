@@ -409,6 +409,8 @@ class Series(WaveHeights):
         noverlap: int = 0,
         nfft: int = 0,
         windows_type: str = "hann",
+        dfDesired: float = 0.01,
+        use_dfDesired: bool = True,
     ) -> spectrum.Spectrum:
         """create spectrum
 
@@ -429,6 +431,10 @@ class Series(WaveHeights):
             Spectrum in spectrum object
 
         """
+
+        if use_dfDesired:
+            nperseg = np.round((1 / self.dt) / dfDesired).astype(int)
+
         [f, S] = core_spectral.compute_spectrum_welch_wrapper(
             self.xTime,
             dt=self.dt,
