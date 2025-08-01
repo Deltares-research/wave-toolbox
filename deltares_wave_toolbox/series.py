@@ -424,12 +424,15 @@ class Series(WaveHeights):
             length of fft, by default None
         window_type : str, optional
             window type, by default "hann"
+        dfDesired : float, optional
+            Desired frequency resolution of the spectrum, by default 0.01
+        use_dfDesired : bool, optional
+            Whether to use the desired frequency resolution, by default True
 
         Returns
         -------
         spectrum.Spectrum
             Spectrum in spectrum object
-
         """
 
         if use_dfDesired:
