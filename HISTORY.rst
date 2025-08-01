@@ -2,6 +2,14 @@
 History
 =======
 
+1.1.1 (2025-08-01)
+------------------
+
+* Patch to the "Rogue" release
+* Added feature: the get_spectrum() method now features a dfDesired keyword, enabling specifying the desired frequency resolution (Series class)
+* Changed default: by default, the get_spectrum() method uses a dfDesired of 0.01 Hz. The previous default behavior can be restored by setting use_dfDesired=False, but often leads to very course frequency resolution.
+
+
 1.1.0 (2024-11-01)
 ------------------
 

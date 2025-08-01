@@ -434,6 +434,7 @@ class Series(WaveHeights):
 
         if use_dfDesired:
             nperseg = np.round((1 / self.dt) / dfDesired).astype(int)
+            noverlap = np.round(nperseg / 2).astype(int)
 
         [f, S] = core_spectral.compute_spectrum_welch_wrapper(
             self.xTime,
