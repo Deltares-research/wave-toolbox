@@ -8,7 +8,6 @@ sys.path.insert(1, os.getcwd())
 
 import deltares_wave_toolbox as dwt
 
-
 df = 0.005
 f = np.arange(0, 0.5 + df, df)
 Tp = 5
