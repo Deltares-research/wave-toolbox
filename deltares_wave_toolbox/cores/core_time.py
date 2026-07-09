@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+from typing import Union
+
 import numpy as np
 from numpy import float64
 from numpy.typing import NDArray
@@ -98,7 +100,8 @@ def determine_zero_crossing(
     t: NDArray[float64],
     xTime: NDArray[float64],
     typeCross: str = "down",
-) -> tuple[int, NDArray[float64]]:
+    return_index: bool = False,
+) -> Union[tuple[int, NDArray[float64]], tuple[int, NDArray[float64], NDArray[float64]]]:
     """Determines zero-crossings (number and positions) of signal.
 
     This function determines the zero-crossings of a given time signal xTime = xTime(t). Here, t stands for time, and
@@ -115,17 +118,28 @@ def determine_zero_crossing(
         value at time t(i). Usually water surface elevation [m]
     typeCross : str, optional
         Search for up- or down-crossings, by default "down"
+    return_index: bool, optional
+        if true, return the index of the zero-crossing, by default False
 
     Returns
     -------
-    tuple[int, NDArray[float64]]
-        nWave : int
-            Number of waves in the signal, where one wave corresponds to two successive zero-crossings. Wave i starts
-            at time tCross(i), and end at time tCross(i+1) [-]
-        tCross : NDArray[float64]
-            1D array of length (nWave+1), containing the time of all zero-crossings. The time of the zero-crossings is
-            determined by linear interpolation. Note that in case of no zero-crossing, the array tCross is empty. Note
-            that in case of one zero-crossing, the number of waves is zero. [s]
+    Union[tuple[int, NDArray[float64]], tuple[int, NDArray[float64], NDArray[float64]]]
+        If return_index is False (default):
+            nWave : int
+                Number of waves in the signal, where one wave corresponds to two successive zero-crossings. Wave i starts
+                at time tCross(i), and end at time tCross(i+1) [-]
+            tCross : NDArray[float64]
+                1D array of length (nWave+1), containing the time of all zero-crossings. The time of the zero-crossings is
+                determined by linear interpolation. Note that in case of no zero-crossing, the array tCross is empty. Note
+                that in case of one zero-crossing, the number of waves is zero. [s]
+
+        If return_index is True:
+            nWave : int
+                Number of waves in the signal
+            tCross : NDArray[float64]
+                1D array containing the time of all zero-crossings [s]
+            iCross : NDArray[float64]
+                1D array containing the indices of the zero-crossings in the time array
 
     Raises
     ------
@@ -162,6 +176,7 @@ def determine_zero_crossing(
     # Computational core
     nWave = -1
     tCross = np.empty((0, 0))
+    iCross = np.empty((0, 0), dtype=int)
     dt = t[1] - t[0]
     nTime = len(t)
 
@@ -179,6 +194,8 @@ def determine_zero_crossing(
                     xTime[iTime] - xTime[iTime + 1]
                 )
                 tCross = np.append(tCross, tCrossing)
+                if return_index:
+                    iCross = np.append(iCross, iTime)
 
     elif typeCross.lower() == "down":
         # --- Downcrossings
@@ -193,6 +210,8 @@ def determine_zero_crossing(
                     xTime[iTime] - xTime[iTime + 1]
                 )
                 tCross = np.append(tCross, tCrossing)
+                if return_index:
+                    iCross = np.append(iCross, iTime)
     else:
         raise ValueError(
             "sort_wave_params: Input error: Wrong input argument for typeCross "
@@ -203,7 +222,10 @@ def determine_zero_crossing(
     if nWave == -1:
         nWave = 0
 
-    return nWave, tCross
+    if return_index:
+        return nWave, tCross, iCross
+    else:
+        return nWave, tCross
 
 
 def highest_waves_params(
