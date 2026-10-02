@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+from typing import Union
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import figure
@@ -345,7 +346,7 @@ class Series(WaveHeights):
     def __repr__(self) -> str:
         return f"{type(self).__name__} (series  nt = {self.nt})"
 
-    def get_crossing(self, typeCross: str = "down") -> tuple[int, NDArray[float64]]:
+    def get_crossing(self, typeCross: str = "down", return_index: bool = False) -> Union[tuple[int, NDArray[float64]], tuple[int, NDArray[float64], NDArray[float64]]]:
         """Get zero crossings form time series
 
         Determine either the zero up- or down-crossings of the time series.
@@ -354,23 +355,43 @@ class Series(WaveHeights):
         ----------
         typeCross : str, optional
             Search for up- or down-crossings, by default "down"
+        return_index: bool, optional
+            if true, return the index of the zero-crossing, by default False
 
         Returns
         -------
-        tuple[int, NDArray[float64]]
-            nWave : int
-                Number of waves in the signal, where one wave corresponds to two successive zero-crossings. Wave i
-                starts at time tCross(i), and end at time tCross(i+1) [-]
-            tCross : NDArray[float64]
-                1D array of length (nWave+1), containing the time of all zero-crossings. The time of the
-                zero-crossings is determined by linear interpolation. Note that in case of no zero-crossing, the
-                array tCross is empty. Note that in case of one zero-crossing, the number of waves is zero. [s]
+        Union[tuple[int, NDArray[float64]], tuple[int, NDArray[float64], NDArray[float64]]]
+            If return_index is False (default):
+                nWave : int
+                    Number of waves in the signal, where one wave corresponds to two successive zero-crossings. Wave i starts
+                    at time tCross(i), and end at time tCross(i+1) [-]
+                tCross : NDArray[float64]
+                    1D array of length (nWave+1), containing the time of all zero-crossings. The time of the zero-crossings is
+                    determined by linear interpolation. Note that in case of no zero-crossing, the array tCross is empty. Note
+                    that in case of one zero-crossing, the number of waves is zero. [s]
+
+            If return_index is True:
+                nWave : int
+                    Number of waves in the signal
+                tCross : NDArray[float64]
+                    1D array containing the time of all zero-crossings [s]
+                iCross : NDArray[float64]
+                    1D array containing the indices of the zero-crossings in the time array
+
+
 
         """
-        nWave, tCross = core_time.determine_zero_crossing(
-            t=self.time, xTime=self.xTime, typeCross=typeCross
-        )
-        return nWave, tCross
+        if return_index:
+            nWave, tCross, iCross = core_time.determine_zero_crossing(
+                t=self.time, xTime=self.xTime, typeCross=typeCross, return_index=True
+            )
+            return nWave, tCross, iCross
+        else:
+            nWave, tCross = core_time.determine_zero_crossing(
+                t=self.time, xTime=self.xTime, typeCross=typeCross, return_index=False
+            )
+            return nWave, tCross
+
 
     def get_skewness(self) -> tuple[float, float]:
         """Compute skewness
