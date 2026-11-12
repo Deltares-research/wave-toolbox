@@ -3,7 +3,7 @@ from .cores import *  # noqa
 from .series import Series, WaveHeights  # noqa
 from .spectrum import Spectrum  # noqa
 
-__version__ = "1.1.2"
+__version__ = "1.1.3"
 
 import os
 
